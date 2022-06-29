@@ -1,0 +1,23 @@
+.DS_Store
+/.idea
+/.vscode
+/.history
+/vendor
+/bin
+/release
+/test
+/docker/data
+/static/images
+/static/apks
+/static/excel
+/static/json
+/static/epg
+/static/archiver
+/static/syncd
+/static/xml
+/gorun
+/gorun_linux
+/gorun.exe
+# config/soap
+/go.sum
+/push.sh
