@@ -10,12 +10,11 @@ import (
 )
 
 type Initial struct {
-	Path   string           // 应用程序执行路径
-	Config *config.Config   // 配置文件
-	Store  *proxy.ProxyPool // 数据库链接
-	// Session    *session.Session // 回话保存实例
-	LaunchTime time.Time    //时间设置
-	Container  di.Container //Container ..
+	Path       string           // 应用程序执行路径
+	Config     *config.Config   // 配置文件
+	Store      *proxy.ProxyPool // 数据库链接
+	LaunchTime time.Time        // 时间设置
+	Container  di.Container     // 依赖注入
 }
 
 //系统
