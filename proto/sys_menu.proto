@@ -1,0 +1,177 @@
+syntax = "proto3";
+// sys_menu 菜单
+package menu;
+option go_package = "cloud/service/sys/menu;menu";
+import "google/protobuf/timestamp.proto";
+import "pagination.proto";
+
+// SysMenuObject 数据对象
+message SysMenuObject {
+	// @inject_tag: gorm:"primaryKey;autoIncrement;column:id" json:"id"
+	optional int64 id = 1; //编号
+	// @inject_tag: gorm:"column:name" json:"name"
+	optional string name = 2; //名称
+	// @inject_tag: gorm:"column:code" json:"code"
+	optional string code = 3; //编码
+	// @inject_tag: gorm:"column:type" json:"type"
+	optional int32 type = 4; //类型:0 目录/1 菜单/2 按钮
+	// @inject_tag: gorm:"column:sort" json:"sort"
+	optional int32 sort = 5; //排序
+	// @inject_tag: gorm:"column:parent_id" json:"parentId"
+	optional int64 parent_id = 6; //上级
+	// @inject_tag: gorm:"column:path" json:"path"
+	optional string path = 7; //地址
+	// @inject_tag: gorm:"column:icon" json:"icon"
+	optional string icon = 8; //图标
+	// @inject_tag: gorm:"column:component" json:"component"
+	optional string component = 9; //组件路径
+	// @inject_tag: gorm:"column:component_name" json:"componentName"
+	optional string component_name = 10; //组件名称
+	// @inject_tag: gorm:"column:hide" json:"hide"
+	optional int32 hide = 11; //隐藏:0 否/1 是
+	// @inject_tag: gorm:"column:link" json:"link"
+	optional string link = 12; //外部地址
+	// @inject_tag: gorm:"column:cache" json:"cache"
+	optional int32 cache = 13; //缓存:0否/1 是
+	// @inject_tag: gorm:"column:affix" json:"affix"
+	optional int32 affix = 14; //固定:0否/1 是
+	// @inject_tag: gorm:"column:active" json:"active"
+	optional string active = 15; //激活地址
+	// @inject_tag: gorm:"column:full" json:"full"
+	optional int32 full = 16; //
+	// @inject_tag: gorm:"column:redirect" json:"redirect"
+	optional string redirect = 17; //重定向
+	// @inject_tag: gorm:"column:status" json:"status"
+	optional int32 status = 18; //状态:0正常/1停用
+	// @inject_tag: gorm:"column:creator" json:"creator"
+	optional string creator = 19; //创建人
+	// @inject_tag: gorm:"column:create_time" json:"createTime"
+	google.protobuf.Timestamp create_time = 20; //创建时间
+	// @inject_tag: gorm:"column:updater" json:"updater"
+	optional string updater = 21; //更新人
+	// @inject_tag: gorm:"column:update_time" json:"updateTime"
+	google.protobuf.Timestamp update_time = 22; //更新时间
+}
+// SysMenuTotalResponse 列表数据总量
+message SysMenuTotalResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysMenuCreateRequest 创建数据请求
+message SysMenuCreateRequest {
+	SysMenuObject data = 1;
+}
+// SysMenuCreateResponse 创建数据响应
+message SysMenuCreateResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysMenuUpdateRequest 更新数据请求
+message SysMenuUpdateRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+	SysMenuObject data = 2;
+}
+// SysMenuUpdateResponse 更新数据响应
+message SysMenuUpdateResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysMenuDeleteRequest 删除数据请求
+message SysMenuDeleteRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysMenuDeleteResponse 删除数据响应
+message SysMenuDeleteResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysMenuRequest 查询单条数据请求
+message SysMenuRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysMenuResponse 查询单条数据响应
+message SysMenuResponse {
+	int64 code = 1;
+	string msg = 2;
+	SysMenuObject data = 3;
+}
+// SysMenuParentRequest 列表数据
+message SysMenuParentRequest {
+	
+	// @inject_tag: db:"status" json:"status"
+	optional int32 status = 1; // 状态:0正常/1停用
+	// @inject_tag: db:"type" json:"type"
+	optional int32 type = 2; // 类型:0 目录/1 菜单/2 按钮
+	// @inject_tag: db:"parent_id" json:"parentId"
+	optional int64 parent_id = 3; // 上级
+
+	// @inject_tag: json:"pagination"
+	optional pagination.PaginationRequest pagination = 4; // 分页
+}
+
+// SysMenuParentResponse 数据响应
+message SysMenuParentResponse {
+	int64 code = 1;
+  	string msg = 2;
+	repeated SysMenuObject data = 3;
+}
+// SysMenuParentTotalRequest 列表数据
+message SysMenuParentTotalRequest {
+	
+	// @inject_tag: db:"status" json:"status"
+	optional int32 status = 1; // 状态:0正常/1停用
+	// @inject_tag: db:"type" json:"type"
+	optional int32 type = 2; // 类型:0 目录/1 菜单/2 按钮
+	// @inject_tag: db:"parent_id" json:"parentId"
+	optional int64 parent_id = 3; // 上级
+
+}
+// SysMenuListRequest 列表数据
+message SysMenuListRequest {
+	
+	// @inject_tag: db:"status" json:"status"
+	optional int32 status = 1; // 状态:0正常/1停用
+	// @inject_tag: db:"type" json:"type"
+	optional int32 type = 2; // 类型:0 目录/1 菜单/2 按钮
+	// @inject_tag: db:"parent_id" json:"parentId"
+	optional int64 parent_id = 3; // 上级
+
+	// @inject_tag: json:"pagination"
+	optional pagination.PaginationRequest pagination = 4; // 分页
+}
+
+// SysMenuListResponse 数据响应
+message SysMenuListResponse {
+	int64 code = 1;
+  	string msg = 2;
+	repeated SysMenuObject data = 3;
+}
+// SysMenuListTotalRequest 列表数据
+message SysMenuListTotalRequest {
+	
+	// @inject_tag: db:"status" json:"status"
+	optional int32 status = 1; // 状态:0正常/1停用
+	// @inject_tag: db:"type" json:"type"
+	optional int32 type = 2; // 类型:0 目录/1 菜单/2 按钮
+	// @inject_tag: db:"parent_id" json:"parentId"
+	optional int64 parent_id = 3; // 上级
+
+}
+
+
+// SysMenuService 服务
+service SysMenuService{
+	rpc SysMenuCreate(SysMenuCreateRequest) returns (SysMenuCreateResponse);
+	rpc SysMenuUpdate(SysMenuUpdateRequest) returns (SysMenuUpdateResponse);
+	rpc SysMenuDelete(SysMenuDeleteRequest) returns (SysMenuDeleteResponse);
+	rpc SysMenu(SysMenuRequest) returns (SysMenuResponse);
+	rpc SysMenuParent(SysMenuParentRequest) returns (SysMenuParentResponse);
+	rpc SysMenuParentTotal(SysMenuParentTotalRequest) returns (SysMenuTotalResponse);
+	rpc SysMenuList(SysMenuListRequest) returns (SysMenuListResponse);
+	rpc SysMenuListTotal(SysMenuListTotalRequest) returns (SysMenuTotalResponse);
+}
