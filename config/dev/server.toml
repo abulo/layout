@@ -1,0 +1,43 @@
+[Server]
+    [Server.Api]
+        # 是否开启
+        Enable = true
+        # 监听 IP,如果是注册发现服务，需要填写内网 IP,如果是单机模式，则填写 127.0.0.1
+        Host = "172.18.1.8"
+        # 监听端口
+        Port = 5555
+        # 注册发现服务中的角色名称
+        Deployment = "stock-api"
+        # 开启指标采集
+        EnableMetric = true
+        # 开启链路追踪
+        EnableTrace = true
+        # 开启慢日志查询
+        EnableSlowQuery = false
+        # 同监听一样
+        ServiceAddress = "172.18.1.8:5555"
+        # 慢日志
+        SlowQueryThresholdInMill = 10000
+    [Server.Grpc]
+        # 是否开启
+        Enable = true
+        # 监听 IP,如果是注册发现服务，需要填写内网 IP,如果是单机模式，则填写 127.0.0.1
+        Host = "172.18.1.8"
+        # 监听端口
+        Port = 6666
+        # 注册发现服务中的角色名称
+        Deployment = "stock-grpc"
+        # 开启指标采集
+        EnableMetric = true
+        # 开启链路追踪
+        EnableTrace = true
+        # 开启慢日志查询
+        EnableSlowQuery = false
+        # 同监听一样
+        ServiceAddress = "172.18.1.8:6666"
+        # 慢日志
+        SlowQueryThresholdInMill = 10000
+    # [Server.monitor]
+    #     host = "172.18.1.8"
+    #     port = 18889
+    #     network = "tcp4"

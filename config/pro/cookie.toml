@@ -1,0 +1,17 @@
+[Cookie]
+    #每一个应用独有标识
+    AppKey = "stock"
+    #过期时间
+    Expires=180000
+    #路径
+    Path="/"
+    #域名
+    Domain=""
+    #https才启用
+    Secure=false
+    #HttpOnly属性
+    HttpOnly=true
+    #hashKey
+    HashKey="cookies_hashKey_stock"
+    #blockKey
+    BlockKey="cookies_blockKey_stock"

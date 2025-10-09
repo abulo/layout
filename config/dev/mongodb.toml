@@ -1,0 +1,15 @@
+[[MongoDB]]
+URI="mongodb://admin:admin@172.18.1.2:27017/stock?authSource=admin&authMechanism=SCRAM-SHA-256"
+MaxConnIdleTime = 1
+MaxPoolSize = 64
+MinPoolSize = 10
+# 开启指标采集
+EnableMetric = false
+# 开启链路追踪
+EnableTrace = false
+#节点名称
+LinkNode = "mongodb.common"
+
+[[ProxyMongoDB]]
+Name = "mongodb"
+LinkNode = "mongodb.common"
