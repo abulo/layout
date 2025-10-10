@@ -1,6 +1,7 @@
 package service
 
 import (
+	"cloud/service/sys"
 	"cloud/service/verify"
 
 	"github.com/abulo/ratel/v3/server/xgrpc"
@@ -13,4 +14,5 @@ func Registry(server *xgrpc.Server) {
 		Server: server,
 	})
 	// 注册服务
+	sys.Registry(server)
 }
