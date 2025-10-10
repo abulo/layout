@@ -1,0 +1,126 @@
+syntax = "proto3";
+// sys_role_menu 角色菜单
+package role;
+option go_package = "cloud/service/sys/role;role";
+import "google/protobuf/timestamp.proto";
+import "pagination.proto";
+
+// SysRoleMenuObject 数据对象
+message SysRoleMenuObject {
+	// @inject_tag: gorm:"primaryKey;autoIncrement;column:id" json:"id"
+	optional int64 id = 1; //编号
+	// @inject_tag: gorm:"column:role_id" json:"roleId"
+	optional int64 role_id = 2; //角色
+	// @inject_tag: gorm:"column:menu_id" json:"menuId"
+	optional int64 menu_id = 3; //菜单
+	// @inject_tag: gorm:"column:tenant_id" json:"tenantId"
+	optional int64 tenant_id = 4; //租户
+}
+// SysRoleMenuTotalResponse 列表数据总量
+message SysRoleMenuTotalResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysRoleMenuCreateRequest 创建数据请求
+message SysRoleMenuCreateRequest {
+	SysRoleMenuObject data = 1;
+}
+// SysRoleMenuCreateResponse 创建数据响应
+message SysRoleMenuCreateResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysRoleMenuUpdateRequest 更新数据请求
+message SysRoleMenuUpdateRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+	SysRoleMenuObject data = 2;
+}
+// SysRoleMenuUpdateResponse 更新数据响应
+message SysRoleMenuUpdateResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysRoleMenuDeleteRequest 删除数据请求
+message SysRoleMenuDeleteRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysRoleMenuDeleteResponse 删除数据响应
+message SysRoleMenuDeleteResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysRoleMenuRequest 查询单条数据请求
+message SysRoleMenuRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysRoleMenuResponse 查询单条数据响应
+message SysRoleMenuResponse {
+	int64 code = 1;
+	string msg = 2;
+	SysRoleMenuObject data = 3;
+}
+// SysRoleMenuItemRequest 查询单条数据请求
+message SysRoleMenuItemRequest {
+	
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	optional int64 tenant_id = 1; // 租户
+	// @inject_tag: db:"role_id" json:"roleId"
+	optional int64 role_id = 2; // 角色
+	// @inject_tag: db:"menu_id" json:"menuId"
+	optional int64 menu_id = 3; // 菜单
+
+}
+// SysRoleMenuItemResponse 查询单条数据响应
+message SysRoleMenuItemResponse {
+	int64 code = 1;
+	string msg = 2;
+	SysRoleMenuObject data = 3;
+}
+// SysRoleMenuListRequest 列表数据
+message SysRoleMenuListRequest {
+	
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	optional int64 tenant_id = 1; // 租户
+	// @inject_tag: db:"role_id" json:"roleId"
+	optional int64 role_id = 2; // 角色
+	// @inject_tag: db:"menu_id" json:"menuId"
+	optional int64 menu_id = 3; // 菜单
+
+	// @inject_tag: json:"pagination"
+	optional pagination.PaginationRequest pagination = 4; // 分页
+}
+
+// SysRoleMenuListResponse 数据响应
+message SysRoleMenuListResponse {
+	int64 code = 1;
+  	string msg = 2;
+	repeated SysRoleMenuObject data = 3;
+}
+// SysRoleMenuListTotalRequest 列表数据
+message SysRoleMenuListTotalRequest {
+	
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	optional int64 tenant_id = 1; // 租户
+	// @inject_tag: db:"role_id" json:"roleId"
+	optional int64 role_id = 2; // 角色
+	// @inject_tag: db:"menu_id" json:"menuId"
+	optional int64 menu_id = 3; // 菜单
+
+}
+
+
+// SysRoleMenuService 服务
+service SysRoleMenuService{
+	rpc SysRoleMenuCreate(SysRoleMenuCreateRequest) returns (SysRoleMenuCreateResponse);
+	rpc SysRoleMenuUpdate(SysRoleMenuUpdateRequest) returns (SysRoleMenuUpdateResponse);
+	rpc SysRoleMenuDelete(SysRoleMenuDeleteRequest) returns (SysRoleMenuDeleteResponse);
+	rpc SysRoleMenu(SysRoleMenuRequest) returns (SysRoleMenuResponse);
+	rpc SysRoleMenuItem(SysRoleMenuItemRequest) returns (SysRoleMenuItemResponse);
+	rpc SysRoleMenuList(SysRoleMenuListRequest) returns (SysRoleMenuListResponse);
+	rpc SysRoleMenuListTotal(SysRoleMenuListTotalRequest) returns (SysRoleMenuTotalResponse);
+}

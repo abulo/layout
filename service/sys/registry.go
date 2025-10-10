@@ -32,4 +32,12 @@ func Registry(server *xgrpc.Server) {
 	dept.RegisterSysDeptServiceServer(server.Server, &dept.SrvSysDeptServiceServer{
 		Server: server,
 	})
+	// 用户部门->sys_user_dept
+	user.RegisterSysUserDeptServiceServer(server.Server, &user.SrvSysUserDeptServiceServer{
+		Server: server,
+	})
+	// 角色菜单->sys_role_menu
+	role.RegisterSysRoleMenuServiceServer(server.Server, &role.SrvSysRoleMenuServiceServer{
+		Server: server,
+	})
 }
