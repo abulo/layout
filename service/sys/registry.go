@@ -2,6 +2,7 @@ package sys
 
 import (
 	"cloud/service/sys/menu"
+	"cloud/service/sys/post"
 	"cloud/service/sys/role"
 	"cloud/service/sys/user"
 
@@ -20,6 +21,10 @@ func Registry(server *xgrpc.Server) {
 	})
 	// 角色->sys_role
 	role.RegisterSysRoleServiceServer(server.Server, &role.SrvSysRoleServiceServer{
+		Server: server,
+	})
+	// 职位->sys_post
+	post.RegisterSysPostServiceServer(server.Server, &post.SrvSysPostServiceServer{
 		Server: server,
 	})
 }

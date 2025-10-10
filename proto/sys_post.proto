@@ -1,0 +1,146 @@
+syntax = "proto3";
+// sys_post 职位
+package post;
+option go_package = "cloud/service/sys/post;post";
+import "google/protobuf/timestamp.proto";
+import "pagination.proto";
+
+// SysPostObject 数据对象
+message SysPostObject {
+	// @inject_tag: gorm:"primaryKey;autoIncrement;column:id" json:"id"
+	optional int64 id = 1; //编号
+	// @inject_tag: gorm:"column:name" json:"name"
+	optional string name = 2; //名称
+	// @inject_tag: gorm:"column:sort" json:"sort"
+	optional int32 sort = 3; //排序
+	// @inject_tag: gorm:"column:status" json:"status"
+	optional int32 status = 4; //状态:0正常/1停用
+	// @inject_tag: gorm:"column:deleted" json:"deleted"
+	optional int32 deleted = 5; //删除:0否/1是
+	// @inject_tag: gorm:"column:tenant_id" json:"tenantId"
+	optional int64 tenant_id = 6; //租户
+	// @inject_tag: gorm:"column:creator" json:"creator"
+	optional string creator = 7; //创建人
+	// @inject_tag: gorm:"column:create_time" json:"createTime"
+	google.protobuf.Timestamp create_time = 8; //创建时间
+	// @inject_tag: gorm:"column:updater" json:"updater"
+	optional string updater = 9; //更新人
+	// @inject_tag: gorm:"column:update_time" json:"updateTime"
+	google.protobuf.Timestamp update_time = 10; //更新时间
+}
+// SysPostTotalResponse 列表数据总量
+message SysPostTotalResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysPostCreateRequest 创建数据请求
+message SysPostCreateRequest {
+	SysPostObject data = 1;
+}
+// SysPostCreateResponse 创建数据响应
+message SysPostCreateResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysPostUpdateRequest 更新数据请求
+message SysPostUpdateRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+	SysPostObject data = 2;
+}
+// SysPostUpdateResponse 更新数据响应
+message SysPostUpdateResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysPostDeleteRequest 删除数据请求
+message SysPostDeleteRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysPostDeleteResponse 删除数据响应
+message SysPostDeleteResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysPostRequest 查询单条数据请求
+message SysPostRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysPostResponse 查询单条数据响应
+message SysPostResponse {
+	int64 code = 1;
+	string msg = 2;
+	SysPostObject data = 3;
+}
+// SysPostRecoverRequest 恢复数据请求
+message SysPostRecoverRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysPostRecoverResponse 删除数据响应
+message SysPostRecoverResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysPostDropRequest 清理数据请求
+message SysPostDropRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysPostDropResponse 清理数据响应
+message SysPostDropResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysPostListRequest 列表数据
+message SysPostListRequest {
+	
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	optional int64 tenant_id = 1; // 租户
+	// @inject_tag: db:"deleted" json:"deleted"
+	optional int32 deleted = 2; // 删除:0否/1是
+	// @inject_tag: db:"status" json:"status"
+	optional int32 status = 3; // 状态:0正常/1停用
+	// @inject_tag: db:"name" json:"name"
+	optional string name = 4; // 名称
+
+	// @inject_tag: json:"pagination"
+	optional pagination.PaginationRequest pagination = 5; // 分页
+}
+
+// SysPostListResponse 数据响应
+message SysPostListResponse {
+	int64 code = 1;
+  	string msg = 2;
+	repeated SysPostObject data = 3;
+}
+// SysPostListTotalRequest 列表数据
+message SysPostListTotalRequest {
+	
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	optional int64 tenant_id = 1; // 租户
+	// @inject_tag: db:"deleted" json:"deleted"
+	optional int32 deleted = 2; // 删除:0否/1是
+	// @inject_tag: db:"status" json:"status"
+	optional int32 status = 3; // 状态:0正常/1停用
+	// @inject_tag: db:"name" json:"name"
+	optional string name = 4; // 名称
+
+}
+
+
+// SysPostService 服务
+service SysPostService{
+	rpc SysPostCreate(SysPostCreateRequest) returns (SysPostCreateResponse);
+	rpc SysPostUpdate(SysPostUpdateRequest) returns (SysPostUpdateResponse);
+	rpc SysPostDelete(SysPostDeleteRequest) returns (SysPostDeleteResponse);
+	rpc SysPost(SysPostRequest) returns (SysPostResponse);
+	rpc SysPostRecover(SysPostRecoverRequest) returns (SysPostRecoverResponse);
+	rpc SysPostDrop(SysPostDropRequest) returns (SysPostDropResponse);
+	rpc SysPostList(SysPostListRequest) returns (SysPostListResponse);
+	rpc SysPostListTotal(SysPostListTotalRequest) returns (SysPostTotalResponse);
+}
