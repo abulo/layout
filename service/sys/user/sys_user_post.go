@@ -2,10 +2,6 @@ package user
 
 import (
 	"cloud/dao"
-
-	"github.com/abulo/ratel/v3/stores/null"
-	"github.com/abulo/ratel/v3/util"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // sys_user_post 用户职位

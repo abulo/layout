@@ -1,7 +1,5 @@
 package dao
 
-import "github.com/abulo/ratel/v3/stores/null"
-
 // SysRoleMenu 角色菜单 sys_role_menu
 type SysRoleMenu struct {
 	Id       *int64 `gorm:"primaryKey;autoIncrement;column:id" json:"id"` //bigint 编号,PRI
