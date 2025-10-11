@@ -2,7 +2,6 @@ syntax = "proto3";
 // sys_role_menu 角色菜单
 package role;
 option go_package = "cloud/service/sys/role;role";
-import "google/protobuf/timestamp.proto";
 import "pagination.proto";
 
 // SysRoleMenuObject 数据对象
@@ -66,7 +65,7 @@ message SysRoleMenuResponse {
 }
 // SysRoleMenuItemRequest 查询单条数据请求
 message SysRoleMenuItemRequest {
-	
+
 	// @inject_tag: db:"tenant_id" json:"tenantId"
 	optional int64 tenant_id = 1; // 租户
 	// @inject_tag: db:"role_id" json:"roleId"
@@ -83,7 +82,7 @@ message SysRoleMenuItemResponse {
 }
 // SysRoleMenuListRequest 列表数据
 message SysRoleMenuListRequest {
-	
+
 	// @inject_tag: db:"tenant_id" json:"tenantId"
 	optional int64 tenant_id = 1; // 租户
 	// @inject_tag: db:"role_id" json:"roleId"
@@ -103,7 +102,7 @@ message SysRoleMenuListResponse {
 }
 // SysRoleMenuListTotalRequest 列表数据
 message SysRoleMenuListTotalRequest {
-	
+
 	// @inject_tag: db:"tenant_id" json:"tenantId"
 	optional int64 tenant_id = 1; // 租户
 	// @inject_tag: db:"role_id" json:"roleId"
