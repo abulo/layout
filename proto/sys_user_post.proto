@@ -1,0 +1,126 @@
+syntax = "proto3";
+// sys_user_post 用户职位
+package user;
+option go_package = "cloud/service/sys/user;user";
+import "google/protobuf/timestamp.proto";
+import "pagination.proto";
+
+// SysUserPostObject 数据对象
+message SysUserPostObject {
+	// @inject_tag: gorm:"primaryKey;autoIncrement;column:id" json:"id"
+	optional int64 id = 1; //编号
+	// @inject_tag: gorm:"column:user_id" json:"userId"
+	optional int64 user_id = 2; //用户
+	// @inject_tag: gorm:"column:post_id" json:"postId"
+	optional int64 post_id = 3; //部门
+	// @inject_tag: gorm:"column:tenant_id" json:"tenantId"
+	optional int64 tenant_id = 4; //租户
+}
+// SysUserPostTotalResponse 列表数据总量
+message SysUserPostTotalResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysUserPostCreateRequest 创建数据请求
+message SysUserPostCreateRequest {
+	SysUserPostObject data = 1;
+}
+// SysUserPostCreateResponse 创建数据响应
+message SysUserPostCreateResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysUserPostUpdateRequest 更新数据请求
+message SysUserPostUpdateRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+	SysUserPostObject data = 2;
+}
+// SysUserPostUpdateResponse 更新数据响应
+message SysUserPostUpdateResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysUserPostDeleteRequest 删除数据请求
+message SysUserPostDeleteRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysUserPostDeleteResponse 删除数据响应
+message SysUserPostDeleteResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysUserPostRequest 查询单条数据请求
+message SysUserPostRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysUserPostResponse 查询单条数据响应
+message SysUserPostResponse {
+	int64 code = 1;
+	string msg = 2;
+	SysUserPostObject data = 3;
+}
+// SysUserPostItemRequest 查询单条数据请求
+message SysUserPostItemRequest {
+	
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	optional int64 tenant_id = 1; // 租户
+	// @inject_tag: db:"user_id" json:"userId"
+	optional int64 user_id = 2; // 用户
+	// @inject_tag: db:"post_id" json:"postId"
+	optional int64 post_id = 3; // 部门
+
+}
+// SysUserPostItemResponse 查询单条数据响应
+message SysUserPostItemResponse {
+	int64 code = 1;
+	string msg = 2;
+	SysUserPostObject data = 3;
+}
+// SysUserPostListRequest 列表数据
+message SysUserPostListRequest {
+	
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	optional int64 tenant_id = 1; // 租户
+	// @inject_tag: db:"user_id" json:"userId"
+	optional int64 user_id = 2; // 用户
+	// @inject_tag: db:"post_id" json:"postId"
+	optional int64 post_id = 3; // 部门
+
+	// @inject_tag: json:"pagination"
+	optional pagination.PaginationRequest pagination = 4; // 分页
+}
+
+// SysUserPostListResponse 数据响应
+message SysUserPostListResponse {
+	int64 code = 1;
+  	string msg = 2;
+	repeated SysUserPostObject data = 3;
+}
+// SysUserPostListTotalRequest 列表数据
+message SysUserPostListTotalRequest {
+	
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	optional int64 tenant_id = 1; // 租户
+	// @inject_tag: db:"user_id" json:"userId"
+	optional int64 user_id = 2; // 用户
+	// @inject_tag: db:"post_id" json:"postId"
+	optional int64 post_id = 3; // 部门
+
+}
+
+
+// SysUserPostService 服务
+service SysUserPostService{
+	rpc SysUserPostCreate(SysUserPostCreateRequest) returns (SysUserPostCreateResponse);
+	rpc SysUserPostUpdate(SysUserPostUpdateRequest) returns (SysUserPostUpdateResponse);
+	rpc SysUserPostDelete(SysUserPostDeleteRequest) returns (SysUserPostDeleteResponse);
+	rpc SysUserPost(SysUserPostRequest) returns (SysUserPostResponse);
+	rpc SysUserPostItem(SysUserPostItemRequest) returns (SysUserPostItemResponse);
+	rpc SysUserPostList(SysUserPostListRequest) returns (SysUserPostListResponse);
+	rpc SysUserPostListTotal(SysUserPostListTotalRequest) returns (SysUserPostTotalResponse);
+}

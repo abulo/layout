@@ -40,4 +40,8 @@ func Registry(server *xgrpc.Server) {
 	role.RegisterSysRoleMenuServiceServer(server.Server, &role.SrvSysRoleMenuServiceServer{
 		Server: server,
 	})
+	// 用户职位->sys_user_post
+	user.RegisterSysUserPostServiceServer(server.Server, &user.SrvSysUserPostServiceServer{
+		Server: server,
+	})
 }
