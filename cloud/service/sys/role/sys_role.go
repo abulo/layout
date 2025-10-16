@@ -23,11 +23,11 @@ func SysRoleDao(item *SysRoleObject) *dao.SysRole {
 	if item != nil && item.Code != nil {
 		daoItem.Code = item.Code // 编码
 	}
-	if item != nil && item.DataScope != nil {
-		daoItem.DataScope = null.Int32From(item.GetDataScope()) // 数据范围:1:全部数据权限/2:自定数据权限/3:本部门数据权限/4:本部门及以下数据权限
+	if item != nil && item.Scope != nil {
+		daoItem.Scope = null.Int32From(item.GetScope()) // 数据范围:1:全部数据权限/2:自定数据权限/3:本部门数据权限/4:本部门及以下数据权限
 	}
-	if item != nil && item.DataScopeDept != nil {
-		daoItem.DataScopeDept = null.JSONFrom(item.GetDataScopeDept()) // 数据范围(指定部门数组)
+	if item != nil && item.ScopeDept != nil {
+		daoItem.ScopeDept = null.JSONFrom(item.GetScopeDept()) // 数据范围(指定部门数组)
 	}
 	if item != nil && item.Sort != nil {
 		daoItem.Sort = item.Sort // 排序
@@ -69,11 +69,11 @@ func SysRoleProto(item dao.SysRole) *SysRoleObject {
 	if item.Code != nil {
 		res.Code = item.Code
 	}
-	if item.DataScope.IsValid() {
-		res.DataScope = item.DataScope.Ptr()
+	if item.Scope.IsValid() {
+		res.Scope = item.Scope.Ptr()
 	}
-	if item.DataScopeDept.IsValid() {
-		res.DataScopeDept = *item.DataScopeDept.Ptr()
+	if item.ScopeDept.IsValid() {
+		res.ScopeDept = *item.ScopeDept.Ptr()
 	}
 	if item.Sort != nil {
 		res.Sort = item.Sort

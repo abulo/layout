@@ -1,5 +1,7 @@
 package dao
 
+import "github.com/abulo/ratel/v3/stores/null"
+
 // SysUserDept 用户部门 sys_user_dept
 type SysUserDept struct {
 	Id       *int64 `gorm:"primaryKey;autoIncrement;column:id" json:"id"` //bigint 编号,PRI

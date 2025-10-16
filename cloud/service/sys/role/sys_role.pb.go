@@ -34,10 +34,10 @@ type SysRoleObject struct {
 	Name *string `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name" gorm:"column:name"` //名称
 	// @inject_tag: gorm:"column:code" json:"code"
 	Code *string `protobuf:"bytes,3,opt,name=code,proto3,oneof" json:"code" gorm:"column:code"` //编码
-	// @inject_tag: gorm:"column:data_scope" json:"dataScope"
-	DataScope *int32 `protobuf:"varint,4,opt,name=data_scope,json=dataScope,proto3,oneof" json:"dataScope" gorm:"column:data_scope"` //数据范围:1:全部数据权限/2:自定数据权限/3:本部门数据权限/4:本部门及以下数据权限
-	// @inject_tag: gorm:"column:data_scope_dept" json:"dataScopeDept"
-	DataScopeDept []byte `protobuf:"bytes,5,opt,name=data_scope_dept,json=dataScopeDept,proto3,oneof" json:"dataScopeDept" gorm:"column:data_scope_dept"` //数据范围(指定部门数组)
+	// @inject_tag: gorm:"column:scope" json:"scope"
+	Scope *int32 `protobuf:"varint,4,opt,name=scope,proto3,oneof" json:"scope" gorm:"column:scope"` //数据范围:1:全部数据权限/2:自定数据权限/3:本部门数据权限/4:本部门及以下数据权限
+	// @inject_tag: gorm:"column:scope_dept" json:"scopeDept"
+	ScopeDept []byte `protobuf:"bytes,5,opt,name=scope_dept,json=scopeDept,proto3,oneof" json:"scopeDept" gorm:"column:scope_dept"` //数据范围(指定部门数组)
 	// @inject_tag: gorm:"column:sort" json:"sort"
 	Sort *int32 `protobuf:"varint,6,opt,name=sort,proto3,oneof" json:"sort" gorm:"column:sort"` //排序
 	// @inject_tag: gorm:"column:status" json:"status"
@@ -109,16 +109,16 @@ func (x *SysRoleObject) GetCode() string {
 	return ""
 }
 
-func (x *SysRoleObject) GetDataScope() int32 {
-	if x != nil && x.DataScope != nil {
-		return *x.DataScope
+func (x *SysRoleObject) GetScope() int32 {
+	if x != nil && x.Scope != nil {
+		return *x.Scope
 	}
 	return 0
 }
 
-func (x *SysRoleObject) GetDataScopeDept() []byte {
+func (x *SysRoleObject) GetScopeDept() []byte {
 	if x != nil {
-		return x.DataScopeDept
+		return x.ScopeDept
 	}
 	return nil
 }
@@ -1211,14 +1211,14 @@ var File_sys_role_proto protoreflect.FileDescriptor
 
 const file_sys_role_proto_rawDesc = "" +
 	"\n" +
-	"\x0esys_role.proto\x12\x04role\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\xd8\x04\n" +
+	"\x0esys_role.proto\x12\x04role\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\xbc\x04\n" +
 	"\rSysRoleObject\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x01R\x04name\x88\x01\x01\x12\x17\n" +
-	"\x04code\x18\x03 \x01(\tH\x02R\x04code\x88\x01\x01\x12\"\n" +
+	"\x04code\x18\x03 \x01(\tH\x02R\x04code\x88\x01\x01\x12\x19\n" +
+	"\x05scope\x18\x04 \x01(\x05H\x03R\x05scope\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"data_scope\x18\x04 \x01(\x05H\x03R\tdataScope\x88\x01\x01\x12+\n" +
-	"\x0fdata_scope_dept\x18\x05 \x01(\fH\x04R\rdataScopeDept\x88\x01\x01\x12\x17\n" +
+	"scope_dept\x18\x05 \x01(\fH\x04R\tscopeDept\x88\x01\x01\x12\x17\n" +
 	"\x04sort\x18\x06 \x01(\x05H\x05R\x04sort\x88\x01\x01\x12\x1b\n" +
 	"\x06status\x18\a \x01(\x05H\x06R\x06status\x88\x01\x01\x12\x1d\n" +
 	"\adeleted\x18\b \x01(\x05H\aR\adeleted\x88\x01\x01\x12 \n" +
@@ -1233,9 +1233,9 @@ const file_sys_role_proto_rawDesc = "" +
 	"updateTimeB\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\a\n" +
-	"\x05_codeB\r\n" +
-	"\v_data_scopeB\x12\n" +
-	"\x10_data_scope_deptB\a\n" +
+	"\x05_codeB\b\n" +
+	"\x06_scopeB\r\n" +
+	"\v_scope_deptB\a\n" +
 	"\x05_sortB\t\n" +
 	"\a_statusB\n" +
 	"\n" +

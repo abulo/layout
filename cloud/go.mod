@@ -149,4 +149,4 @@ require (
 	gorm.io/driver/postgres v1.6.0 // indirect
 )
 
-replace github.com/abulo/ratel/v3 => ../../ratel
+replace github.com/abulo/ratel/v3 => ../../../ratel

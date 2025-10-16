@@ -13,10 +13,10 @@ message SysRoleObject {
 	optional string name = 2; //名称
 	// @inject_tag: gorm:"column:code" json:"code"
 	optional string code = 3; //编码
-	// @inject_tag: gorm:"column:data_scope" json:"dataScope"
-	optional int32 data_scope = 4; //数据范围:1:全部数据权限/2:自定数据权限/3:本部门数据权限/4:本部门及以下数据权限
-	// @inject_tag: gorm:"column:data_scope_dept" json:"dataScopeDept"
-	optional bytes data_scope_dept = 5; //数据范围(指定部门数组)
+	// @inject_tag: gorm:"column:scope" json:"scope"
+	optional int32 scope = 4; //数据范围:1:全部数据权限/2:自定数据权限/3:本部门数据权限/4:本部门及以下数据权限
+	// @inject_tag: gorm:"column:scope_dept" json:"scopeDept"
+	optional bytes scope_dept = 5; //数据范围(指定部门数组)
 	// @inject_tag: gorm:"column:sort" json:"sort"
 	optional int32 sort = 6; //排序
 	// @inject_tag: gorm:"column:status" json:"status"
