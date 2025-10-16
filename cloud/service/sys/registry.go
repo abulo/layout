@@ -44,4 +44,8 @@ func Registry(server *xgrpc.Server) {
 	user.RegisterSysUserPostServiceServer(server.Server, &user.SrvSysUserPostServiceServer{
 		Server: server,
 	})
+	// 租户用户->sys_user_tenant
+	user.RegisterSysUserTenantServiceServer(server.Server, &user.SrvSysUserTenantServiceServer{
+		Server: server,
+	})
 }

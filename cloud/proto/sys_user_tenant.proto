@@ -1,0 +1,118 @@
+syntax = "proto3";
+// sys_user_tenant 租户用户
+package user;
+option go_package = "cloud/service/sys/user;user";
+import "google/protobuf/timestamp.proto";
+import "pagination.proto";
+
+// SysUserTenantObject 数据对象
+message SysUserTenantObject {
+	// @inject_tag: gorm:"primaryKey;autoIncrement;column:id" json:"id"
+	optional int64 id = 1; //编号
+	// @inject_tag: gorm:"column:user_id" json:"userId"
+	optional int64 user_id = 2; //用户
+	// @inject_tag: gorm:"column:tenant_id" json:"tenantId"
+	optional int64 tenant_id = 3; //租户
+}
+// SysUserTenantTotalResponse 列表数据总量
+message SysUserTenantTotalResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysUserTenantCreateRequest 创建数据请求
+message SysUserTenantCreateRequest {
+	SysUserTenantObject data = 1;
+}
+// SysUserTenantCreateResponse 创建数据响应
+message SysUserTenantCreateResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysUserTenantUpdateRequest 更新数据请求
+message SysUserTenantUpdateRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+	SysUserTenantObject data = 2;
+}
+// SysUserTenantUpdateResponse 更新数据响应
+message SysUserTenantUpdateResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysUserTenantDeleteRequest 删除数据请求
+message SysUserTenantDeleteRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysUserTenantDeleteResponse 删除数据响应
+message SysUserTenantDeleteResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysUserTenantRequest 查询单条数据请求
+message SysUserTenantRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysUserTenantResponse 查询单条数据响应
+message SysUserTenantResponse {
+	int64 code = 1;
+	string msg = 2;
+	SysUserTenantObject data = 3;
+}
+// SysUserTenantBindRequest 查询单条数据请求
+message SysUserTenantBindRequest {
+	
+	// @inject_tag: db:"user_id" json:"userId"
+	optional int64 user_id = 1; // 用户
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	optional int64 tenant_id = 2; // 租户
+
+}
+// SysUserTenantBindResponse 查询单条数据响应
+message SysUserTenantBindResponse {
+	int64 code = 1;
+	string msg = 2;
+	SysUserTenantObject data = 3;
+}
+// SysUserTenantListRequest 列表数据
+message SysUserTenantListRequest {
+	
+	// @inject_tag: db:"user_id" json:"userId"
+	optional int64 user_id = 1; // 用户
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	optional int64 tenant_id = 2; // 租户
+
+	// @inject_tag: json:"pagination"
+	optional pagination.PaginationRequest pagination = 3; // 分页
+}
+
+// SysUserTenantListResponse 数据响应
+message SysUserTenantListResponse {
+	int64 code = 1;
+  	string msg = 2;
+	repeated SysUserTenantObject data = 3;
+}
+// SysUserTenantListTotalRequest 列表数据
+message SysUserTenantListTotalRequest {
+	
+	// @inject_tag: db:"user_id" json:"userId"
+	optional int64 user_id = 1; // 用户
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	optional int64 tenant_id = 2; // 租户
+
+}
+
+
+// SysUserTenantService 服务
+service SysUserTenantService{
+	rpc SysUserTenantCreate(SysUserTenantCreateRequest) returns (SysUserTenantCreateResponse);
+	rpc SysUserTenantUpdate(SysUserTenantUpdateRequest) returns (SysUserTenantUpdateResponse);
+	rpc SysUserTenantDelete(SysUserTenantDeleteRequest) returns (SysUserTenantDeleteResponse);
+	rpc SysUserTenant(SysUserTenantRequest) returns (SysUserTenantResponse);
+	rpc SysUserTenantBind(SysUserTenantBindRequest) returns (SysUserTenantBindResponse);
+	rpc SysUserTenantList(SysUserTenantListRequest) returns (SysUserTenantListResponse);
+	rpc SysUserTenantListTotal(SysUserTenantListTotalRequest) returns (SysUserTenantTotalResponse);
+}

@@ -1,7 +1,5 @@
 package dao
 
-import "github.com/abulo/ratel/v3/stores/null"
-
 // SysUserTenant 租户用户 sys_user_tenant
 type SysUserTenant struct {
 	Id       *int64 `gorm:"primaryKey;autoIncrement;column:id" json:"id"` //bigint 编号,PRI

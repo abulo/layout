@@ -1,7 +1,5 @@
 package dao
 
-import "github.com/abulo/ratel/v3/stores/null"
-
 // SysUserPost 用户职位 sys_user_post
 type SysUserPost struct {
 	Id       *int64 `gorm:"primaryKey;autoIncrement;column:id" json:"id"` //bigint 编号,PRI
