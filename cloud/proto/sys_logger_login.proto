@@ -1,0 +1,162 @@
+syntax = "proto3";
+// sys_logger_login 登录日志
+package logger;
+option go_package = "cloud/service/sys/logger;logger";
+import "google/protobuf/timestamp.proto";
+import "pagination.proto";
+
+// SysLoggerLoginObject 数据对象
+message SysLoggerLoginObject {
+	// @inject_tag: gorm:"primaryKey;autoIncrement;column:id" json:"id"
+	optional int64 id = 1; //编号
+	// @inject_tag: gorm:"column:name" json:"name"
+	optional string name = 2; //姓名
+	// @inject_tag: gorm:"column:username" json:"username"
+	optional string username = 3; //用户名
+	// @inject_tag: gorm:"column:user_id" json:"userId"
+	optional int64 user_id = 4; //用户编号
+	// @inject_tag: gorm:"column:ua" json:"ua"
+	optional string ua = 5; //UA
+	// @inject_tag: gorm:"column:login_time" json:"loginTime"
+	google.protobuf.Timestamp login_time = 6; //登录时间
+	// @inject_tag: gorm:"column:channel" json:"channel"
+	optional string channel = 7; //渠道
+	// @inject_tag: gorm:"column:ip" json:"ip"
+	optional string ip = 8; //IP
+	// @inject_tag: gorm:"column:deleted" json:"deleted"
+	optional int32 deleted = 9; //删除:0否/1是
+	// @inject_tag: gorm:"column:tenant_id" json:"tenantId"
+	optional int64 tenant_id = 10; //租户
+	// @inject_tag: gorm:"column:creator" json:"creator"
+	optional string creator = 11; //创建人
+	// @inject_tag: gorm:"column:create_time" json:"createTime"
+	google.protobuf.Timestamp create_time = 12; //创建时间
+	// @inject_tag: gorm:"column:updater" json:"updater"
+	optional string updater = 13; //更新人
+	// @inject_tag: gorm:"column:update_time" json:"updateTime"
+	google.protobuf.Timestamp update_time = 14; //更新时间
+}
+// SysLoggerLoginTotalResponse 列表数据总量
+message SysLoggerLoginTotalResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysLoggerLoginCreateRequest 创建数据请求
+message SysLoggerLoginCreateRequest {
+	SysLoggerLoginObject data = 1;
+}
+// SysLoggerLoginCreateResponse 创建数据响应
+message SysLoggerLoginCreateResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysLoggerLoginUpdateRequest 更新数据请求
+message SysLoggerLoginUpdateRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+	SysLoggerLoginObject data = 2;
+}
+// SysLoggerLoginUpdateResponse 更新数据响应
+message SysLoggerLoginUpdateResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysLoggerLoginDeleteRequest 删除数据请求
+message SysLoggerLoginDeleteRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysLoggerLoginDeleteResponse 删除数据响应
+message SysLoggerLoginDeleteResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysLoggerLoginRequest 查询单条数据请求
+message SysLoggerLoginRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysLoggerLoginResponse 查询单条数据响应
+message SysLoggerLoginResponse {
+	int64 code = 1;
+	string msg = 2;
+	SysLoggerLoginObject data = 3;
+}
+// SysLoggerLoginRecoverRequest 恢复数据请求
+message SysLoggerLoginRecoverRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysLoggerLoginRecoverResponse 删除数据响应
+message SysLoggerLoginRecoverResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysLoggerLoginDropRequest 清理数据请求
+message SysLoggerLoginDropRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysLoggerLoginDropResponse 清理数据响应
+message SysLoggerLoginDropResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysLoggerLoginListRequest 列表数据
+message SysLoggerLoginListRequest {
+	
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	optional int64 tenant_id = 1; // 租户
+	// @inject_tag: db:"deleted" json:"deleted"
+	optional int32 deleted = 2; // 删除:0否/1是
+	// @inject_tag: db:"channel" json:"channel"
+	optional string channel = 3; // 渠道
+	// @inject_tag: db:"login_time" json:"loginTime"
+	google.protobuf.Timestamp login_time = 4; // 登录时间
+	// @inject_tag: db:"user_id" json:"userId"
+	optional int64 user_id = 5; // 用户编号
+	// @inject_tag: db:"username" json:"username"
+	optional string username = 6; // 用户名
+
+	// @inject_tag: json:"pagination"
+	optional pagination.PaginationRequest pagination = 7; // 分页
+}
+
+// SysLoggerLoginListResponse 数据响应
+message SysLoggerLoginListResponse {
+	int64 code = 1;
+  	string msg = 2;
+	repeated SysLoggerLoginObject data = 3;
+}
+// SysLoggerLoginListTotalRequest 列表数据
+message SysLoggerLoginListTotalRequest {
+	
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	optional int64 tenant_id = 1; // 租户
+	// @inject_tag: db:"deleted" json:"deleted"
+	optional int32 deleted = 2; // 删除:0否/1是
+	// @inject_tag: db:"channel" json:"channel"
+	optional string channel = 3; // 渠道
+	// @inject_tag: db:"login_time" json:"loginTime"
+	google.protobuf.Timestamp login_time = 4; // 登录时间
+	// @inject_tag: db:"user_id" json:"userId"
+	optional int64 user_id = 5; // 用户编号
+	// @inject_tag: db:"username" json:"username"
+	optional string username = 6; // 用户名
+
+}
+
+
+// SysLoggerLoginService 服务
+service SysLoggerLoginService{
+	rpc SysLoggerLoginCreate(SysLoggerLoginCreateRequest) returns (SysLoggerLoginCreateResponse);
+	rpc SysLoggerLoginUpdate(SysLoggerLoginUpdateRequest) returns (SysLoggerLoginUpdateResponse);
+	rpc SysLoggerLoginDelete(SysLoggerLoginDeleteRequest) returns (SysLoggerLoginDeleteResponse);
+	rpc SysLoggerLogin(SysLoggerLoginRequest) returns (SysLoggerLoginResponse);
+	rpc SysLoggerLoginRecover(SysLoggerLoginRecoverRequest) returns (SysLoggerLoginRecoverResponse);
+	rpc SysLoggerLoginDrop(SysLoggerLoginDropRequest) returns (SysLoggerLoginDropResponse);
+	rpc SysLoggerLoginList(SysLoggerLoginListRequest) returns (SysLoggerLoginListResponse);
+	rpc SysLoggerLoginListTotal(SysLoggerLoginListTotalRequest) returns (SysLoggerLoginTotalResponse);
+}

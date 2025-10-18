@@ -1,0 +1,184 @@
+syntax = "proto3";
+// sys_logger_operate 操作日志
+package logger;
+option go_package = "cloud/service/sys/logger;logger";
+import "google/protobuf/timestamp.proto";
+import "pagination.proto";
+
+// SysLoggerOperateObject 数据对象
+message SysLoggerOperateObject {
+	// @inject_tag: gorm:"primaryKey;autoIncrement;column:id" json:"id"
+	optional int64 id = 1; //编号
+	// @inject_tag: gorm:"column:name" json:"name"
+	optional string name = 2; //姓名
+	// @inject_tag: gorm:"column:username" json:"username"
+	optional string username = 3; //用户名
+	// @inject_tag: gorm:"column:user_id" json:"userId"
+	optional int64 user_id = 4; //用户编号
+	// @inject_tag: gorm:"column:module" json:"module"
+	optional string module = 5; //模块名称
+	// @inject_tag: gorm:"column:method" json:"method"
+	optional string method = 6; //请求方法
+	// @inject_tag: gorm:"column:url" json:"url"
+	optional string url = 7; //请求地址
+	// @inject_tag: gorm:"column:ip" json:"ip"
+	optional string ip = 8; //IP
+	// @inject_tag: gorm:"column:ua" json:"ua"
+	optional string ua = 9; //UA
+	// @inject_tag: gorm:"column:go_method" json:"goMethod"
+	optional string go_method = 10; //方法名
+	// @inject_tag: gorm:"column:go_method_args" json:"goMethodArgs"
+	optional bytes go_method_args = 11; //方法参数
+	// @inject_tag: gorm:"column:start_time" json:"startTime"
+	google.protobuf.Timestamp start_time = 12; //开始时间
+	// @inject_tag: gorm:"column:duration" json:"duration"
+	optional int32 duration = 13; //执行时长
+	// @inject_tag: gorm:"column:channel" json:"channel"
+	optional string channel = 14; //渠道
+	// @inject_tag: gorm:"column:result" json:"result"
+	optional int32 result = 15; //结果:0 成功/1 失败
+	// @inject_tag: gorm:"column:deleted" json:"deleted"
+	optional int32 deleted = 16; //删除:0否/1是
+	// @inject_tag: gorm:"column:tenant_id" json:"tenantId"
+	optional int64 tenant_id = 17; //租户
+	// @inject_tag: gorm:"column:creator" json:"creator"
+	optional string creator = 18; //创建人
+	// @inject_tag: gorm:"column:create_time" json:"createTime"
+	google.protobuf.Timestamp create_time = 19; //创建时间
+	// @inject_tag: gorm:"column:updater" json:"updater"
+	optional string updater = 20; //更新人
+	// @inject_tag: gorm:"column:update_time" json:"updateTime"
+	google.protobuf.Timestamp update_time = 21; //更新时间
+}
+// SysLoggerOperateTotalResponse 列表数据总量
+message SysLoggerOperateTotalResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysLoggerOperateCreateRequest 创建数据请求
+message SysLoggerOperateCreateRequest {
+	SysLoggerOperateObject data = 1;
+}
+// SysLoggerOperateCreateResponse 创建数据响应
+message SysLoggerOperateCreateResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysLoggerOperateUpdateRequest 更新数据请求
+message SysLoggerOperateUpdateRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+	SysLoggerOperateObject data = 2;
+}
+// SysLoggerOperateUpdateResponse 更新数据响应
+message SysLoggerOperateUpdateResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysLoggerOperateDeleteRequest 删除数据请求
+message SysLoggerOperateDeleteRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysLoggerOperateDeleteResponse 删除数据响应
+message SysLoggerOperateDeleteResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysLoggerOperateRequest 查询单条数据请求
+message SysLoggerOperateRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysLoggerOperateResponse 查询单条数据响应
+message SysLoggerOperateResponse {
+	int64 code = 1;
+	string msg = 2;
+	SysLoggerOperateObject data = 3;
+}
+// SysLoggerOperateRecoverRequest 恢复数据请求
+message SysLoggerOperateRecoverRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysLoggerOperateRecoverResponse 删除数据响应
+message SysLoggerOperateRecoverResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysLoggerOperateDropRequest 清理数据请求
+message SysLoggerOperateDropRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysLoggerOperateDropResponse 清理数据响应
+message SysLoggerOperateDropResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysLoggerOperateListRequest 列表数据
+message SysLoggerOperateListRequest {
+	
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	optional int64 tenant_id = 1; // 租户
+	// @inject_tag: db:"deleted" json:"deleted"
+	optional int32 deleted = 2; // 删除:0否/1是
+	// @inject_tag: db:"result" json:"result"
+	optional int32 result = 3; // 结果:0 成功/1 失败
+	// @inject_tag: db:"channel" json:"channel"
+	optional string channel = 4; // 渠道
+	// @inject_tag: db:"method" json:"method"
+	optional string method = 5; // 请求方法
+	// @inject_tag: db:"start_time" json:"startTime"
+	google.protobuf.Timestamp start_time = 6; // 开始时间
+	// @inject_tag: db:"user_id" json:"userId"
+	optional int64 user_id = 7; // 用户编号
+	// @inject_tag: db:"username" json:"username"
+	optional string username = 8; // 用户名
+
+	// @inject_tag: json:"pagination"
+	optional pagination.PaginationRequest pagination = 9; // 分页
+}
+
+// SysLoggerOperateListResponse 数据响应
+message SysLoggerOperateListResponse {
+	int64 code = 1;
+  	string msg = 2;
+	repeated SysLoggerOperateObject data = 3;
+}
+// SysLoggerOperateListTotalRequest 列表数据
+message SysLoggerOperateListTotalRequest {
+	
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	optional int64 tenant_id = 1; // 租户
+	// @inject_tag: db:"deleted" json:"deleted"
+	optional int32 deleted = 2; // 删除:0否/1是
+	// @inject_tag: db:"result" json:"result"
+	optional int32 result = 3; // 结果:0 成功/1 失败
+	// @inject_tag: db:"channel" json:"channel"
+	optional string channel = 4; // 渠道
+	// @inject_tag: db:"method" json:"method"
+	optional string method = 5; // 请求方法
+	// @inject_tag: db:"start_time" json:"startTime"
+	google.protobuf.Timestamp start_time = 6; // 开始时间
+	// @inject_tag: db:"user_id" json:"userId"
+	optional int64 user_id = 7; // 用户编号
+	// @inject_tag: db:"username" json:"username"
+	optional string username = 8; // 用户名
+
+}
+
+
+// SysLoggerOperateService 服务
+service SysLoggerOperateService{
+	rpc SysLoggerOperateCreate(SysLoggerOperateCreateRequest) returns (SysLoggerOperateCreateResponse);
+	rpc SysLoggerOperateUpdate(SysLoggerOperateUpdateRequest) returns (SysLoggerOperateUpdateResponse);
+	rpc SysLoggerOperateDelete(SysLoggerOperateDeleteRequest) returns (SysLoggerOperateDeleteResponse);
+	rpc SysLoggerOperate(SysLoggerOperateRequest) returns (SysLoggerOperateResponse);
+	rpc SysLoggerOperateRecover(SysLoggerOperateRecoverRequest) returns (SysLoggerOperateRecoverResponse);
+	rpc SysLoggerOperateDrop(SysLoggerOperateDropRequest) returns (SysLoggerOperateDropResponse);
+	rpc SysLoggerOperateList(SysLoggerOperateListRequest) returns (SysLoggerOperateListResponse);
+	rpc SysLoggerOperateListTotal(SysLoggerOperateListTotalRequest) returns (SysLoggerOperateTotalResponse);
+}

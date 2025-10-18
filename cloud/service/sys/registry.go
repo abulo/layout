@@ -2,6 +2,7 @@ package sys
 
 import (
 	"cloud/service/sys/dept"
+	"cloud/service/sys/logger"
 	"cloud/service/sys/menu"
 	"cloud/service/sys/post"
 	"cloud/service/sys/role"
@@ -46,6 +47,14 @@ func Registry(server *xgrpc.Server) {
 	})
 	// 租户用户->sys_user_tenant
 	user.RegisterSysUserTenantServiceServer(server.Server, &user.SrvSysUserTenantServiceServer{
+		Server: server,
+	})
+	// 登录日志->sys_logger_login
+	logger.RegisterSysLoggerLoginServiceServer(server.Server, &logger.SrvSysLoggerLoginServiceServer{
+		Server: server,
+	})
+	// 操作日志->sys_logger_operate
+	logger.RegisterSysLoggerOperateServiceServer(server.Server, &logger.SrvSysLoggerOperateServiceServer{
 		Server: server,
 	})
 }
