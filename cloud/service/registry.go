@@ -1,6 +1,7 @@
 package service
 
 import (
+	"cloud/service/dict"
 	"cloud/service/sys"
 	"cloud/service/tenant"
 	"cloud/service/verify"
@@ -17,5 +18,5 @@ func Registry(server *xgrpc.Server) {
 	// 注册服务
 	sys.Registry(server)
 	tenant.Registry(server)
-
+	dict.Registry(server)
 }
