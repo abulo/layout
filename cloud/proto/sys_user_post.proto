@@ -2,7 +2,6 @@ syntax = "proto3";
 // sys_user_post 用户职位
 package user;
 option go_package = "cloud/service/sys/user;user";
-import "google/protobuf/timestamp.proto";
 import "pagination.proto";
 
 // SysUserPostObject 数据对象
@@ -66,7 +65,7 @@ message SysUserPostResponse {
 }
 // SysUserPostItemRequest 查询单条数据请求
 message SysUserPostItemRequest {
-	
+
 	// @inject_tag: db:"tenant_id" json:"tenantId"
 	optional int64 tenant_id = 1; // 租户
 	// @inject_tag: db:"user_id" json:"userId"
@@ -83,7 +82,7 @@ message SysUserPostItemResponse {
 }
 // SysUserPostListRequest 列表数据
 message SysUserPostListRequest {
-	
+
 	// @inject_tag: db:"tenant_id" json:"tenantId"
 	optional int64 tenant_id = 1; // 租户
 	// @inject_tag: db:"user_id" json:"userId"
@@ -103,7 +102,7 @@ message SysUserPostListResponse {
 }
 // SysUserPostListTotalRequest 列表数据
 message SysUserPostListTotalRequest {
-	
+
 	// @inject_tag: db:"tenant_id" json:"tenantId"
 	optional int64 tenant_id = 1; // 租户
 	// @inject_tag: db:"user_id" json:"userId"
