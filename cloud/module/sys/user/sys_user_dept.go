@@ -9,6 +9,7 @@ import (
 	"github.com/abulo/ratel/v3/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cast"
+	"google.golang.org/protobuf/proto"
 )
 
 // sys_user_dept 用户部门
@@ -23,6 +24,7 @@ func SysUserDeptCreate(ctx context.Context, data dao.SysUserDept) (res int64, er
 // SysUserDeptUpdate 更新数据
 func SysUserDeptUpdate(ctx context.Context, id int64, data dao.SysUserDept) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
+	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.SysUserDept{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
 }
@@ -30,7 +32,8 @@ func SysUserDeptUpdate(ctx context.Context, id int64, data dao.SysUserDept) (res
 // SysUserDeptDelete 删除数据
 func SysUserDeptDelete(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	result := db.WithContext(ctx).Where("id = ?", id).Delete(&dao.SysUserDept{})
+	var data dao.SysUserDept
+	result := db.WithContext(ctx).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
 }
 

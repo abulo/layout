@@ -9,6 +9,7 @@ import (
 	"github.com/abulo/ratel/v3/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cast"
+	"google.golang.org/protobuf/proto"
 )
 
 // sys_user 用户
@@ -23,6 +24,7 @@ func SysUserCreate(ctx context.Context, data dao.SysUser) (res int64, err error)
 // SysUserUpdate 更新数据
 func SysUserUpdate(ctx context.Context, id int64, data dao.SysUser) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
+	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.SysUser{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
 }
@@ -30,8 +32,9 @@ func SysUserUpdate(ctx context.Context, id int64, data dao.SysUser) (res int64, 
 // SysUserDelete 删除数据
 func SysUserDelete(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	data := make(map[string]any)
-	data["deleted"] = 1
+	var data dao.SysUser
+	data.Id = proto.Int64(id)
+	data.Deleted = proto.Int32(1)
 	result := db.WithContext(ctx).Model(&dao.SysUser{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
 }
@@ -46,8 +49,9 @@ func SysUser(ctx context.Context, id int64) (res dao.SysUser, err error) {
 // SysUserRecover 恢复数据
 func SysUserRecover(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	data := make(map[string]any)
-	data["deleted"] = 0
+	var data dao.SysUser
+	data.Id = proto.Int64(id)
+	data.Deleted = proto.Int32(0)
 	result := db.WithContext(ctx).Model(&dao.SysUser{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
 }
@@ -55,7 +59,8 @@ func SysUserRecover(ctx context.Context, id int64) (res int64, err error) {
 // SysUserDrop 清理数据
 func SysUserDrop(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	result := db.WithContext(ctx).Where("id = ?", id).Delete(&dao.SysUser{})
+	var data dao.SysUser
+	result := db.WithContext(ctx).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
 }
 

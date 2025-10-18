@@ -9,6 +9,7 @@ import (
 	"github.com/abulo/ratel/v3/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cast"
+	"google.golang.org/protobuf/proto"
 )
 
 // sys_role_menu 角色菜单
@@ -23,6 +24,7 @@ func SysRoleMenuCreate(ctx context.Context, data dao.SysRoleMenu) (res int64, er
 // SysRoleMenuUpdate 更新数据
 func SysRoleMenuUpdate(ctx context.Context, id int64, data dao.SysRoleMenu) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
+	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.SysRoleMenu{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
 }
@@ -30,7 +32,8 @@ func SysRoleMenuUpdate(ctx context.Context, id int64, data dao.SysRoleMenu) (res
 // SysRoleMenuDelete 删除数据
 func SysRoleMenuDelete(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	result := db.WithContext(ctx).Where("id = ?", id).Delete(&dao.SysRoleMenu{})
+	var data dao.SysRoleMenu
+	result := db.WithContext(ctx).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
 }
 

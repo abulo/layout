@@ -9,6 +9,7 @@ import (
 	"github.com/abulo/ratel/v3/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cast"
+	"google.golang.org/protobuf/proto"
 )
 
 // dict_type 字典类型
@@ -23,6 +24,7 @@ func DictTypeCreate(ctx context.Context, data dao.DictType) (res int64, err erro
 // DictTypeUpdate 更新数据
 func DictTypeUpdate(ctx context.Context, id int64, data dao.DictType) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
+	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.DictType{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
 }
@@ -30,7 +32,8 @@ func DictTypeUpdate(ctx context.Context, id int64, data dao.DictType) (res int64
 // DictTypeDelete 删除数据
 func DictTypeDelete(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	result := db.WithContext(ctx).Where("id = ?", id).Delete(&dao.DictType{})
+	var data dao.DictType
+	result := db.WithContext(ctx).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
 }
 

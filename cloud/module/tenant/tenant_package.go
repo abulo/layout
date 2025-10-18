@@ -7,6 +7,7 @@ import (
 
 	"github.com/abulo/ratel/v3/stores/sql"
 	"github.com/spf13/cast"
+	"google.golang.org/protobuf/proto"
 )
 
 // tenant_package 租户套餐
@@ -21,6 +22,7 @@ func TenantPackageCreate(ctx context.Context, data dao.TenantPackage) (res int64
 // TenantPackageUpdate 更新数据
 func TenantPackageUpdate(ctx context.Context, id int64, data dao.TenantPackage) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
+	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.TenantPackage{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
 }
@@ -28,7 +30,8 @@ func TenantPackageUpdate(ctx context.Context, id int64, data dao.TenantPackage) 
 // TenantPackageDelete 删除数据
 func TenantPackageDelete(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	result := db.WithContext(ctx).Where("id = ?", id).Delete(&dao.TenantPackage{})
+	var data dao.TenantPackage
+	result := db.WithContext(ctx).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
 }
 

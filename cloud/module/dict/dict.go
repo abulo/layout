@@ -7,6 +7,7 @@ import (
 
 	"github.com/abulo/ratel/v3/stores/sql"
 	"github.com/spf13/cast"
+	"google.golang.org/protobuf/proto"
 )
 
 // dict 字典
@@ -21,6 +22,7 @@ func DictCreate(ctx context.Context, data dao.Dict) (res int64, err error) {
 // DictUpdate 更新数据
 func DictUpdate(ctx context.Context, id int64, data dao.Dict) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
+	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.Dict{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
 }
@@ -28,7 +30,8 @@ func DictUpdate(ctx context.Context, id int64, data dao.Dict) (res int64, err er
 // DictDelete 删除数据
 func DictDelete(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	result := db.WithContext(ctx).Where("id = ?", id).Delete(&dao.Dict{})
+	var data dao.Dict
+	result := db.WithContext(ctx).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
 }
 

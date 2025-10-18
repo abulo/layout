@@ -7,6 +7,7 @@ import (
 
 	"github.com/abulo/ratel/v3/stores/sql"
 	"github.com/spf13/cast"
+	"google.golang.org/protobuf/proto"
 )
 
 // sys_menu 菜单
@@ -21,6 +22,7 @@ func SysMenuCreate(ctx context.Context, data dao.SysMenu) (res int64, err error)
 // SysMenuUpdate 更新数据
 func SysMenuUpdate(ctx context.Context, id int64, data dao.SysMenu) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
+	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.SysMenu{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
 }
@@ -28,7 +30,8 @@ func SysMenuUpdate(ctx context.Context, id int64, data dao.SysMenu) (res int64, 
 // SysMenuDelete 删除数据
 func SysMenuDelete(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	result := db.WithContext(ctx).Where("id = ?", id).Delete(&dao.SysMenu{})
+	var data dao.SysMenu
+	result := db.WithContext(ctx).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
 }
 

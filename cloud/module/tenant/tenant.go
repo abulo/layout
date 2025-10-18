@@ -7,6 +7,7 @@ import (
 
 	"github.com/abulo/ratel/v3/stores/sql"
 	"github.com/spf13/cast"
+	"google.golang.org/protobuf/proto"
 )
 
 // tenant 租户
@@ -21,6 +22,7 @@ func TenantCreate(ctx context.Context, data dao.Tenant) (res int64, err error) {
 // TenantUpdate 更新数据
 func TenantUpdate(ctx context.Context, id int64, data dao.Tenant) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
+	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.Tenant{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
 }
@@ -28,8 +30,9 @@ func TenantUpdate(ctx context.Context, id int64, data dao.Tenant) (res int64, er
 // TenantDelete 删除数据
 func TenantDelete(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	data := make(map[string]any)
-	data["deleted"] = 1
+	var data dao.Tenant
+	data.Id = proto.Int64(id)
+	data.Deleted = proto.Int32(1)
 	result := db.WithContext(ctx).Model(&dao.Tenant{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
 }
@@ -44,8 +47,9 @@ func Tenant(ctx context.Context, id int64) (res dao.Tenant, err error) {
 // TenantRecover 恢复数据
 func TenantRecover(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	data := make(map[string]any)
-	data["deleted"] = 0
+	var data dao.Tenant
+	data.Id = proto.Int64(id)
+	data.Deleted = proto.Int32(0)
 	result := db.WithContext(ctx).Model(&dao.Tenant{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
 }
@@ -53,7 +57,8 @@ func TenantRecover(ctx context.Context, id int64) (res int64, err error) {
 // TenantDrop 清理数据
 func TenantDrop(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	result := db.WithContext(ctx).Where("id = ?", id).Delete(&dao.Tenant{})
+	var data dao.Tenant
+	result := db.WithContext(ctx).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
 }
 

@@ -7,6 +7,7 @@ import (
 
 	"github.com/abulo/ratel/v3/stores/sql"
 	"github.com/spf13/cast"
+	"google.golang.org/protobuf/proto"
 )
 
 // sys_dept 部门
@@ -21,6 +22,7 @@ func SysDeptCreate(ctx context.Context, data dao.SysDept) (res int64, err error)
 // SysDeptUpdate 更新数据
 func SysDeptUpdate(ctx context.Context, id int64, data dao.SysDept) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
+	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.SysDept{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
 }
@@ -28,8 +30,9 @@ func SysDeptUpdate(ctx context.Context, id int64, data dao.SysDept) (res int64, 
 // SysDeptDelete 删除数据
 func SysDeptDelete(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	data := make(map[string]any)
-	data["deleted"] = 1
+	var data dao.SysDept
+	data.Id = proto.Int64(id)
+	data.Deleted = proto.Int32(1)
 	result := db.WithContext(ctx).Model(&dao.SysDept{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
 }
@@ -44,8 +47,9 @@ func SysDept(ctx context.Context, id int64) (res dao.SysDept, err error) {
 // SysDeptRecover 恢复数据
 func SysDeptRecover(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	data := make(map[string]any)
-	data["deleted"] = 0
+	var data dao.SysDept
+	data.Id = proto.Int64(id)
+	data.Deleted = proto.Int32(0)
 	result := db.WithContext(ctx).Model(&dao.SysDept{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
 }
@@ -53,7 +57,8 @@ func SysDeptRecover(ctx context.Context, id int64) (res int64, err error) {
 // SysDeptDrop 清理数据
 func SysDeptDrop(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	result := db.WithContext(ctx).Where("id = ?", id).Delete(&dao.SysDept{})
+	var data dao.SysDept
+	result := db.WithContext(ctx).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
 }
 
