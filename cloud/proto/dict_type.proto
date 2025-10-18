@@ -1,0 +1,132 @@
+syntax = "proto3";
+// dict_type 字典类型
+package dict;
+option go_package = "cloud/service/dict;dict";
+import "google/protobuf/timestamp.proto";
+import "pagination.proto";
+
+// DictTypeObject 数据对象
+message DictTypeObject {
+	// @inject_tag: gorm:"primaryKey;autoIncrement;column:id" json:"id"
+	optional int64 id = 1; //编号
+	// @inject_tag: gorm:"column:name" json:"name"
+	optional string name = 2; //字典名称
+	// @inject_tag: gorm:"column:type" json:"type"
+	optional string type = 3; //字典类型
+	// @inject_tag: gorm:"column:status" json:"status"
+	optional int32 status = 4; //状态:0正常/1停用
+	// @inject_tag: gorm:"column:remark" json:"remark"
+	optional string remark = 5; //备注
+	// @inject_tag: gorm:"column:creator" json:"creator"
+	optional string creator = 6; //创建人
+	// @inject_tag: gorm:"column:create_time" json:"createTime"
+	google.protobuf.Timestamp create_time = 7; //创建时间
+	// @inject_tag: gorm:"column:updater" json:"updater"
+	optional string updater = 8; //更新人
+	// @inject_tag: gorm:"column:update_time" json:"updateTime"
+	google.protobuf.Timestamp update_time = 9; //更新时间
+}
+// DictTypeTotalResponse 列表数据总量
+message DictTypeTotalResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// DictTypeCreateRequest 创建数据请求
+message DictTypeCreateRequest {
+	DictTypeObject data = 1;
+}
+// DictTypeCreateResponse 创建数据响应
+message DictTypeCreateResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// DictTypeUpdateRequest 更新数据请求
+message DictTypeUpdateRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+	DictTypeObject data = 2;
+}
+// DictTypeUpdateResponse 更新数据响应
+message DictTypeUpdateResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// DictTypeDeleteRequest 删除数据请求
+message DictTypeDeleteRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// DictTypeDeleteResponse 删除数据响应
+message DictTypeDeleteResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// DictTypeRequest 查询单条数据请求
+message DictTypeRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// DictTypeResponse 查询单条数据响应
+message DictTypeResponse {
+	int64 code = 1;
+	string msg = 2;
+	DictTypeObject data = 3;
+}
+// DictTypeTypeRequest 查询单条数据请求
+message DictTypeTypeRequest {
+	
+	// @inject_tag: db:"type" json:"type"
+	optional string type = 1; // 字典类型
+
+}
+// DictTypeTypeResponse 查询单条数据响应
+message DictTypeTypeResponse {
+	int64 code = 1;
+	string msg = 2;
+	DictTypeObject data = 3;
+}
+// DictTypeListRequest 列表数据
+message DictTypeListRequest {
+	
+	// @inject_tag: db:"type" json:"type"
+	optional string type = 1; // 字典类型
+	// @inject_tag: db:"status" json:"status"
+	optional int32 status = 2; // 状态:0正常/1停用
+	// @inject_tag: db:"name" json:"name"
+	optional string name = 3; // 字典名称
+
+	// @inject_tag: json:"pagination"
+	optional pagination.PaginationRequest pagination = 4; // 分页
+}
+
+// DictTypeListResponse 数据响应
+message DictTypeListResponse {
+	int64 code = 1;
+  	string msg = 2;
+	repeated DictTypeObject data = 3;
+}
+// DictTypeListTotalRequest 列表数据
+message DictTypeListTotalRequest {
+	
+	// @inject_tag: db:"type" json:"type"
+	optional string type = 1; // 字典类型
+	// @inject_tag: db:"status" json:"status"
+	optional int32 status = 2; // 状态:0正常/1停用
+	// @inject_tag: db:"name" json:"name"
+	optional string name = 3; // 字典名称
+
+}
+
+
+// DictTypeService 服务
+service DictTypeService{
+	rpc DictTypeCreate(DictTypeCreateRequest) returns (DictTypeCreateResponse);
+	rpc DictTypeUpdate(DictTypeUpdateRequest) returns (DictTypeUpdateResponse);
+	rpc DictTypeDelete(DictTypeDeleteRequest) returns (DictTypeDeleteResponse);
+	rpc DictType(DictTypeRequest) returns (DictTypeResponse);
+	rpc DictTypeType(DictTypeTypeRequest) returns (DictTypeTypeResponse);
+	rpc DictTypeList(DictTypeListRequest) returns (DictTypeListResponse);
+	rpc DictTypeListTotal(DictTypeListTotalRequest) returns (DictTypeTotalResponse);
+}
