@@ -147,7 +147,7 @@ func {{.Name}}(ctx context.Context,newCtx *app.RequestContext) {
 	}
 	reqInfo.Id = nil
 	reqInfo.Updater = null.StringFrom(newCtx.GetString("userName"))
-	reqInfo.UpdatedTime = null.DateTimeFrom(util.Now())
+	reqInfo.UpdateTime = null.DateTimeFrom(util.Now())
 	reqInfo.Creator = null.StringFromPtr(nil)
 	reqInfo.CreatedTime = null.DateTimeFromPtr(nil)
 	request.Data = {{.Pkg}}.{{CamelStr .Table.TableName}}Proto(reqInfo)
