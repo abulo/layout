@@ -11,7 +11,7 @@ import (
 	"github.com/abulo/ratel/v3/client/grpc/resolver"
 	"github.com/abulo/ratel/v3/core/env"
 	"github.com/abulo/ratel/v3/core/logger"
-	"github.com/abulo/ratel/v3/core/logger/mongo"
+	"github.com/abulo/ratel/v3/core/logger/sql"
 	"github.com/abulo/ratel/v3/util"
 	"github.com/sirupsen/logrus"
 )
@@ -45,8 +45,8 @@ func main() {
 	env.SetAppHost("golang")
 	env.SetBuildTime(BuildTime)
 	env.SetBuildVersion(BuildVersion)
-	client := initial.Core.Store.LoadMongoDB("mongodb")
-	loggerHook := mongo.DefaultWithURL(client, "sys_entry")
+	client := initial.Core.Store.LoadSQL("mysql").Write()
+	loggerHook := sql.DefaultWithURL(client, "sys_logger_dev")
 	defer loggerHook.Flush()
 	logger.Logger.AddHook(loggerHook)
 	logger.Logger.SetFormatter(&logrus.JSONFormatter{})
