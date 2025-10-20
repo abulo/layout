@@ -1,0 +1,116 @@
+syntax = "proto3";
+// sys_logger_dev 开发日志
+package logger;
+option go_package = "cloud/service/sys/logger;logger";
+import "google/protobuf/timestamp.proto";
+import "pagination.proto";
+
+// SysLoggerDevObject 数据对象
+message SysLoggerDevObject {
+	// @inject_tag: gorm:"primaryKey;autoIncrement;column:id" json:"id"
+	optional int64 id = 1; //编号
+	// @inject_tag: gorm:"column:host" json:"host"
+	optional string host = 2; //服务名
+	// @inject_tag: gorm:"column:timestamp" json:"timestamp"
+	google.protobuf.Timestamp timestamp = 3; //时间
+	// @inject_tag: gorm:"column:file" json:"file"
+	optional string file = 4; //
+	// @inject_tag: gorm:"column:func" json:"func"
+	optional string func = 5; //方法名
+	// @inject_tag: gorm:"column:messsage" json:"messsage"
+	optional string messsage = 6; //消息
+	// @inject_tag: gorm:"column:level" json:"level"
+	optional string level = 7; //等级
+	// @inject_tag: gorm:"column:data" json:"data"
+	optional bytes data = 8; //数据
+}
+// SysLoggerDevTotalResponse 列表数据总量
+message SysLoggerDevTotalResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysLoggerDevCreateRequest 创建数据请求
+message SysLoggerDevCreateRequest {
+	SysLoggerDevObject data = 1;
+}
+// SysLoggerDevCreateResponse 创建数据响应
+message SysLoggerDevCreateResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysLoggerDevUpdateRequest 更新数据请求
+message SysLoggerDevUpdateRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+	SysLoggerDevObject data = 2;
+}
+// SysLoggerDevUpdateResponse 更新数据响应
+message SysLoggerDevUpdateResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysLoggerDevDeleteRequest 删除数据请求
+message SysLoggerDevDeleteRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysLoggerDevDeleteResponse 删除数据响应
+message SysLoggerDevDeleteResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysLoggerDevRequest 查询单条数据请求
+message SysLoggerDevRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysLoggerDevResponse 查询单条数据响应
+message SysLoggerDevResponse {
+	int64 code = 1;
+	string msg = 2;
+	SysLoggerDevObject data = 3;
+}
+// SysLoggerDevListRequest 列表数据
+message SysLoggerDevListRequest {
+	
+	// @inject_tag: db:"timestamp" json:"timestamp"
+	google.protobuf.Timestamp timestamp = 1; // 时间
+	// @inject_tag: db:"host" json:"host"
+	optional string host = 2; // 服务名
+	// @inject_tag: db:"level" json:"level"
+	optional string level = 3; // 等级
+
+	// @inject_tag: json:"pagination"
+	optional pagination.PaginationRequest pagination = 4; // 分页
+}
+
+// SysLoggerDevListResponse 数据响应
+message SysLoggerDevListResponse {
+	int64 code = 1;
+  	string msg = 2;
+	repeated SysLoggerDevObject data = 3;
+}
+// SysLoggerDevListTotalRequest 列表数据
+message SysLoggerDevListTotalRequest {
+	
+	// @inject_tag: db:"timestamp" json:"timestamp"
+	google.protobuf.Timestamp timestamp = 1; // 时间
+	// @inject_tag: db:"host" json:"host"
+	optional string host = 2; // 服务名
+	// @inject_tag: db:"level" json:"level"
+	optional string level = 3; // 等级
+
+}
+
+
+// SysLoggerDevService 服务
+service SysLoggerDevService{
+	rpc SysLoggerDevCreate(SysLoggerDevCreateRequest) returns (SysLoggerDevCreateResponse);
+	rpc SysLoggerDevUpdate(SysLoggerDevUpdateRequest) returns (SysLoggerDevUpdateResponse);
+	rpc SysLoggerDevDelete(SysLoggerDevDeleteRequest) returns (SysLoggerDevDeleteResponse);
+	rpc SysLoggerDev(SysLoggerDevRequest) returns (SysLoggerDevResponse);
+	rpc SysLoggerDevList(SysLoggerDevListRequest) returns (SysLoggerDevListResponse);
+	rpc SysLoggerDevListTotal(SysLoggerDevListTotalRequest) returns (SysLoggerDevTotalResponse);
+}

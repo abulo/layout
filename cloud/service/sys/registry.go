@@ -57,4 +57,8 @@ func Registry(server *xgrpc.Server) {
 	logger.RegisterSysLoggerOperateServiceServer(server.Server, &logger.SrvSysLoggerOperateServiceServer{
 		Server: server,
 	})
+	// 开发日志->sys_logger_dev
+	logger.RegisterSysLoggerDevServiceServer(server.Server, &logger.SrvSysLoggerDevServiceServer{
+		Server: server,
+	})
 }
