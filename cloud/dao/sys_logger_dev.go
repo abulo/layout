@@ -9,7 +9,7 @@ type SysLoggerDev struct {
 	Timestamp null.DateTime `gorm:"column:timestamp" json:"timestamp"`            //datetime 时间
 	File      null.String   `gorm:"column:file" json:"file"`                      //varchar
 	Func      null.String   `gorm:"column:func" json:"func"`                      //varchar 方法名
-	Messsage  null.String   `gorm:"column:messsage" json:"messsage"`              //varchar 消息
+	Message   null.String   `gorm:"column:message" json:"message"`                //varchar 消息
 	Level     null.String   `gorm:"column:level" json:"level"`                    //varchar 等级
 	Data      null.JSON     `gorm:"column:data" json:"data"`                      //json 数据
 }

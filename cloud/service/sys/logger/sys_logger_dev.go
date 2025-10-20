@@ -29,8 +29,8 @@ func SysLoggerDevDao(item *SysLoggerDevObject) *dao.SysLoggerDev {
 	if item != nil && item.Func != nil {
 		daoItem.Func = null.StringFrom(item.GetFunc()) // 方法名
 	}
-	if item != nil && item.Messsage != nil {
-		daoItem.Messsage = null.StringFrom(item.GetMesssage()) // 消息
+	if item != nil && item.Message != nil {
+		daoItem.Message = null.StringFrom(item.GetMessage()) // 消息
 	}
 	if item != nil && item.Level != nil {
 		daoItem.Level = null.StringFrom(item.GetLevel()) // 等级
@@ -60,8 +60,8 @@ func SysLoggerDevProto(item dao.SysLoggerDev) *SysLoggerDevObject {
 	if item.Func.IsValid() {
 		res.Func = item.Func.Ptr()
 	}
-	if item.Messsage.IsValid() {
-		res.Messsage = item.Messsage.Ptr()
+	if item.Message.IsValid() {
+		res.Message = item.Message.Ptr()
 	}
 	if item.Level.IsValid() {
 		res.Level = item.Level.Ptr()

@@ -17,8 +17,8 @@ message SysLoggerDevObject {
 	optional string file = 4; //
 	// @inject_tag: gorm:"column:func" json:"func"
 	optional string func = 5; //方法名
-	// @inject_tag: gorm:"column:messsage" json:"messsage"
-	optional string messsage = 6; //消息
+	// @inject_tag: gorm:"column:message" json:"message"
+	optional string message = 6; //消息
 	// @inject_tag: gorm:"column:level" json:"level"
 	optional string level = 7; //等级
 	// @inject_tag: gorm:"column:data" json:"data"

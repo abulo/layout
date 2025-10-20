@@ -38,8 +38,8 @@ type SysLoggerDevObject struct {
 	File *string `protobuf:"bytes,4,opt,name=file,proto3,oneof" json:"file" gorm:"column:file"` //
 	// @inject_tag: gorm:"column:func" json:"func"
 	Func *string `protobuf:"bytes,5,opt,name=func,proto3,oneof" json:"func" gorm:"column:func"` //方法名
-	// @inject_tag: gorm:"column:messsage" json:"messsage"
-	Messsage *string `protobuf:"bytes,6,opt,name=messsage,proto3,oneof" json:"messsage" gorm:"column:messsage"` //消息
+	// @inject_tag: gorm:"column:message" json:"message"
+	Message *string `protobuf:"bytes,6,opt,name=message,proto3,oneof" json:"message" gorm:"column:message"` //消息
 	// @inject_tag: gorm:"column:level" json:"level"
 	Level *string `protobuf:"bytes,7,opt,name=level,proto3,oneof" json:"level" gorm:"column:level"` //等级
 	// @inject_tag: gorm:"column:data" json:"data"
@@ -113,9 +113,9 @@ func (x *SysLoggerDevObject) GetFunc() string {
 	return ""
 }
 
-func (x *SysLoggerDevObject) GetMesssage() string {
-	if x != nil && x.Messsage != nil {
-		return *x.Messsage
+func (x *SysLoggerDevObject) GetMessage() string {
+	if x != nil && x.Message != nil {
+		return *x.Message
 	}
 	return ""
 }
@@ -816,21 +816,22 @@ var File_sys_logger_dev_proto protoreflect.FileDescriptor
 
 const file_sys_logger_dev_proto_rawDesc = "" +
 	"\n" +
-	"\x14sys_logger_dev.proto\x12\x06logger\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\xc5\x02\n" +
+	"\x14sys_logger_dev.proto\x12\x06logger\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\xc2\x02\n" +
 	"\x12SysLoggerDevObject\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12\x17\n" +
 	"\x04host\x18\x02 \x01(\tH\x01R\x04host\x88\x01\x01\x128\n" +
 	"\ttimestamp\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp\x12\x17\n" +
 	"\x04file\x18\x04 \x01(\tH\x02R\x04file\x88\x01\x01\x12\x17\n" +
-	"\x04func\x18\x05 \x01(\tH\x03R\x04func\x88\x01\x01\x12\x1f\n" +
-	"\bmesssage\x18\x06 \x01(\tH\x04R\bmesssage\x88\x01\x01\x12\x19\n" +
+	"\x04func\x18\x05 \x01(\tH\x03R\x04func\x88\x01\x01\x12\x1d\n" +
+	"\amessage\x18\x06 \x01(\tH\x04R\amessage\x88\x01\x01\x12\x19\n" +
 	"\x05level\x18\a \x01(\tH\x05R\x05level\x88\x01\x01\x12\x17\n" +
 	"\x04data\x18\b \x01(\fH\x06R\x04data\x88\x01\x01B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_hostB\a\n" +
 	"\x05_fileB\a\n" +
-	"\x05_funcB\v\n" +
-	"\t_messsageB\b\n" +
+	"\x05_funcB\n" +
+	"\n" +
+	"\b_messageB\b\n" +
 	"\x06_levelB\a\n" +
 	"\x05_data\"U\n" +
 	"\x19SysLoggerDevTotalResponse\x12\x12\n" +

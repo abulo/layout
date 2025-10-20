@@ -23,12 +23,11 @@ func init() {
 	if util.Empty(configPath) {
 		panic("configPath is empty")
 	}
-	//加载配置文件
 	global.InitConfig(path.Join(global.Path, "config", configPath))
 	global.InitMongoDB()
 	global.InitRedis()
+	global.InitSql()
 	global.InitRegistry()
-	global.InitGrpc()
 	global.InitTrace()
 	global.InitRate()
 	global.InitPool(10000)
