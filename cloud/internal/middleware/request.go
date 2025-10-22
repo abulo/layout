@@ -226,12 +226,11 @@ func parseQuery(newCtx *app.RequestContext) error {
 	return nil
 }
 
-func getStr(v interface{}) string {
+func getStr(v any) string {
 	val := ""
-	switch v.(type) {
+	switch v := v.(type) {
 	case float64:
-		fl, _ := v.(float64)
-		val = strconv.FormatFloat(fl, 'f', -1, 64)
+		val = strconv.FormatFloat(v, 'f', -1, 64)
 	default:
 		val = fmt.Sprintf("%v", v)
 	}
