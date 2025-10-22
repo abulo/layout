@@ -4,7 +4,7 @@ go 1.25.0
 
 require (
 	github.com/abulo/ratel/v3 v3.8.43
-	github.com/cloudwego/hertz v0.10.2
+	github.com/cloudwego/hertz v0.10.3
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/mojocn/base64Captcha v1.3.8
 	github.com/panjf2000/ants/v2 v2.11.3
@@ -142,7 +142,7 @@ require (
 	golang.org/x/text v0.30.0 // indirect
 	golang.org/x/tools v0.37.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250825161204-c5933d9347a5 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20251014184007-4626949a642f // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20251020155222-88f65dc88635 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/clickhouse v0.7.0 // indirect
 	gorm.io/driver/mysql v1.6.0 // indirect
