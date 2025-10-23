@@ -8,11 +8,16 @@ import (
 
 	"github.com/abulo/ratel/v3/core/task"
 	"github.com/abulo/ratel/v3/core/task/driver"
+	"github.com/abulo/ratel/v3/stores/redis"
 )
 
 func CronJob() func() {
 	redisHandler := initial.Core.Store.LoadRedis("redis")
-	driverHandler := driver.NewRedisDriver(redisHandler)
+	client, err := redis.OriginalClient(redisHandler)
+	if err != nil {
+		panic(err)
+	}
+	driverHandler := driver.NewRedisDriver(client)
 	cron := task.NewTaskWithOption(
 		"WorkerService",
 		driverHandler,
