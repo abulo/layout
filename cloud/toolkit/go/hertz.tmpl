@@ -87,7 +87,7 @@ func {{.Name}}(ctx context.Context,newCtx *app.RequestContext) {
 	}
 	reqInfo.Id = nil
 	reqInfo.Creator = null.StringFrom(newCtx.GetString("userName"))
-	reqInfo.CreatedTime = null.DateTimeFrom(util.Now())
+	reqInfo.CreateTime = null.DateTimeFrom(util.Now())
 	request.Data = {{.Pkg}}.{{CamelStr .Table.TableName}}Proto(reqInfo)
 	// 执行服务
 	res, err := client.{{.Name}}(ctx, request)
@@ -149,7 +149,7 @@ func {{.Name}}(ctx context.Context,newCtx *app.RequestContext) {
 	reqInfo.Updater = null.StringFrom(newCtx.GetString("userName"))
 	reqInfo.UpdateTime = null.DateTimeFrom(util.Now())
 	reqInfo.Creator = null.StringFromPtr(nil)
-	reqInfo.CreatedTime = null.DateTimeFromPtr(nil)
+	reqInfo.CreateTime = null.DateTimeFromPtr(nil)
 	request.Data = {{.Pkg}}.{{CamelStr .Table.TableName}}Proto(reqInfo)
 	// 执行服务
 	res, err := client.{{.Name}}(ctx, request)
@@ -457,7 +457,7 @@ func {{.Name}}(ctx context.Context,newCtx *app.RequestContext){
 
 
 
-// {{.Name}}Layer 列表数据
+// {{.Name}}Layer 列表层数据
 func {{.Name}}Layer(ctx context.Context,newCtx *app.RequestContext){
 	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()
 	if err != nil {
@@ -511,7 +511,7 @@ func {{.Name}}Layer(ctx context.Context,newCtx *app.RequestContext){
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}")
+		}).Error("GrpcCall:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}Layer")
 		fromError := status.Convert(err)
 		response.JSON(newCtx,consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
