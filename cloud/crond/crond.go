@@ -17,7 +17,7 @@ func CronJob() func() {
 	if err != nil {
 		panic(err)
 	}
-	driverHandler := driver.NewRedisDriver(client)
+	driverHandler := driver.NewRedisZSetDriver(client)
 	cron := task.NewTaskWithOption(
 		"WorkerService",
 		driverHandler,
