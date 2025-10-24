@@ -7,7 +7,7 @@
         # 监听端口
         Port = 5555
         # 注册发现服务中的角色名称
-        Deployment = "stock-api"
+        Deployment = "cloud-api"
         # 开启指标采集
         EnableMetric = true
         # 开启链路追踪
@@ -26,7 +26,7 @@
         # 监听端口
         Port = 6666
         # 注册发现服务中的角色名称
-        Deployment = "stock-grpc"
+        Deployment = "cloud-grpc"
         # 开启指标采集
         EnableMetric = true
         # 开启链路追踪

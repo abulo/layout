@@ -1,5 +1,5 @@
 [[MongoDB]]
-URI="mongodb://admin:admin@127.0.0.1:27017/stock?authSource=admin&authMechanism=SCRAM-SHA-256"
+URI="mongodb://admin:admin@127.0.0.1:27017/cloud?authSource=admin&authMechanism=SCRAM-SHA-256"
 MaxConnIdleTime = 1
 MaxPoolSize = 64
 MinPoolSize = 10

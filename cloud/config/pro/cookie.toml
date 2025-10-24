@@ -1,6 +1,6 @@
 [Cookie]
     #每一个应用独有标识
-    AppKey = "stock"
+    AppKey = "cloud"
     #过期时间
     Expires=180000
     #路径
@@ -12,6 +12,6 @@
     #HttpOnly属性
     HttpOnly=true
     #hashKey
-    HashKey="cookies_hashKey_stock"
+    HashKey="cookies_hashKey_cloud"
     #blockKey
-    BlockKey="cookies_blockKey_stock"
+    BlockKey="cookies_blockKey_cloud"

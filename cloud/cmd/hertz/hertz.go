@@ -37,10 +37,10 @@ var BuildVersion string // 编译版本
 var BuildTime string    // 编译时间
 // 程序主入口
 func main() {
-	env.SetName("StockHertz")
+	env.SetName("CloudHertz")
 	env.SetAppID("1")
-	env.SetAppRegion("sichuan")
-	env.SetAppZone("chengdu")
+	env.SetAppRegion("SiChuan")
+	env.SetAppZone("ChengDu")
 	env.SetAppMode("product")
 	env.SetAppHost("golang")
 	env.SetBuildTime(BuildTime)
