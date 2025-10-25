@@ -22,7 +22,7 @@
           <el-tag>{{ lastBuildTime }}</el-tag>
         </el-descriptions-item>
         <el-descriptions-item label="Github" label-align="left">
-          <el-link type="primary" href="https://github.com/Geeker-Admin/Geeker-Admin" target="_blank"> Github </el-link>
+          <el-link type="primary" href="https://github.com/abulo/Geeker-Admin" target="_blank"> Github </el-link>
         </el-descriptions-item>
         <el-descriptions-item label="文档地址" label-align="left">
           <el-link type="primary" href="https://maicss.com/geeker-admin/" target="_blank"> 文档地址 </el-link>

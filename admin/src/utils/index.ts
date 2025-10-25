@@ -423,7 +423,7 @@ export function treeMap<T, R, K extends string = 'children'>(
 // 使用Web Crypto API进行SHA-256加盐哈希，提高密码安全性。
 // 请替换为自己项目的加密方法。如果确定使用这个方法加密通讯，也请替换盐值。
 export async function encryptPassword(password: string) {
-  const salt = 'geeker-admin-salt'
+  const salt = 'admin-salt'
   const encoder = new TextEncoder()
   const data = encoder.encode(password + salt)
   const hashBuffer = await crypto.subtle.digest('SHA-256', data)

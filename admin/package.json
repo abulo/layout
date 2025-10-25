@@ -1,9 +1,9 @@
 {
-  "name": "geeker-admin",
+  "name": "admin",
   "private": true,
   "version": "1.2.0",
   "type": "module",
-  "description": "geeker-admin open source management system",
+  "description": "admin open source management system",
   "authors": [
     {
       "name": "maicss",
@@ -14,16 +14,21 @@
       "name": "Geeker",
       "email": "848130454@qq.com",
       "url": "https://github.com/HalseySpicy"
+    },
+    {
+      "name": "abulo",
+      "email": "abulo.hoo@gmail.com",
+      "url": "https://github.com/abulo"
     }
   ],
   "license": "Apache-2.0",
-  "homepage": "https://github.com/Geeker-Admin/Geeker-Admin",
+  "homepage": "https://github.com/abulo/Geeker-Admin",
   "repository": {
     "type": "git",
-    "url": "git@github.com:Geeker-Admin/Geeker-Admin.git"
+    "url": "git@github.com:abulo/Geeker-Admin.git"
   },
   "bugs": {
-    "url": "https://github.com/Geeker-Admin/Geeker-Admin/issues"
+    "url": "https://github.com/abulo/Geeker-Admin/issues"
   },
   "scripts": {
     "dev": "NODE_OPTIONS=--max-old-space-size=4096 vite",

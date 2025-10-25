@@ -14,7 +14,7 @@ Geeker-Admin 一款基于 Vue3.5、TypeScript、Vite7、Pinia、Element-Plus 开
 
 ### 代码仓库 ⭐
 
-- GitHub：https://github.com/Geeker-Admin/Geeker-Admin
+- GitHub：https://github.com/abulo/Geeker-Admin
 
 ### 项目文档 📚
 
@@ -42,7 +42,7 @@ Geeker-Admin 一款基于 Vue3.5、TypeScript、Vite7、Pinia、Element-Plus 开
 
 ```text
 # GitHub
-git clone https://github.com/Geeker-Admin/Geeker-Admin.git
+git clone https://github.com/abulo/Geeker-Admin.git
 ```
 
 - **Install：**

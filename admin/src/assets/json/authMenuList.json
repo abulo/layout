@@ -961,7 +961,7 @@
           "meta": {
             "icon": "Menu",
             "title": "GitHub 仓库",
-            "isLink": "https://github.com/Geeker-Admin/Geeker-Admin",
+            "isLink": "https://github.com/abulo/Geeker-Admin",
             "isHide": false,
             "isFull": false,
             "isAffix": false,
