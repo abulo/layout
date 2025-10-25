@@ -1,0 +1,21 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "stylelint.vscode-stylelint",
+    "esbenp.prettier-vscode",
+    "editorconfig.editorconfig",
+    "streetsidesoftware.code-spell-checker",
+    "syler.sass-indented",
+    "mikestead.dotenv",
+    "nicholashsiang.vscode-vue3-snippets",
+    "vue.volar",
+    "bradlc.vscode-tailwindcss",
+    "lokalise.i18n-ally",
+    "gruntfuggly.todo-tree",
+    "christian-kohler.path-intellisense",
+    "warmthsea.vscode-custom-code-color",
+    "vscode-icons-team.vscode-icons",
+    "davidanson.vscode-markdownlint",
+    "csstools.postcss",
+  ]
+}

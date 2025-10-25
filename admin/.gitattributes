@@ -1,0 +1,4 @@
+* text=auto eol=lf
+* core.ignorecase=false
+src/types/auto-imports.d.ts linguist-generated=true
+src/types/components.d.ts linguist-generated=true

@@ -1,0 +1,208 @@
+{
+  // "editor.formatOnSave": true,
+  // "editor.codeActionsOnSave": {
+  //   "source.fixAll.stylelint": "explicit",
+  //   "source.fixAll.eslint": "explicit"
+  // },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
+  },
+  // "eslint.validate": ["vue", "javascript", "typescript", "typescriptreact"],
+  "i18n-ally.sortKeys": true,
+  "i18n-ally.keepFulfilled": true,
+  "i18n-ally.localesPaths": [
+    "src/locales"
+  ],
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.sourceLanguage": "zh",
+  "i18n-ally.displayLanguage": "zh",
+  "i18n-ally.enabledFrameworks": [
+    "vue"
+  ],
+  // "stylelint.enable": true,
+  "stylelint.validate": [
+    "css",
+    "less",
+    "postcss",
+    "scss",
+    "vue",
+    "sass",
+    "html"
+  ],
+  "files.eol": "\n",
+  "todo-tree.regex.regex": "(//)\\s*($TAGS).*(\\n\\s*//\\s{2,}.*)*",
+  "todo-tree.general.tags": [
+    "BUG",
+    "HACK",
+    "FIXME",
+    "TODO",
+    "XXX",
+    "[ ]",
+    "[x]",
+    "todo"
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[vue]": {
+    "editor.defaultFormatter": null
+  },
+  "cSpell.words": [
+    "apng",
+    "axios",
+    "brotli",
+    "cascader",
+    "commitlint",
+    "contentright",
+    "daterange",
+    "datetimerange",
+    "echarts",
+    "geeker",
+    "GITEA",
+    "Gitee",
+    "iconify",
+    "ignorecase",
+    "juejin",
+    "liquidfill",
+    "longpress",
+    "maicss",
+    "monthrange",
+    "nprogress",
+    "officedocument",
+    "openxmlformats",
+    "Pageable",
+    "persistedstate",
+    "pinia",
+    "pjpeg",
+    "Prefixs",
+    "screenfull",
+    "sortablejs",
+    "spreadsheetml",
+    "styl",
+    "stylelint",
+    "stylelintignore",
+    "stylelintrc",
+    "truetype",
+    "unocss",
+    "unplugin",
+    "unref",
+    "VITE",
+    "vuedraggable",
+    "vueuse",
+    "Vuex",
+    "wangeditor"
+  ],
+  "cSpell.ignorePaths": [
+    "**/*.svg"
+  ],
+  "editor.rulers": [
+    120
+  ],
+  "editor.acceptSuggestionOnCommitCharacter": false,
+  "css.lint.propertyIgnoredDueToDisplay": "ignore",
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": true,
+    "strings": true
+  },
+  "files.associations": {
+    "editor.snippetSuggestions": "top",
+    "*.tsx": "typescriptreact"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "stylelint.enable": false, // 禁用 stylelint
+  "css.validate": false, // 禁用 CSS 内置验证
+  "scss.validate": false, // 禁用 SCSS 内置验证
+  "less.validate": false, // 禁用 LESS 内置验证
+  "prettier.enable": false,
+  "editor.formatOnSave": false,
+  // Silent the stylistic rules in you IDE, but still auto fix them
+  "eslint.rules.customizations": [
+    {
+      "rule": "style/*",
+      "severity": "off",
+      "fixable": true
+    },
+    {
+      "rule": "format/*",
+      "severity": "off",
+      "fixable": true
+    },
+    {
+      "rule": "*-indent",
+      "severity": "off",
+      "fixable": true
+    },
+    {
+      "rule": "*-spacing",
+      "severity": "off",
+      "fixable": true
+    },
+    {
+      "rule": "*-spaces",
+      "severity": "off",
+      "fixable": true
+    },
+    {
+      "rule": "*-order",
+      "severity": "off",
+      "fixable": true
+    },
+    {
+      "rule": "*-dangle",
+      "severity": "off",
+      "fixable": true
+    },
+    {
+      "rule": "*-newline",
+      "severity": "off",
+      "fixable": true
+    },
+    {
+      "rule": "*quotes",
+      "severity": "off",
+      "fixable": true
+    },
+    {
+      "rule": "*semi",
+      "severity": "off",
+      "fixable": true
+    }
+  ],
+  // Enable eslint for all supported languages
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "vue",
+    "html",
+    "markdown",
+    "json",
+    "jsonc",
+    "yaml",
+    "toml",
+    "xml",
+    "gql",
+    "graphql",
+    "astro",
+    "svelte",
+    "css",
+    "less",
+    "scss",
+    "pcss",
+    "postcss"
+  ],
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  // Tailwind CSS语言支持配置
+  "tailwindCSS.includeLanguages": {
+    "vue": "html",
+    "javascript": "javascriptreact",
+    "typescript": "typescriptreact",
+    "typescriptreact": "html"
+  }
+}

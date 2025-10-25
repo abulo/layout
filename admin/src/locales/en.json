@@ -1,0 +1,79 @@
+{
+  "common": {
+    "add": "Add",
+    "address": "Address",
+    "collapse": "Collapse",
+    "createTime": "Create time",
+    "delete": "Delete",
+    "edit": "Edit",
+    "email": "Email",
+    "expand": "Expand",
+    "export": "Export",
+    "gender": "Gender",
+    "idCard": "ID card",
+    "import": "Import",
+    "index": "#",
+    "layout": "Layout",
+    "operation": "Operation",
+    "operations": "Operations",
+    "radio": "Radio",
+    "refresh": "Refresh",
+    "reset": "Reset",
+    "resetPassword": "Reset password",
+    "search": "Search",
+    "status": "Status",
+    "submit": "Submit",
+    "title": "Title",
+    "userStatus": "User status",
+    "username": "Username",
+    "view": "View"
+  },
+  "error": {
+    "fePaginationFilterMethodIsRequired": "fePaginationFilterMethod is a necessary parameter when paging in front-end and has search config.",
+    "localeNotSupported": "Localization language [{locale}] is not supported, please check `src/locales/index.ts`",
+    "notRemoteDictNeedOptions": "Dict prop [options] is required when remote is false",
+    "tableDataShouldBeArray": "The table data should be an array, the current type is incorrect"
+  },
+  "header": {
+    "changePassword": "Change password",
+    "componentSize": "Component size",
+    "darkMode": "Dark mode",
+    "exitFullScreen": "Exit full screen",
+    "fullScreen": "Full screen",
+    "greyMode": "Grey mode",
+    "language": "Language",
+    "layoutConfig": "Layout config",
+    "logout": "Logout",
+    "personalData": "Personal Data",
+    "primary": "Primary",
+    "theme": "Theme",
+    "weakMode": "Weak mode"
+  },
+  "home": {
+    "welcome": "Welcome"
+  },
+  "proTable": {
+    "colName": "Col Name",
+    "colSetting": "Col Setting",
+    "colShow": "Show",
+    "colSort": "Sort",
+    "noColSetting": "No Col Settings"
+  },
+  "system": {
+    "dictManage": {
+      "dictCode": "Dict Code",
+      "dictName": "Dict Name",
+      "remark": "Remark",
+      "status": "Status"
+    }
+  },
+  "tabs": {
+    "closeAll": "Close all",
+    "closeCurrent": "Close current",
+    "closeLeft": "Close left",
+    "closeOther": "Close other",
+    "closeRight": "Close right",
+    "maximize": "Maximize",
+    "refresh": "Refresh"
+  }
+}
