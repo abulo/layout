@@ -25,7 +25,5 @@ func SysInitRoute(handle *xhertz.Server) {
 		route.GET("/sys/post", post.SysPostList)
 		// sys_post->职位->列表(精简)
 		route.GET("/sys/post/simple", post.SysPostListSimple)
-		// sys_post->职位->列表(层)
-		route.GET("/sys/post/layer", post.SysPostListLayer)
 	}
 }

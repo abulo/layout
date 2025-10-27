@@ -410,13 +410,13 @@ func SysPostList(ctx context.Context, newCtx *app.RequestContext) {
 	})
 }
 
-// SysPostListLayer 列表层数据
-func SysPostListLayer(ctx context.Context, newCtx *app.RequestContext) {
+// SysPostListSimple 列表精简数据
+func SysPostListSimple(ctx context.Context, newCtx *app.RequestContext) {
 	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"err": err,
-		}).Error("Grpc:职位:sys_post:SysPostListLayer")
+		}).Error("Grpc:职位:sys_post:SysPostListSimple")
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.RPCError,
 			"msg":  code.StatusText(code.RPCError),
@@ -452,7 +452,7 @@ func SysPostListLayer(ctx context.Context, newCtx *app.RequestContext) {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:职位:sys_post:SysPostListLayer")
+		}).Error("GrpcCall:职位:sys_post:SysPostListSimple")
 		fromError := status.Convert(err)
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
@@ -468,70 +468,6 @@ func SysPostListLayer(ctx context.Context, newCtx *app.RequestContext) {
 	if resTotal.GetCode() == code.Success {
 		total = resTotal.GetData()
 	}
-	// 执行服务
-	res, err := client.SysPostList(ctx, request)
-	if err != nil {
-		globalLogger.Logger.WithFields(logrus.Fields{
-			"req": request,
-			"err": err,
-		}).Error("GrpcCall:职位:sys_post:SysPostListLayer")
-		fromError := status.Convert(err)
-		response.JSON(newCtx, consts.StatusOK, utils.H{
-			"code": code.ConvertToHttp(fromError.Code()),
-			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
-		})
-		return
-	}
-	var list []*dao.SysPost
-	if res.GetCode() == code.Success {
-		rpcList := res.GetData()
-		for _, item := range rpcList {
-			list = append(list, post.SysPostDao(item))
-		}
-	}
-	response.JSON(newCtx, consts.StatusOK, utils.H{
-		"code": res.GetCode(),
-		"msg":  res.GetMsg(),
-		"data": utils.H{
-			"total":    total,
-			"list":     list,
-			"pageNum":  paginationRequest.PageNum,
-			"pageSize": paginationRequest.PageSize,
-		},
-	})
-}
-
-// SysPostListSimple 列表精简数据
-func SysPostListSimple(ctx context.Context, newCtx *app.RequestContext) {
-	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()
-	if err != nil {
-		globalLogger.Logger.WithFields(logrus.Fields{
-			"err": err,
-		}).Error("Grpc:职位:sys_post:SysPostListSimple")
-		response.JSON(newCtx, consts.StatusOK, utils.H{
-			"code": code.RPCError,
-			"msg":  code.StatusText(code.RPCError),
-		})
-		return
-	}
-	//链接服务
-	client := post.NewSysPostServiceClient(grpcClient)
-	// 构造查询条件
-	request := &post.SysPostListRequest{}
-
-	if val, ok := newCtx.GetQuery("tenantId"); ok {
-		request.TenantId = proto.Int64(cast.ToInt64(val)) // 租户
-	}
-	if val, ok := newCtx.GetQuery("deleted"); ok {
-		request.Deleted = proto.Int32(cast.ToInt32(val)) // 删除:0否/1是
-	}
-	if val, ok := newCtx.GetQuery("status"); ok {
-		request.Status = proto.Int32(cast.ToInt32(val)) // 状态:0正常/1停用
-	}
-	if val, ok := newCtx.GetQuery("name"); ok {
-		request.Name = proto.String(val) // 名称
-	}
-
 	// 执行服务
 	res, err := client.SysPostList(ctx, request)
 	if err != nil {
@@ -556,6 +492,11 @@ func SysPostListSimple(ctx context.Context, newCtx *app.RequestContext) {
 	response.JSON(newCtx, consts.StatusOK, utils.H{
 		"code": res.GetCode(),
 		"msg":  res.GetMsg(),
-		"data": list,
+		"data": utils.H{
+			"total":    total,
+			"list":     list,
+			"pageNum":  paginationRequest.PageNum,
+			"pageSize": paginationRequest.PageSize,
+		},
 	})
 }
