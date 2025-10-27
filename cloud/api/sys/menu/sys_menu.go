@@ -8,6 +8,7 @@ import (
 	"cloud/initial"
 	"cloud/internal/response"
 	"cloud/service/sys/menu"
+	"cloud/tools"
 
 	globalLogger "github.com/abulo/ratel/v3/core/logger"
 	"github.com/abulo/ratel/v3/stores/null"
@@ -262,17 +263,17 @@ func SysMenuList(ctx context.Context, newCtx *app.RequestContext) {
 		})
 		return
 	}
-	var list []*dao.SysMenu
+	var list []dao.SysMenu
 	if res.GetCode() == code.Success {
 		rpcList := res.GetData()
 		for _, item := range rpcList {
-			list = append(list, menu.SysMenuDao(item))
+			list = append(list, *menu.SysMenuDao(item))
 		}
 	}
 	response.JSON(newCtx, consts.StatusOK, utils.H{
 		"code": res.GetCode(),
 		"msg":  res.GetMsg(),
-		"data": list,
+		"data": tools.SysMenuTree(list),
 	})
 }
 
@@ -312,16 +313,16 @@ func SysMenuListSimple(ctx context.Context, newCtx *app.RequestContext) {
 		})
 		return
 	}
-	var list []*dao.SysMenu
+	var list []dao.SysMenu
 	if res.GetCode() == code.Success {
 		rpcList := res.GetData()
 		for _, item := range rpcList {
-			list = append(list, menu.SysMenuDao(item))
+			list = append(list, *menu.SysMenuDao(item))
 		}
 	}
 	response.JSON(newCtx, consts.StatusOK, utils.H{
 		"code": res.GetCode(),
 		"msg":  res.GetMsg(),
-		"data": list,
+		"data": tools.SysMenuTree(list),
 	})
 }
