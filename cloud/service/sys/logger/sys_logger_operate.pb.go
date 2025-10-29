@@ -58,18 +58,20 @@ type SysLoggerOperateObject struct {
 	Channel *string `protobuf:"bytes,14,opt,name=channel,proto3,oneof" json:"channel" gorm:"column:channel"` //渠道
 	// @inject_tag: gorm:"column:result" json:"result"
 	Result *int32 `protobuf:"varint,15,opt,name=result,proto3,oneof" json:"result" gorm:"column:result"` //结果:0 成功/1 失败
+	// @inject_tag: gorm:"column:result_msg" json:"resultMsg"
+	ResultMsg *string `protobuf:"bytes,16,opt,name=result_msg,json=resultMsg,proto3,oneof" json:"resultMsg" gorm:"column:result_msg"` //结果信息
 	// @inject_tag: gorm:"column:deleted" json:"deleted"
-	Deleted *int32 `protobuf:"varint,16,opt,name=deleted,proto3,oneof" json:"deleted" gorm:"column:deleted"` //删除:0否/1是
+	Deleted *int32 `protobuf:"varint,17,opt,name=deleted,proto3,oneof" json:"deleted" gorm:"column:deleted"` //删除:0否/1是
 	// @inject_tag: gorm:"column:tenant_id" json:"tenantId"
-	TenantId *int64 `protobuf:"varint,17,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenantId" gorm:"column:tenant_id"` //租户
+	TenantId *int64 `protobuf:"varint,18,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenantId" gorm:"column:tenant_id"` //租户
 	// @inject_tag: gorm:"column:creator" json:"creator"
-	Creator *string `protobuf:"bytes,18,opt,name=creator,proto3,oneof" json:"creator" gorm:"column:creator"` //创建人
+	Creator *string `protobuf:"bytes,19,opt,name=creator,proto3,oneof" json:"creator" gorm:"column:creator"` //创建人
 	// @inject_tag: gorm:"column:create_time" json:"createTime"
-	CreateTime *timestamppb.Timestamp `protobuf:"bytes,19,opt,name=create_time,json=createTime,proto3" json:"createTime" gorm:"column:create_time"` //创建时间
+	CreateTime *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=create_time,json=createTime,proto3" json:"createTime" gorm:"column:create_time"` //创建时间
 	// @inject_tag: gorm:"column:updater" json:"updater"
-	Updater *string `protobuf:"bytes,20,opt,name=updater,proto3,oneof" json:"updater" gorm:"column:updater"` //更新人
+	Updater *string `protobuf:"bytes,21,opt,name=updater,proto3,oneof" json:"updater" gorm:"column:updater"` //更新人
 	// @inject_tag: gorm:"column:update_time" json:"updateTime"
-	UpdateTime    *timestamppb.Timestamp `protobuf:"bytes,21,opt,name=update_time,json=updateTime,proto3" json:"updateTime" gorm:"column:update_time"` //更新时间
+	UpdateTime    *timestamppb.Timestamp `protobuf:"bytes,22,opt,name=update_time,json=updateTime,proto3" json:"updateTime" gorm:"column:update_time"` //更新时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -207,6 +209,13 @@ func (x *SysLoggerOperateObject) GetResult() int32 {
 		return *x.Result
 	}
 	return 0
+}
+
+func (x *SysLoggerOperateObject) GetResultMsg() string {
+	if x != nil && x.ResultMsg != nil {
+		return *x.ResultMsg
+	}
+	return ""
 }
 
 func (x *SysLoggerOperateObject) GetDeleted() int32 {
@@ -1221,7 +1230,7 @@ var File_sys_logger_operate_proto protoreflect.FileDescriptor
 
 const file_sys_logger_operate_proto_rawDesc = "" +
 	"\n" +
-	"\x18sys_logger_operate.proto\x12\x06logger\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\xaa\a\n" +
+	"\x18sys_logger_operate.proto\x12\x06logger\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\xdd\a\n" +
 	"\x16SysLoggerOperateObject\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x01R\x04name\x88\x01\x01\x12\x1f\n" +
@@ -1240,14 +1249,16 @@ const file_sys_logger_operate_proto_rawDesc = "" +
 	"start_time\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tstartTime\x12\x1f\n" +
 	"\bduration\x18\r \x01(\x05H\vR\bduration\x88\x01\x01\x12\x1d\n" +
 	"\achannel\x18\x0e \x01(\tH\fR\achannel\x88\x01\x01\x12\x1b\n" +
-	"\x06result\x18\x0f \x01(\x05H\rR\x06result\x88\x01\x01\x12\x1d\n" +
-	"\adeleted\x18\x10 \x01(\x05H\x0eR\adeleted\x88\x01\x01\x12 \n" +
-	"\ttenant_id\x18\x11 \x01(\x03H\x0fR\btenantId\x88\x01\x01\x12\x1d\n" +
-	"\acreator\x18\x12 \x01(\tH\x10R\acreator\x88\x01\x01\x12;\n" +
-	"\vcreate_time\x18\x13 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"\x06result\x18\x0f \x01(\x05H\rR\x06result\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"result_msg\x18\x10 \x01(\tH\x0eR\tresultMsg\x88\x01\x01\x12\x1d\n" +
+	"\adeleted\x18\x11 \x01(\x05H\x0fR\adeleted\x88\x01\x01\x12 \n" +
+	"\ttenant_id\x18\x12 \x01(\x03H\x10R\btenantId\x88\x01\x01\x12\x1d\n" +
+	"\acreator\x18\x13 \x01(\tH\x11R\acreator\x88\x01\x01\x12;\n" +
+	"\vcreate_time\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"createTime\x12\x1d\n" +
-	"\aupdater\x18\x14 \x01(\tH\x11R\aupdater\x88\x01\x01\x12;\n" +
-	"\vupdate_time\x18\x15 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"\aupdater\x18\x15 \x01(\tH\x12R\aupdater\x88\x01\x01\x12;\n" +
+	"\vupdate_time\x18\x16 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"updateTimeB\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\v\n" +
@@ -1265,7 +1276,8 @@ const file_sys_logger_operate_proto_rawDesc = "" +
 	"\t_durationB\n" +
 	"\n" +
 	"\b_channelB\t\n" +
-	"\a_resultB\n" +
+	"\a_resultB\r\n" +
+	"\v_result_msgB\n" +
 	"\n" +
 	"\b_deletedB\f\n" +
 	"\n" +

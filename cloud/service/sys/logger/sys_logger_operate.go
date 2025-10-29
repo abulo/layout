@@ -59,6 +59,9 @@ func SysLoggerOperateDao(item *SysLoggerOperateObject) *dao.SysLoggerOperate {
 	if item != nil && item.Result != nil {
 		daoItem.Result = null.Int32From(item.GetResult()) // 结果:0 成功/1 失败
 	}
+	if item != nil && item.ResultMsg != nil {
+		daoItem.ResultMsg = null.StringFrom(item.GetResultMsg()) // 结果信息
+	}
 	if item != nil && item.Deleted != nil {
 		daoItem.Deleted = item.Deleted // 删除:0否/1是
 	}
@@ -128,6 +131,9 @@ func SysLoggerOperateProto(item dao.SysLoggerOperate) *SysLoggerOperateObject {
 	}
 	if item.Result.IsValid() {
 		res.Result = item.Result.Ptr()
+	}
+	if item.ResultMsg.IsValid() {
+		res.ResultMsg = item.ResultMsg.Ptr()
 	}
 	if item.Deleted != nil {
 		res.Deleted = item.Deleted

@@ -19,6 +19,7 @@ type SysLoggerOperate struct {
 	Duration     null.Int32    `gorm:"column:duration" json:"duration"`              //int 执行时长
 	Channel      null.String   `gorm:"column:channel" json:"channel"`                //varchar 渠道
 	Result       null.Int32    `gorm:"column:result" json:"result"`                  //tinyint 结果:0 成功/1 失败
+	ResultMsg    null.String   `gorm:"column:result_msg" json:"resultMsg"`           //varchar 结果信息
 	Deleted      *int32        `gorm:"column:deleted" json:"deleted"`                //tinyint 删除:0否/1是
 	TenantId     *int64        `gorm:"column:tenant_id" json:"tenantId"`             //bigint 租户
 	Creator      null.String   `gorm:"column:creator" json:"creator"`                //varchar 创建人

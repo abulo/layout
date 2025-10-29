@@ -37,18 +37,20 @@ message SysLoggerOperateObject {
 	optional string channel = 14; //渠道
 	// @inject_tag: gorm:"column:result" json:"result"
 	optional int32 result = 15; //结果:0 成功/1 失败
+	// @inject_tag: gorm:"column:result_msg" json:"resultMsg"
+	optional string result_msg = 16; //结果信息
 	// @inject_tag: gorm:"column:deleted" json:"deleted"
-	optional int32 deleted = 16; //删除:0否/1是
+	optional int32 deleted = 17; //删除:0否/1是
 	// @inject_tag: gorm:"column:tenant_id" json:"tenantId"
-	optional int64 tenant_id = 17; //租户
+	optional int64 tenant_id = 18; //租户
 	// @inject_tag: gorm:"column:creator" json:"creator"
-	optional string creator = 18; //创建人
+	optional string creator = 19; //创建人
 	// @inject_tag: gorm:"column:create_time" json:"createTime"
-	google.protobuf.Timestamp create_time = 19; //创建时间
+	google.protobuf.Timestamp create_time = 20; //创建时间
 	// @inject_tag: gorm:"column:updater" json:"updater"
-	optional string updater = 20; //更新人
+	optional string updater = 21; //更新人
 	// @inject_tag: gorm:"column:update_time" json:"updateTime"
-	google.protobuf.Timestamp update_time = 21; //更新时间
+	google.protobuf.Timestamp update_time = 22; //更新时间
 }
 // SysLoggerOperateTotalResponse 列表数据总量
 message SysLoggerOperateTotalResponse {
