@@ -1,6 +1,6 @@
 import { isArray } from '@/utils/is'
 import type { FieldNamesProps } from '@/components/ProTable/interface'
-import type { MenuOptions } from '@/api/system/menu'
+// import type { MenuOptions } from '@/api/system/menu'
 
 const mode = import.meta.env.VITE_ROUTER_MODE
 

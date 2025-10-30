@@ -10,21 +10,21 @@ interface UserInfo {
 interface ResAuthButtons {
   [key: string]: string[]
 }
-interface MenuOptions {
-  path: string
-  name: string
-  component: string
-  meta: {
-    icon: string
-    title: string
-    isLink: string
-    isHide: boolean
-    isFull: boolean
-    isAffix: boolean
-    isKeepAlive: boolean
-  }
-  children?: MenuOptions[]
-}
+// interface MenuOptions {
+//   path: string
+//   name: string
+//   component: string
+//   meta: {
+//     icon: string
+//     title: string
+//     isLink: string
+//     isHide: boolean
+//     isFull: boolean
+//     isAffix: boolean
+//     isKeepAlive: boolean
+//   }
+//   children?: MenuOptions[]
+// }
 export const AccountAPI = {
   getUserInfo: () => http.get<UserInfo>(`/user/info?userCode=${localStorage.getItem('userCode')}`),
   getUserMenu: () => http.get<MenuOptions[]>(`/user/menu?userCode=${localStorage.getItem('userCode')}`),

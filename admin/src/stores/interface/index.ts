@@ -1,4 +1,4 @@
-import type { MenuOptions } from '@/api/system/menu'
+// import type { MenuOptions } from '@/api/system/menu'
 
 export type LayoutType = 'vertical' | 'classic' | 'transverse' | 'columns' | 'mixed'
 

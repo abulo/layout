@@ -1,7 +1,7 @@
 // import authMenuList from '@/assets/json/authMenuList.json'
 // import authButtonList from '@/assets/json/authButtonList.json'
 import http from '@/utils/request'
-import type { MenuOptions } from '@/api/system/menu'
+// // import type { MenuOptions } from '@/api/system/menu'
 
 export interface ReqLoginForm {
   username: string

@@ -24,7 +24,7 @@
 defineOptions({
   name: 'SubMenu',
 })
-import type { MenuOptions } from '@/api/system/menu'
+// import type { MenuOptions } from '@/api/system/menu'
 import { useRouter } from 'vue-router'
 
 defineProps<{ menuList: MenuOptions[] }>()
