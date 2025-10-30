@@ -10,9 +10,10 @@
           :closable="item.close"
         >
           <template #label>
-            <el-icon v-if="item.icon && tabsIcon" class="tabs-icon">
+            <!-- <el-icon v-if="item.icon && tabsIcon" class="tabs-icon">
               <component :is="item.icon" />
-            </el-icon>
+            </el-icon> -->
+            <Icon v-if="item.icon && tabsIcon" class="tabs-icon" :icon="item.icon" />
             {{ item.title }}
           </template>
         </el-tab-pane>

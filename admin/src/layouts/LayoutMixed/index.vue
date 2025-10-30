@@ -25,9 +25,10 @@
         <ToolBarLeft />
         <el-menu mode="horizontal" :router="false" :default-active="activeHeaderMenu">
           <el-menu-item v-for="item in menuList" :key="item.path" :index="item.path" @click="changeSubMenu(item)">
-            <el-icon>
+            <!-- <el-icon>
               <component :is="item.meta.icon"></component>
-            </el-icon>
+            </el-icon> -->
+            <Icon :icon="item.meta.icon" />
             <template #title>
               <span>{{ item.meta.title }}</span>
             </template>

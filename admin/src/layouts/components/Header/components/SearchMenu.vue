@@ -19,9 +19,10 @@
           @click="handleClickMenu()"
         >
           <div class="menu-lf">
-            <el-icon class="menu-icon">
+            <!-- <el-icon class="menu-icon">
               <component :is="item.meta.icon" />
-            </el-icon>
+            </el-icon> -->
+            <Icon class="menu-icon" :icon="item.meta.icon" :custom-key="item.path" />
             <span class="menu-title">{{ item.meta.customTitle }}</span>
           </div>
           <mi-enter class="menu-enter cursor-pointer" @click="handleOpen" />
