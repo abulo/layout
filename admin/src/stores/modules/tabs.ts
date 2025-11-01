@@ -38,7 +38,9 @@ export const useTabsStore = defineStore('geeker-tabs', {
       }
       // remove keepalive
       const tabItem = this.tabsMenuList.find(item => item.path === tabPath)
-      tabItem?.isKeepAlive && keepAliveStore.removeKeepAliveName(tabItem.path)
+      if (tabItem?.isKeepAlive) {
+        await keepAliveStore.removeKeepAliveName(tabItem.path)
+      }
       // set tabs
       this.tabsMenuList = this.tabsMenuList.filter(item => item.path !== tabPath)
     },
