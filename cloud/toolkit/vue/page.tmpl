@@ -4,9 +4,10 @@
 	  ref="proTable"
 	  title="{{.Table.TableComment}}列表"
 	  row-key="id"
-	  :columns="columns"
-	  :request-api="get{{CamelStr .Table.TableName}}ListApi"
-	  :request-auto="true"
+    :columns="columns"
+    :toolbar-right="['search', 'refresh', 'export', 'layout']"
+    :request-api="getTableList"
+    :request-auto="true"
 	  :pagination="{{.Page}}"
 	  :search-col="12">
 	    <!-- 表格 header 按钮 -->
@@ -89,7 +90,7 @@
     </template>
 	</ProTable>
 	<el-dialog
-      v-model="centerDialogVisible"
+      v-model="dialogVisible"
       :title="title"
       width="40%"
       destroy-on-close
@@ -99,25 +100,26 @@
       draggable
       :lock-scroll="false"
       class="dialog-settings">
-	  <el-form ref="ref{{CamelStr .Table.TableName}}ItemFrom" :model="{{Helper .Table.TableName}}ItemFrom" :rules="rules{{CamelStr .Table.TableName}}ItemFrom" label-width="100px">
+	  <el-form ref="ref{{CamelStr .Table.TableName}}Form" :model="{{Helper .Table.TableName}}Form" :rules="rules{{CamelStr .Table.TableName}}Form" label-width="100px">
 		{{- range .TableColumn}}
 		<el-form-item label="{{.ColumnComment}}" prop="{{Helper .ColumnName}}">
-          <el-input v-model="{{Helper $.Table.TableName}}ItemFrom.{{Helper .ColumnName}}" :disabled="disabled" />
-        </el-form-item>
+          <el-input v-model="{{Helper $.Table.TableName}}Form.{{Helper .ColumnName}}" :disabled="disabled" />
+    </el-form-item>
 		{{- end}}
 	  </el-form>
-	  <template #footer v-if="!disabled">
+	  <template v-if="!disabled" #footer>
 		<span class="dialog-footer">
-		  <el-button @click="resetForm(ref{{CamelStr .Table.TableName}}ItemFrom)">取消</el-button>
-		  <el-button type="primary" :loading="loading" @click="submitForm(ref{{CamelStr .Table.TableName}}ItemFrom)">确定</el-button>
+		  <el-button @click="resetForm(ref{{CamelStr .Table.TableName}}Form)">取消</el-button>
+		  <el-button type="primary" :loading="loading" @click="submitForm(ref{{CamelStr .Table.TableName}}Form)">确定</el-button>
 		</span>
 	  </template>
 	</el-dialog>
   </div>
 </template>
-<script setup lang="ts" name="{{Helper .Table.TableName}}">
-import { ref, reactive } from "vue";
-import { ProTableInstance, ColumnProps, SearchProps } from "@/components/ProTable/interface";
+<script setup lang="tsx">
+defineOptions({ name: '{{CamelStr .Table.TableName}}' })
+import type { Res{{CamelStr .Table.TableName}} } from '@/api/interface/{{Helper .Table.TableName}}'
+import type { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
 import {
 	{{- if InMethod .Method "Update"}}
 	EditPen,
@@ -139,8 +141,6 @@ import {
 	{{- end}}
 	DArrowRight,
 	} from "@element-plus/icons-vue";
-import ProTable from "@/components/ProTable/index.vue";
-import { {{CamelStr .Table.TableName}} } from "@/api/interface/{{Helper .Table.TableName}}";
 import {
   {{- if InMethod .Method "List"}}
   get{{CamelStr .Table.TableName}}ListApi,
@@ -164,32 +164,173 @@ import {
   update{{CamelStr .Table.TableName}}Api,
   {{- end}}
 } from "@/api/modules/{{Helper .Table.TableName}}";
-import { FormInstance, FormRules } from "element-plus";
+import type { FormInstance, FormRules } from 'element-plus'
 {{- if .SoftDelete}}
 import { getIntDictOptions } from "@/utils/dict";
 import { DictTag } from "@/components/DictTag";
 {{- end}}
 import { useHandleData, useHandleSet } from "@/hooks/useHandleData";
 import { HasPermission } from "@/utils/permission";
-const disabled = ref(true);
 //加载
-const loading = ref(false);
+const loading = ref(false)
+//禁用
+const disabled = ref(true)
 //弹出层标题
-const title = ref();
-//table数据
-const proTable = ref<ProTableInstance>();
-//是否显示弹出层
-const centerDialogVisible = ref(false);
+const title = ref('')
+//列表数据
+const proTable = ref<ProTableInstance>()
+//显示弹出层
+const dialogVisible = ref(false)
 //数据接口
-const {{Helper .Table.TableName}}ItemFrom = ref<{{CamelStr .Table.TableName}}.Res{{CamelStr .Table.TableName}}Item>({
+const {{Helper .Table.TableName}}Form = ref<Res{{CamelStr .Table.TableName}}>({
 {{Json .TableColumn}}
 });
+//表单
+const ref{{CamelStr .Table.TableName}}Form = ref<FormInstance>()
 //校验
-const ref{{CamelStr .Table.TableName}}ItemFrom = ref<FormInstance>();
-//校验
-const rules{{CamelStr .Table.TableName}}ItemFrom = reactive<FormRules>({
+const rules{{CamelStr .Table.TableName}}Form = reactive<FormRules>({
   {{Rule .TableColumn}}
 });
+
+
+
+/**
+ * 获取表格数据列表
+ * @param params 查询参数对象
+ * @returns 返回列表数据的Promise对象
+ */
+const getTableList = (params: any) => {
+  // 深拷贝参数对象，避免修改原始参数
+  let newParams = JSON.parse(JSON.stringify(params))
+  return get{{CamelStr .Table.TableName}}ListApi(newParams)
+}
+
+/**
+ * 重置数据
+ * 该函数用于清空或初始化
+ * @returns {void} 无返回值
+ */
+const reset{{CamelStr .Table.TableName}} = () => {
+  // 设置{{Helper .Table.TableName}}Form为默认值
+  Object.assign({{Helper .Table.TableName}}Form.value, {
+    {{Json .TableColumn}}
+  })
+}
+
+/**
+ * 重置函数
+ * @returns {void}
+ */
+const reset = () => {
+  loading.value = false
+  reset{{CamelStr .Table.TableName}}()
+  disabled.value = true
+}
+
+{{- if InMethod .Method "Create"}}
+/**
+ * 处理新增操作
+ * 该函数用于初始化对话框的状态
+ */
+const handleAdd = () => {
+  title.value = '新增{{.Table.TableComment}}'
+  dialogVisible.value = true
+  reset()
+  disabled.value = false
+}
+{{- end}}
+
+{{- if InMethod .Method "Update"}}
+/**
+ * 处理更新操作
+ * @param row - 要更新数据对象
+ */
+const handleUpdate = async (row: Res{{CamelStr .Table.TableName}}) => {
+  title.value = '编辑{{.Table.TableComment}}'
+  dialogVisible.value = true
+  reset()
+  const data = await get{{CamelStr .Table.TableName}}Api(Number(row.id))
+  {{Helper .Table.TableName}}Form.value = data
+  disabled.value = false
+}
+{{- end}}
+
+{{- if InMethod .Method "Show"}}
+/**
+ * 处理查看操作
+ * @param row - 要查看数据对象
+ */
+const handleItem = async (row: Res{{CamelStr .Table.TableName}}) => {
+  title.value = '查看{{.Table.TableComment}}'
+  dialogVisible.value = true
+  reset()
+  const data = await get{{CamelStr .Table.TableName}}Api(Number(row.id))
+  {{Helper .Table.TableName}}Form.value = data
+  disabled.value = true
+}
+{{- end}}
+
+{{- if InMethod .Method "Drop"}}
+/**
+ * 处理清理操作
+ * @param row - 要清理数据对象
+ */
+const handleDrop = async (row: Res{{CamelStr .Table.TableName}}) => {
+  await useHandleData(drop{{CamelStr .Table.TableName}}Api, Number(row.id), '清理{{.Table.TableComment}}')
+  proTable.value?.getTableList()
+}
+{{- end}}
+
+{{- if InMethod .Method "Delete"}}
+/**
+ * 处理删除操作
+ * @param row - 要删除数据对象
+ */
+const handleDelete = async (row: Res{{CamelStr .Table.TableName}}) => {
+  await useHandleData(delete{{CamelStr .Table.TableName}}Api, Number(row.id), '删除{{.Table.TableComment}}')
+  proTable.value?.getTableList()
+}
+{{- end}}
+
+{{- if InMethod .Method "Recover"}}
+/**
+ * 处理恢复操作
+ * @param row - 要恢复数据对象
+ */
+const handleRecover = async (row: Res{{CamelStr .Table.TableName}}) => {
+  await useHandleData(recover{{CamelStr .Table.TableName}}Api, Number(row.id), '恢复{{.Table.TableComment}}')
+  proTable.value?.getTableList()
+}
+{{- end}}
+
+/**
+ * 重置表单并关闭对话框
+ * @param formEl - 表单实例对象，用于调用重置方法
+ */
+const resetForm = (formEl: FormInstance | undefined) => {
+  dialogVisible.value = false
+  if (!formEl) return
+  formEl.resetFields()
+}
+
+
+// 提交数据
+const submitForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.validate(async valid => {
+    if (!valid) return
+    loading.value = true
+    const data = {{Helper .Table.TableName}}Form.value as unknown as Res{{CamelStr .Table.TableName}}
+    if (data.id !== 0) {
+      await useHandleSet(update{{CamelStr .Table.TableName}}Api, data.id, data, '修改{{.Table.TableComment}}')
+    } else {
+      await useHandleData(add{{CamelStr .Table.TableName}}Api, data, '添加{{.Table.TableComment}}')
+    }
+    resetForm(formEl)
+    loading.value = false
+    proTable.value?.getTableList()
+  })
+}
 
 {{- if .SoftDelete}}
 //删除状态
@@ -209,7 +350,7 @@ const deleteSearch = reactive<SearchProps>(
 );
 {{- end}}
 
-const columns: ColumnProps<{{CamelStr .Table.TableName}}.Res{{CamelStr .Table.TableName}}Item>[] = [
+const columns: ColumnProps<Res{{CamelStr .Table.TableName}}>[] = [
 	  {{Props .TableColumn .Condition}}
 	  {
 		prop: "operation",
@@ -234,105 +375,7 @@ const columns: ColumnProps<{{CamelStr .Table.TableName}}.Res{{CamelStr .Table.Ta
       {{- end}}
     )}
 ];
-
-// 重置数据
-const reset = () => {
-  loading.value = false;
-  {{Helper .Table.TableName}}ItemFrom.value = {
-    {{Json .TableColumn}}
-  };
-  disabled.value = true;
-};
-
-// resetForm
-const resetForm = (formEl: FormInstance | undefined) => {
-  centerDialogVisible.value = false;
-  if (!formEl) return;
-  formEl.resetFields();
-};
-
-
-// 提交数据
-const submitForm = (formEl: FormInstance | undefined) => {
-  if (!formEl) return;
-  formEl.validate(async valid => {
-    if (!valid) return;
-    loading.value = true;
-    const data = {{Helper .Table.TableName}}ItemFrom.value as unknown as {{CamelStr .Table.TableName}}.Res{{CamelStr .Table.TableName}}Item;
-    if (data.id !== 0) {
-	  {{- if InMethod .Method "Update"}}
-      await useHandleSet(update{{CamelStr .Table.TableName}}Api, data.id, data, "修改{{.Table.TableComment}}");
-	  {{- end}}
-    } else {
-	  {{- if InMethod .Method "Create"}}
-      await useHandleData(add{{CamelStr .Table.TableName}}Api, data, "添加{{.Table.TableComment}}");
-	  {{- end}}
-    }
-    resetForm(formEl);
-    loading.value = false;
-    proTable.value?.getTableList();
-  });
-};
-
-{{- if InMethod .Method "Drop"}}
-// 清理按钮
-const handleDrop = async (row: {{CamelStr .Table.TableName}}.Res{{CamelStr .Table.TableName}}Item) => {
-  await useHandleData(drop{{CamelStr .Table.TableName}}Api, Number(row.id), "清理{{.Table.TableComment}}");
-  proTable.value?.getTableList();
-};
-{{- end}}
-
-{{- if InMethod .Method "Delete"}}
-// 删除按钮
-const handleDelete = async (row: {{CamelStr .Table.TableName}}.Res{{CamelStr .Table.TableName}}Item) => {
-  await useHandleData(delete{{CamelStr .Table.TableName}}Api, Number(row.id), "删除{{.Table.TableComment}}");
-  proTable.value?.getTableList();
-};
-{{- end}}
-
-{{- if InMethod .Method "Recover"}}
-// 恢复按钮
-const handleRecover = async (row: {{CamelStr .Table.TableName}}.Res{{CamelStr .Table.TableName}}Item) => {
-  await useHandleData(recover{{CamelStr .Table.TableName}}Api, Number(row.id), "恢复{{.Table.TableComment}}");
-  proTable.value?.getTableList();
-};
-{{- end}}
-
-{{- if InMethod .Method "Create"}}
-// 添加按钮
-const handleAdd = () => {
-  title.value = "新增{{.Table.TableComment}}";
-  centerDialogVisible.value = true;
-  reset();
-  disabled.value = false;
-};
-{{- end}}
-
-{{- if InMethod .Method "Update"}}
-// 编辑按钮
-const handleUpdate = async (row: {{CamelStr .Table.TableName}}.Res{{CamelStr .Table.TableName}}Item) => {
-  title.value = "编辑{{.Table.TableComment}}";
-  centerDialogVisible.value = true;
-  reset();
-  const { data } = await get{{CamelStr .Table.TableName}}Api(Number(row.id));
-  {{Helper .Table.TableName}}ItemFrom.value = data;
-  disabled.value = false;
-};
-{{- end}}
-
-{{- if InMethod .Method "Show"}}
-// 查看按钮
-const handleItem = async (row: {{CamelStr .Table.TableName}}.Res{{CamelStr .Table.TableName}}Item) => {
-  title.value = "查看{{.Table.TableComment}}";
-  centerDialogVisible.value = true;
-  reset();
-  const { data } = await get{{CamelStr .Table.TableName}}Api(Number(row.id));
-  {{Helper .Table.TableName}}ItemFrom.value = data;
-  disabled.value = true;
-};
-{{- end}}
-
 </script>
-<style lang="scss">
-@import "@/styles/custom.scss";
+<style scoped lang="scss">
+@use '@/styles/custom';
 </style>
