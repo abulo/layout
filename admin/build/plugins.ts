@@ -56,7 +56,12 @@ export const createVitePlugins = (viteEnv: ViteEnv): (PluginOption | PluginOptio
     // 自动导入组件
     Components({
       resolvers: [
-        ElementPlusResolver(),
+        ElementPlusResolver({
+          // 自动导入图标
+          importStyle: 'sass',
+          // 确保图标也被自动导入
+          directives: true,
+        }),
         // icon auto import
         // IconsResolver({
         //   enabledCollections: ['localSvgIcon'],
