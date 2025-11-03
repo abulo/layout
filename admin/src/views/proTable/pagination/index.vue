@@ -7,12 +7,11 @@
           :columns="fePaginationColumns"
           :request-api="getAllData"
           :toolbar-middle="toolbarMiddle"
-          :fe-pagination-filter-method="getFEPaginationData"
-          :pagination="ProTablePaginationEnum.FE"
+          :pagination="true"
         />
       </el-tab-pane>
       <el-tab-pane label="无分页" name="noPagination" class="table-box">
-        <pro-table :columns="noPaginationColumns" :request-api="getAllData" :pagination="ProTablePaginationEnum.NONE" />
+        <pro-table :columns="noPaginationColumns" :request-api="getAllData" :pagination="false" />
       </el-tab-pane>
     </el-tabs>
     <el-dialog v-model="functionDialogVisible" title="功能说明" width="30%">
@@ -25,10 +24,7 @@
               1，后端分页：使用 pagination 属性，设置为 ProTablePaginationEnum.BE，默认值。其他 ProTable
               页面都是后端分页，本页面不再演示
             </li>
-            <li>
-              2，前端分页：使用 pagination 属性，设置为 ProTablePaginationEnum.FE，需要配合 fe-pagination-filter-method
-              属性使用
-            </li>
+            <li>2，前端分页：使用 pagination 属性，设置为 true，需要配合 fe-pagination-filter-method 属性使用</li>
             <li>3，无分页：使用 pagination 属性，设置为 ProTablePaginationEnum.NO</li>
           </ul>
         </li>
@@ -42,7 +38,6 @@
 defineOptions({ name: 'UseProTablePagination' })
 import type { TabPaneName } from 'element-plus'
 import type { ColumnProps, ProTableInstance } from '@/components/ProTable/interface'
-import { ProTablePaginationEnum } from '@/enums'
 import { ElButton } from 'element-plus'
 
 interface MockDataItem {
@@ -65,13 +60,6 @@ for (let i = 0; i < 200; i++) {
 
 const getAllData = () => {
   return Promise.resolve(mockData.value)
-}
-const getFEPaginationData = (query: IObject) => {
-  return mockData.value.filter(item => {
-    return Object.keys(query).every(key =>
-      item[key as keyof MockDataItem].toString().includes(query[key as keyof MockDataItem])
-    )
-  })
 }
 
 const setFormData = () => {

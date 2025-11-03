@@ -1,7 +1,6 @@
 import type { ColumnProps, RenderScope, HeaderRenderScope } from '../interface'
 import { filterEnum, formatValue, handleProp, handleRowAccordingToProp } from '@/utils'
 import { ElTableColumn, ElTag, ElText } from 'element-plus'
-import { TABLE_COLUMN_OPERATIONS_NAME } from '@/constants/proTable'
 
 const highlightKeyword = (value: string, keyword: string) => {
   const index = value.indexOf(keyword)
@@ -71,7 +70,7 @@ export default defineComponent({
             <ElTableColumn
               {...item}
               align={item.align}
-              showOverflowTooltip={item.showOverflowTooltip ?? item.prop !== TABLE_COLUMN_OPERATIONS_NAME}
+              showOverflowTooltip={item.showOverflowTooltip ?? item.prop !== 'operation'}
               label={unref(item.label)}
               fixed={item.fixed}
             >

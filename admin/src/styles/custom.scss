@@ -1,0 +1,30 @@
+.dialog-footer button:first-child {
+  margin-right: 10px;
+}
+.dialog-settings {
+  .el-dialog__body {
+    max-height: 600px;
+    overflow: auto;
+  }
+}
+.dialog-settings-none {
+  .el-dialog__body {
+    text-align: center;
+    scrollbar-width: none;
+  }
+}
+.el-dialog .el-dialog__header {
+  margin-bottom: 18px;
+}
+.el-dropdown {
+  margin-left: 12px;
+  vertical-align: sub;
+}
+.cardHeight {
+  width: 100%;
+  max-height: 400px;
+  overflow-y: scroll;
+}
+.table-el-dropdown {
+  margin-left: 0;
+}

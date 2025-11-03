@@ -30,7 +30,8 @@ export const useAuthStore = defineStore('geeker-auth', () => {
       state.allAuthButtonList = await AccountAPI.getUserButtons()
     },
     async getAuthMenuList() {
-      state.authMenuList = await AccountAPI.getUserMenu()
+      const { data } = AccountAPI.getUserMenu()
+      this.authMenuList = data
     },
     async setRouteName(name: string) {
       state.routeName = name

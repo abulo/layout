@@ -1,6 +1,7 @@
 export const SERVER_ENDPOINTS = {
   geeker: '/geeker',
   api: '/api',
+  sys: '/sys', //系统管理
 }
 // 字典缓存时间 30 天
 export const DICT_CACHE_TIME = 1000 * 60 * 60 * 24 * 30

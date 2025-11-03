@@ -1,4 +1,4 @@
-// import authMenuList from '@/assets/json/authMenuList.json'
+import authMenuList from '@/assets/json/authMenuList.json'
 // import authButtonList from '@/assets/json/authButtonList.json'
 import http from '@/utils/request'
 // // import type { MenuOptions } from '@/api/system/menu'
@@ -29,9 +29,9 @@ export const AuthApi = {
 
   // 获取菜单列表
   getAuthMenuList: () => {
-    return http.get<MenuOptions[]>(`/user/menu`, {}, { loading: false })
+    // return http.get<MenuOptions[]>(`/user/menu`, {}, { loading: false })
     // 如果想让菜单变为本地数据，注释上一行代码，并引入本地 authMenuList.json 数据
-    // return authMenuList
+    return authMenuList
   },
 
   // 获取按钮权限

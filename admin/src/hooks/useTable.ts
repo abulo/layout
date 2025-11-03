@@ -1,6 +1,4 @@
 import { reactive, toRefs } from 'vue'
-import { DEFAULT_PAGE_SIZE } from '@/constants/proTable'
-import { ProTablePaginationEnum } from '@/enums'
 import type { ComposerTranslation } from 'vue-i18n'
 
 export interface Pageable {
@@ -21,18 +19,16 @@ export interface StateProps<T> {
 export function useTable<TableItem>(
   _api: (_params: IObject) => Promise<ResultPage<TableItem>> | Promise<TableItem[]>,
   _initParam: object,
-  _pagination: ProTablePaginationEnum,
+  _pagination: boolean,
   _t: ComposerTranslation,
-  _fePaginationFilterMethod?: (_query: IObject) => IObject[],
   _dataCallBack?: (_data: TableItem[]) => IObject[]
 ): any
 
 export function useTable<TableItem>(
   api: (_params: IObject) => Promise<ResultPage<TableItem>> | Promise<TableItem[]>,
   initParam: object = {},
-  pagination: ProTablePaginationEnum = ProTablePaginationEnum.BE,
+  pagination: boolean = true,
   t: ComposerTranslation,
-  fePaginationFilterMethod?: (_query: IObject) => IObject[],
   dataCallBack?: (_data: TableItem[]) => IObject[]
 ) {
   const state = reactive<StateProps<TableItem>>({
@@ -43,7 +39,7 @@ export function useTable<TableItem>(
       // 当前页数
       pageNum: 1,
       // 每页显示条数
-      pageSize: DEFAULT_PAGE_SIZE,
+      pageSize: 10,
       // 总条数
       total: 0,
     },
@@ -65,14 +61,12 @@ export function useTable<TableItem>(
       Object.assign(
         state.totalParam,
         initParam,
-        pagination !== ProTablePaginationEnum.NONE
-          ? { pageNum: state.pageable.pageNum, pageSize: state.pageable.pageSize }
-          : {}
+        pagination !== false ? { pageNum: state.pageable.pageNum, pageSize: state.pageable.pageSize } : {}
       )
 
       const data = await api({ ...state.searchInitParam, ...state.totalParam })
       let listData: TableItem[] | IObject[] = []
-      if (pagination === ProTablePaginationEnum.BE) {
+      if (pagination === true) {
         if (Array.isArray((data as ResultPage<TableItem>).list)) {
           listData = (data as ResultPage<TableItem>).list
         } else {
@@ -85,14 +79,6 @@ export function useTable<TableItem>(
         } else {
           throw new Error(t('error.tableDataShouldBeArray'))
         }
-      }
-
-      if (pagination === ProTablePaginationEnum.FE) {
-        const { pageNum, pageSize, ...rest } = state.totalParam
-        const queryKeys = Object.keys(rest)
-        const filterData = queryKeys.length ? fePaginationFilterMethod!(rest) : (data as TableItem[])
-        listData = filterData.slice((pageNum - 1) * pageSize, pageNum * pageSize)
-        state.pageable.total = queryKeys.length ? filterData.length : (data as TableItem[]).length
       }
       // @ts-expect-error 类型不兼容
       state.tableData = dataCallBack ? dataCallBack(listData) : listData
@@ -137,7 +123,7 @@ export function useTable<TableItem>(
     state.pageable.pageNum = 1
     // 重置搜索表单的时，如果有默认搜索参数，则重置默认的搜索参数
     state.searchParam = { ...state.searchInitParam }
-    state.pageable.pageSize = DEFAULT_PAGE_SIZE
+    state.pageable.pageSize = 10
     updatedTotalParam()
     void getTableList()
   }

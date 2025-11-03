@@ -16,6 +16,20 @@
       }
     },
     {
+      "path": "/sys/post",
+      "name": "SysPost",
+      "component": "/sys/post/index",
+      "meta": {
+        "icon": "Menu",
+        "title": "职位",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      }
+    },
+    {
       "path": "/dataScreen",
       "name": "dataScreen",
       "component": "/dataScreen/index",

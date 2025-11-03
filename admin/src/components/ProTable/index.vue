@@ -121,7 +121,7 @@
     <!-- 分页组件 -->
     <slot name="pagination">
       <pagination
-        v-if="pagination !== ProTablePaginationEnum.NONE"
+        v-if="pagination"
         :pageable="pageable"
         :handle-size-change="handleSizeChange"
         :handle-current-change="handleCurrentChange"
@@ -138,7 +138,7 @@
 
 <script setup lang="ts">
 defineOptions({ name: 'ProTable' })
-import { ElTable, ElMessage } from 'element-plus'
+import { ElTable } from 'element-plus'
 import { useTable } from '@/hooks/useTable'
 import { useSelection } from '@/hooks/useSelection'
 import type { ColumnProps, TypeProps, ProTableProps } from './interface'
@@ -150,16 +150,14 @@ import TableColumn from './components/TableColumn'
 import Sortable from 'sortablejs'
 import { toolbarButtonsConfig } from '@/utils/proTable'
 import { Operation } from '@element-plus/icons-vue'
-import { ProTablePaginationEnum } from '@/enums'
 import { useI18n } from 'vue-i18n'
 import { useLoadingStore } from '@/stores/modules/loading'
-import { TABLE_COLUMN_OPERATIONS_NAME } from '@/constants/proTable'
 
 // 接受父组件参数，配置默认值
 const props = withDefaults(defineProps<ProTableProps>(), {
   columns: () => [],
   requestAuto: true,
-  pagination: ProTablePaginationEnum.BE,
+  pagination: true,
   initParam: () => ({}),
   border: true,
   rowKey: 'id',
@@ -268,7 +266,7 @@ const {
   reset,
   handleSizeChange,
   handleCurrentChange,
-} = useTable(props.requestApi, props.initParam, props.pagination, t, props.fePaginationFilterMethod, props.dataCallback)
+} = useTable(props.requestApi, props.initParam, props.pagination, t, props.dataCallback)
 
 // 清空选中数据列表
 const clearSelection = () => tableRef.value!.clearSelection()
@@ -357,13 +355,13 @@ const searchColumns = computed(() => {
 })
 
 // 如果是前端分页，且有筛选参数，但是没有 fePaginationFilterMethod，则抛出错误
-if (
-  props.pagination === ProTablePaginationEnum.FE &&
-  searchColumns.value.length !== 0 &&
-  !props.fePaginationFilterMethod
-) {
-  ElMessage.error(t('error.fePaginationFilterMethodIsRequired'))
-}
+// if (
+//   props.pagination === true &&
+//   searchColumns.value.length !== 0 &&
+//   !props.fePaginationFilterMethod
+// ) {
+//   ElMessage.error(t('error.fePaginationFilterMethodIsRequired'))
+// }
 
 // 设置 搜索表单默认排序 && 搜索表单项的默认值
 searchColumns.value?.forEach((column, index) => {
@@ -388,7 +386,7 @@ const setSearchParamForm = (key: string, value: any) => {
 const colRef = ref()
 const colSetting = tableColumns.value.filter(item => {
   const { type, prop, isSetting } = item
-  return !columnTypes.includes(type!) && prop !== TABLE_COLUMN_OPERATIONS_NAME && isSetting
+  return !columnTypes.includes(type!) && prop !== 'operation' && isSetting
 })
 const openColSetting = () => colRef.value.openColSetting()
 
@@ -435,7 +433,6 @@ defineExpose({
   isSelected,
   selectedList,
   selectedListIds,
-
   setSearchParamForm,
   getTableList,
   search,
