@@ -5,7 +5,7 @@ import { getFlatMenuList, getShowMenuList, getAllBreadcrumbList } from '@/utils'
 import { useRoute } from 'vue-router'
 import { computed, reactive, toRefs } from 'vue'
 
-export const useAuthStore = defineStore('geeker-auth', () => {
+export const useAuthStore = defineStore('admin-auth', () => {
   const route = useRoute()
   const state = reactive<AuthState>({
     // 全部的按钮权限列表

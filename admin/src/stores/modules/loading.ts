@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-export const useLoadingStore = defineStore('geeker-loading', () => {
+export const useLoadingStore = defineStore('admin-loading', () => {
   const loading = ref(false)
 
   const setLoading = (_state: boolean) => {

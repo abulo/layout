@@ -4,8 +4,8 @@ import { useStorage } from '@vueuse/core'
 import { DictAPI } from '@/api/system/dict'
 import { DICT_CACHE_TIME } from '@/constants'
 
-export const useDictStore = defineStore('geeker-dict', () => {
-  const dict = useStorage<Record<string, { list: Dict[]; __cache_time: number }>>('geeker-dict', {}, localStorage, {
+export const useDictStore = defineStore('admin-dict', () => {
+  const dict = useStorage<Record<string, { list: Dict[]; __cache_time: number }>>('admin-dict', {}, localStorage, {
     mergeDefaults: true,
   })
 
