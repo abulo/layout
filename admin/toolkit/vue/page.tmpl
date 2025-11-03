@@ -10,8 +10,7 @@
     :request-auto="true"
 	  :pagination="{{.Page}}"
 	  :search-col="12">
-	    <!-- 表格 header 按钮 -->
-      <template #tableHeader>
+	    <template #toolbarLeft>
 	  	{{- if InMethod .Method "Create"}}
         <el-button v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}Create'" type="primary" :icon="CirclePlus" @click="handleAdd">新增</el-button>
 		  {{- end}}

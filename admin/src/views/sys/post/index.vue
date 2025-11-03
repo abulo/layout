@@ -11,8 +11,7 @@
       :pagination="true"
       :search-col="12"
     >
-      <!-- 表格 header 按钮 -->
-      <template #tableHeader>
+      <template #toolbarLeft>
         <el-button v-auth="'post.SysPostCreate'" type="primary" :icon="CirclePlus" @click="handleAdd">新增</el-button>
       </template>
       <!-- 删除状态 -->
@@ -322,7 +321,7 @@ const columns: ColumnProps<ResSysPost>[] = [
   { prop: 'name', label: '名称', search: { valueType: 'input' } },
   { prop: 'sort', label: '排序' },
   { prop: 'status', label: '状态:0正常/1停用', search: { valueType: 'input' } },
-  { prop: 'deleted', label: '删除:0否/1是', search: { valueType: 'input' } },
+  { prop: 'deleted', label: '删除:0否/1是', enum: deletedEnum, search: deleteSearch },
   { prop: 'tenantId', label: '租户' },
   { prop: 'creator', label: '创建人' },
   { prop: 'createTime', label: '创建时间' },
