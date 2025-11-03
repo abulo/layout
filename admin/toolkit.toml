@@ -20,9 +20,9 @@
     DriverName = "mysql" # 数据库驱动名称
     LinkNode = "sql.host1"
 [vue]
-    MethodPath = "src/api/method"
-    InterfacePath = "src/api/interface"
-    PagePath = "src/view"
+    ModuleDir = "src/api/modules"
+    InterfaceDir = "src/api/interface"
+    PageDir = "src/views"
 [watch]
     # 在 go.mod 发生变化自动运行 go mod tidy
     AutoTidy = true
