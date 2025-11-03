@@ -104,7 +104,13 @@ export default [
       'vue/singleline-html-element-content-newline': 'off',
       'vue/component-name-in-template-casing': 'off',
       'vue/require-default-prop': 'off',
-      'vue/html-closing-bracket-newline': 'off',
+      'vue/html-closing-bracket-newline': [
+        'off',
+        {
+          singleline: 'never',
+          multiline: 'always',
+        },
+      ], // 在标签的右括号之前要求或禁止换行
 
       // 一般规则
       curly: ['error', 'multi-line'],
