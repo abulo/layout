@@ -8,6 +8,7 @@ import (
 	"github.com/abulo/ratel/v3/stores/sql"
 	"github.com/spf13/cast"
 	"google.golang.org/protobuf/proto"
+	"gorm.io/gorm/clause"
 )
 
 // sys_menu 菜单
@@ -111,7 +112,11 @@ func SysMenuList(ctx context.Context, condition map[string]any) (res []dao.SysMe
 			builder.Limit(cast.ToInt(val))
 		}
 	}
-	builder.Order("id")
+	builder.Order(clause.OrderBy{Columns: []clause.OrderByColumn{
+		{Column: clause.Column{Name: "sort"}, Desc: false},
+		{Column: clause.Column{Name: "parent_id"}, Desc: false},
+		{Column: clause.Column{Name: "id"}, Desc: true},
+	}})
 	err = builder.Find(&res).Error
 	return
 }
@@ -131,5 +136,13 @@ func SysMenuListTotal(ctx context.Context, condition map[string]any) (res int64,
 	}
 
 	err = builder.Count(&res).Error
+	return
+}
+
+// SystemMenuListRecursive 递归查询向上查询, 用于在计划任务中使用
+func SysMenuListRecursive(ctx context.Context, id int64) (res []dao.SysMenu, err error) {
+	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db.WithContext(ctx).Raw("WITH RECURSIVE filter_sys_menu (id,name,code,type,sort,parent_id,path,icon,component,component_name,hide,link,cache,remark,active,full,redirect,status,creator,create_time,updater,update_time) AS ( SELECT * FROM sys_menu WHERE id = ? UNION ALL SELECT t.* FROM sys_menu t INNER JOIN filter_sys_menu ON filter_sys_menu.parent_id=t.id) SELECT DISTINCT * FROM filter_sys_menu ORDER BY filter_sys_menu.sort ASC,filter_sys_menu.parent_id ASC,filter_sys_menu.id DESC", id).Scan(&res)
+	err = nil
 	return
 }

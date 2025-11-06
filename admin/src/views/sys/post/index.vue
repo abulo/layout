@@ -15,9 +15,9 @@
         <el-button v-auth="'post.SysPostCreate'" type="primary" :icon="CirclePlus" @click="handleAdd">新增</el-button>
       </template>
       <!-- 删除状态 -->
-      <template #deleted="scope">
-        <DictTag type="delete" :value="scope.row.deleted" />
-      </template>
+      <!-- <template #deleted="scope"> -->
+      <!-- <DictTag type="delete" :value="scope.row.deleted" /> -->
+      <!-- </template> -->
       <!-- 菜单操作 -->
       <template #operation="scope">
         <el-button v-auth="'post.SysPost'" type="primary" link :icon="View" @click="handleItem(scope.row)">
@@ -122,7 +122,8 @@
 <script setup lang="tsx">
 defineOptions({ name: 'SysPost' })
 import type { ResSysPost } from '@/api/interface/sysPost'
-import type { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
+// import type { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
+import type { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
 import { EditPen, CirclePlus, Delete, Refresh, DeleteFilled, View, DArrowRight } from '@element-plus/icons-vue'
 import {
   getSysPostListApi,
@@ -134,10 +135,10 @@ import {
   updateSysPostApi,
 } from '@/api/modules/sysPost'
 import type { FormInstance, FormRules } from 'element-plus'
-import { getIntDictOptions } from '@/utils/dict'
-import { DictTag } from '@/components/DictTag'
+// import { getIntDictOptions } from '@/utils/dict'
+// import { DictTag } from '@/components/DictTag'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
-import { HasPermission } from '@/utils/permission'
+// import { HasPermission } from '@/utils/permission'
 //加载
 const loading = ref(false)
 //禁用
@@ -301,27 +302,28 @@ const submitForm = (formEl: FormInstance | undefined) => {
   })
 }
 //删除状态
-const deletedEnum = getIntDictOptions('delete')
+// const deletedEnum = getIntDictOptions('delete')
 // 表格配置项
-const deleteSearch = reactive<SearchProps>(
-  HasPermission('post.SysPostDelete')
-    ? {
-        el: 'switch',
-        span: 2,
-        props: {
-          activeValue: 1,
-          inactiveValue: 0,
-        },
-      }
-    : {}
-)
+// const deleteSearch = reactive<SearchProps>(
+//   // HasPermission('post.SysPostDelete')
+//   // ?
+//   {
+//     el: 'switch',
+//     span: 2,
+//     props: {
+//       activeValue: 1,
+//       inactiveValue: 0,
+//     },
+//   }
+//   // : {}
+// )
 
 const columns: ColumnProps<ResSysPost>[] = [
   { prop: 'id', label: '编号' },
   { prop: 'name', label: '名称', search: { valueType: 'input' } },
   { prop: 'sort', label: '排序' },
   { prop: 'status', label: '状态:0正常/1停用', search: { valueType: 'input' } },
-  { prop: 'deleted', label: '删除:0否/1是', enum: deletedEnum, search: deleteSearch },
+  { prop: 'deleted', label: '删除:0否/1是' },
   { prop: 'tenantId', label: '租户' },
   { prop: 'creator', label: '创建人' },
   { prop: 'createTime', label: '创建时间' },
@@ -332,13 +334,13 @@ const columns: ColumnProps<ResSysPost>[] = [
     label: '操作',
     width: 150,
     fixed: 'right',
-    isShow: HasPermission(
-      'post.SysPostUpdate',
-      'post.SysPostDelete',
-      'post.SysPostDrop',
-      'post.SysPostRecover',
-      'post.SysPost'
-    ),
+    // isShow: HasPermission(
+    //   'post.SysPostUpdate',
+    //   'post.SysPostDelete',
+    //   'post.SysPostDrop',
+    //   'post.SysPostRecover',
+    //   'post.SysPost'
+    // ),
   },
 ]
 </script>

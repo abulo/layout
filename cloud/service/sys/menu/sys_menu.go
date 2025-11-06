@@ -53,14 +53,14 @@ func SysMenuDao(item *SysMenuObject) *dao.SysMenu {
 	if item != nil && item.Cache != nil {
 		daoItem.Cache = item.Cache // 缓存:0否/1 是
 	}
-	if item != nil && item.Affix != nil {
-		daoItem.Affix = item.Affix // 固定:0否/1 是
+	if item != nil && item.Remark != nil {
+		daoItem.Remark = null.StringFrom(item.GetRemark()) // 备注
 	}
 	if item != nil && item.Active != nil {
 		daoItem.Active = null.StringFrom(item.GetActive()) // 激活地址
 	}
 	if item != nil && item.Full != nil {
-		daoItem.Full = item.Full //
+		daoItem.Full = item.Full // 全屏:1 开/0 关
 	}
 	if item != nil && item.Redirect != nil {
 		daoItem.Redirect = null.StringFrom(item.GetRedirect()) // 重定向
@@ -126,8 +126,8 @@ func SysMenuProto(item dao.SysMenu) *SysMenuObject {
 	if item.Cache != nil {
 		res.Cache = item.Cache
 	}
-	if item.Affix != nil {
-		res.Affix = item.Affix
+	if item.Remark.IsValid() {
+		res.Remark = item.Remark.Ptr()
 	}
 	if item.Active.IsValid() {
 		res.Active = item.Active.Ptr()

@@ -54,12 +54,12 @@ type SysMenuObject struct {
 	Link *string `protobuf:"bytes,12,opt,name=link,proto3,oneof" json:"link" gorm:"column:link"` //外部地址
 	// @inject_tag: gorm:"column:cache" json:"cache"
 	Cache *int32 `protobuf:"varint,13,opt,name=cache,proto3,oneof" json:"cache" gorm:"column:cache"` //缓存:0否/1 是
-	// @inject_tag: gorm:"column:affix" json:"affix"
-	Affix *int32 `protobuf:"varint,14,opt,name=affix,proto3,oneof" json:"affix" gorm:"column:affix"` //固定:0否/1 是
+	// @inject_tag: gorm:"column:remark" json:"remark"
+	Remark *string `protobuf:"bytes,14,opt,name=remark,proto3,oneof" json:"remark" gorm:"column:remark"` //备注
 	// @inject_tag: gorm:"column:active" json:"active"
 	Active *string `protobuf:"bytes,15,opt,name=active,proto3,oneof" json:"active" gorm:"column:active"` //激活地址
 	// @inject_tag: gorm:"column:full" json:"full"
-	Full *int32 `protobuf:"varint,16,opt,name=full,proto3,oneof" json:"full" gorm:"column:full"` //
+	Full *int32 `protobuf:"varint,16,opt,name=full,proto3,oneof" json:"full" gorm:"column:full"` //全屏:1 开/0 关
 	// @inject_tag: gorm:"column:redirect" json:"redirect"
 	Redirect *string `protobuf:"bytes,17,opt,name=redirect,proto3,oneof" json:"redirect" gorm:"column:redirect"` //重定向
 	// @inject_tag: gorm:"column:status" json:"status"
@@ -197,11 +197,11 @@ func (x *SysMenuObject) GetCache() int32 {
 	return 0
 }
 
-func (x *SysMenuObject) GetAffix() int32 {
-	if x != nil && x.Affix != nil {
-		return *x.Affix
+func (x *SysMenuObject) GetRemark() string {
+	if x != nil && x.Remark != nil {
+		return *x.Remark
 	}
-	return 0
+	return ""
 }
 
 func (x *SysMenuObject) GetActive() string {
@@ -1140,7 +1140,7 @@ var File_sys_menu_proto protoreflect.FileDescriptor
 
 const file_sys_menu_proto_rawDesc = "" +
 	"\n" +
-	"\x0esys_menu.proto\x12\x04menu\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\x95\a\n" +
+	"\x0esys_menu.proto\x12\x04menu\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\x98\a\n" +
 	"\rSysMenuObject\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x01R\x04name\x88\x01\x01\x12\x17\n" +
@@ -1156,8 +1156,8 @@ const file_sys_menu_proto_rawDesc = "" +
 	"\x04hide\x18\v \x01(\x05H\n" +
 	"R\x04hide\x88\x01\x01\x12\x17\n" +
 	"\x04link\x18\f \x01(\tH\vR\x04link\x88\x01\x01\x12\x19\n" +
-	"\x05cache\x18\r \x01(\x05H\fR\x05cache\x88\x01\x01\x12\x19\n" +
-	"\x05affix\x18\x0e \x01(\x05H\rR\x05affix\x88\x01\x01\x12\x1b\n" +
+	"\x05cache\x18\r \x01(\x05H\fR\x05cache\x88\x01\x01\x12\x1b\n" +
+	"\x06remark\x18\x0e \x01(\tH\rR\x06remark\x88\x01\x01\x12\x1b\n" +
 	"\x06active\x18\x0f \x01(\tH\x0eR\x06active\x88\x01\x01\x12\x17\n" +
 	"\x04full\x18\x10 \x01(\x05H\x0fR\x04full\x88\x01\x01\x12\x1f\n" +
 	"\bredirect\x18\x11 \x01(\tH\x10R\bredirect\x88\x01\x01\x12\x1b\n" +
@@ -1182,8 +1182,8 @@ const file_sys_menu_proto_rawDesc = "" +
 	"\x0f_component_nameB\a\n" +
 	"\x05_hideB\a\n" +
 	"\x05_linkB\b\n" +
-	"\x06_cacheB\b\n" +
-	"\x06_affixB\t\n" +
+	"\x06_cacheB\t\n" +
+	"\a_remarkB\t\n" +
 	"\a_activeB\a\n" +
 	"\x05_fullB\v\n" +
 	"\t_redirectB\t\n" +

@@ -1,7 +1,6 @@
 package crond
 
 import (
-	"fmt"
 	"time"
 
 	"cloud/initial"
@@ -39,6 +38,6 @@ func CronJob() func() {
 }
 
 func CommonQueue() {
-	fmt.Println("CommonQueue")
+	// fmt.Println("CommonQueue")
 	return
 }

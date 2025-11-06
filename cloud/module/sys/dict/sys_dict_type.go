@@ -12,46 +12,46 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-// dict_type 字典类型
-// DictTypeCreate 创建数据
-func DictTypeCreate(ctx context.Context, data dao.DictType) (res int64, err error) {
+// sys_dict_type 字典类型
+// SysDictTypeCreate 创建数据
+func SysDictTypeCreate(ctx context.Context, data dao.SysDictType) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	err = db.WithContext(ctx).Model(&dao.DictType{}).Create(&data).Error
+	err = db.WithContext(ctx).Model(&dao.SysDictType{}).Create(&data).Error
 	res = cast.ToInt64(data.Id)
 	return
 }
 
-// DictTypeUpdate 更新数据
-func DictTypeUpdate(ctx context.Context, id int64, data dao.DictType) (res int64, err error) {
+// SysDictTypeUpdate 更新数据
+func SysDictTypeUpdate(ctx context.Context, id int64, data dao.SysDictType) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
 	data.Id = proto.Int64(id)
-	result := db.WithContext(ctx).Model(&dao.DictType{}).Where("id = ?", id).Updates(data)
+	result := db.WithContext(ctx).Model(&dao.SysDictType{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
 }
 
-// DictTypeDelete 删除数据
-func DictTypeDelete(ctx context.Context, id int64) (res int64, err error) {
+// SysDictTypeDelete 删除数据
+func SysDictTypeDelete(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	var data dao.DictType
+	var data dao.SysDictType
 	result := db.WithContext(ctx).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
 }
 
-// DictType 查询单条数据
-func DictType(ctx context.Context, id int64) (res dao.DictType, err error) {
+// SysDictType 查询单条数据
+func SysDictType(ctx context.Context, id int64) (res dao.SysDictType, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Read()
-	err = db.WithContext(ctx).Model(&dao.DictType{}).Where("id = ?", id).Find(&res).Error
+	err = db.WithContext(ctx).Model(&dao.SysDictType{}).Where("id = ?", id).Find(&res).Error
 	return
 }
 
-// DictTypeType 查询单条数据
-func DictTypeType(ctx context.Context, condition map[string]any) (res dao.DictType, err error) {
+// SysDictTypeType 查询单条数据
+func SysDictTypeType(ctx context.Context, condition map[string]any) (res dao.SysDictType, err error) {
 	if util.Empty(condition) {
 		err = errors.New("condition is empty")
 		return
 	}
 	db := initial.Core.Store.LoadSQL("mysql").Read()
-	builder := db.WithContext(ctx).Model(&dao.DictType{})
+	builder := db.WithContext(ctx).Model(&dao.SysDictType{})
 	if val, ok := condition["type"]; ok {
 		builder.Where("type = ?", val)
 	}
@@ -60,10 +60,10 @@ func DictTypeType(ctx context.Context, condition map[string]any) (res dao.DictTy
 	return
 }
 
-// DictTypeList 查询列表数据
-func DictTypeList(ctx context.Context, condition map[string]any) (res []dao.DictType, err error) {
+// SysDictTypeList 查询列表数据
+func SysDictTypeList(ctx context.Context, condition map[string]any) (res []dao.SysDictType, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Read()
-	builder := db.WithContext(ctx).Model(&dao.DictType{})
+	builder := db.WithContext(ctx).Model(&dao.SysDictType{})
 	if val, ok := condition["type"]; ok {
 		builder.Where("type = ?", val)
 	}
@@ -88,10 +88,10 @@ func DictTypeList(ctx context.Context, condition map[string]any) (res []dao.Dict
 	return
 }
 
-// DictTypeListTotal 查询列表数据总量
-func DictTypeListTotal(ctx context.Context, condition map[string]any) (res int64, err error) {
+// SysDictTypeListTotal 查询列表数据总量
+func SysDictTypeListTotal(ctx context.Context, condition map[string]any) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Read()
-	builder := db.WithContext(ctx).Model(&dao.DictType{})
+	builder := db.WithContext(ctx).Model(&dao.SysDictType{})
 	if val, ok := condition["type"]; ok {
 		builder.Where("type = ?", val)
 	}

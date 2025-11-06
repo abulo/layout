@@ -8,11 +8,11 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-// dict_type 字典类型
+// sys_dict_type 字典类型
 
-// DictTypeDao 数据转换
-func DictTypeDao(item *DictTypeObject) *dao.DictType {
-	daoItem := &dao.DictType{}
+// SysDictTypeDao 数据转换
+func SysDictTypeDao(item *SysDictTypeObject) *dao.SysDictType {
+	daoItem := &dao.SysDictType{}
 
 	if item != nil && item.Id != nil {
 		daoItem.Id = item.Id // 编号
@@ -45,9 +45,9 @@ func DictTypeDao(item *DictTypeObject) *dao.DictType {
 	return daoItem
 }
 
-// DictTypeProto 数据绑定
-func DictTypeProto(item dao.DictType) *DictTypeObject {
-	res := &DictTypeObject{}
+// SysDictTypeProto 数据绑定
+func SysDictTypeProto(item dao.SysDictType) *SysDictTypeObject {
+	res := &SysDictTypeObject{}
 	if item.Id != nil {
 		res.Id = item.Id
 	}

@@ -8,11 +8,11 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-// dict 字典
+// sys_dict 字典
 
-// DictDao 数据转换
-func DictDao(item *DictObject) *dao.Dict {
-	daoItem := &dao.Dict{}
+// SysDictDao 数据转换
+func SysDictDao(item *SysDictObject) *dao.SysDict {
+	daoItem := &dao.SysDict{}
 
 	if item != nil && item.Id != nil {
 		daoItem.Id = item.Id // 编号
@@ -26,8 +26,8 @@ func DictDao(item *DictObject) *dao.Dict {
 	if item != nil && item.Value != nil {
 		daoItem.Value = item.Value // 键值
 	}
-	if item != nil && item.DictType != nil {
-		daoItem.DictType = item.DictType // 字典类型
+	if item != nil && item.DictId != nil {
+		daoItem.DictId = item.DictId // 字典类型
 	}
 	if item != nil && item.ColorType != nil {
 		daoItem.ColorType = null.StringFrom(item.GetColorType()) // 颜色类型
@@ -57,9 +57,9 @@ func DictDao(item *DictObject) *dao.Dict {
 	return daoItem
 }
 
-// DictProto 数据绑定
-func DictProto(item dao.Dict) *DictObject {
-	res := &DictObject{}
+// SysDictProto 数据绑定
+func SysDictProto(item dao.SysDict) *SysDictObject {
+	res := &SysDictObject{}
 	if item.Id != nil {
 		res.Id = item.Id
 	}
@@ -72,8 +72,8 @@ func DictProto(item dao.Dict) *DictObject {
 	if item.Value != nil {
 		res.Value = item.Value
 	}
-	if item.DictType != nil {
-		res.DictType = item.DictType
+	if item.DictId != nil {
+		res.DictId = item.DictId
 	}
 	if item.ColorType.IsValid() {
 		res.ColorType = item.ColorType.Ptr()

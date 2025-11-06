@@ -1,12 +1,12 @@
 syntax = "proto3";
-// dict_type 字典类型
+// sys_dict_type 字典类型
 package dict;
-option go_package = "cloud/service/dict;dict";
+option go_package = "cloud/service/sys/dict;dict";
 import "google/protobuf/timestamp.proto";
 import "pagination.proto";
 
-// DictTypeObject 数据对象
-message DictTypeObject {
+// SysDictTypeObject 数据对象
+message SysDictTypeObject {
 	// @inject_tag: gorm:"primaryKey;autoIncrement;column:id" json:"id"
 	optional int64 id = 1; //编号
 	// @inject_tag: gorm:"column:name" json:"name"
@@ -26,69 +26,69 @@ message DictTypeObject {
 	// @inject_tag: gorm:"column:update_time" json:"updateTime"
 	google.protobuf.Timestamp update_time = 9; //更新时间
 }
-// DictTypeTotalResponse 列表数据总量
-message DictTypeTotalResponse {
+// SysDictTypeTotalResponse 列表数据总量
+message SysDictTypeTotalResponse {
 	int64 code = 1;
 	string msg = 2;
 	int64 data = 3;
 }
-// DictTypeCreateRequest 创建数据请求
-message DictTypeCreateRequest {
-	DictTypeObject data = 1;
+// SysDictTypeCreateRequest 创建数据请求
+message SysDictTypeCreateRequest {
+	SysDictTypeObject data = 1;
 }
-// DictTypeCreateResponse 创建数据响应
-message DictTypeCreateResponse {
+// SysDictTypeCreateResponse 创建数据响应
+message SysDictTypeCreateResponse {
 	int64 code = 1;
 	string msg = 2;
 	int64 data = 3;
 }
-// DictTypeUpdateRequest 更新数据请求
-message DictTypeUpdateRequest {
+// SysDictTypeUpdateRequest 更新数据请求
+message SysDictTypeUpdateRequest {
 	// @inject_tag: gorm:"column:id" json:"id"
 	int64 id = 1; //编号
-	DictTypeObject data = 2;
+	SysDictTypeObject data = 2;
 }
-// DictTypeUpdateResponse 更新数据响应
-message DictTypeUpdateResponse {
+// SysDictTypeUpdateResponse 更新数据响应
+message SysDictTypeUpdateResponse {
 	int64 code = 1;
 	string msg = 2;
 }
-// DictTypeDeleteRequest 删除数据请求
-message DictTypeDeleteRequest {
+// SysDictTypeDeleteRequest 删除数据请求
+message SysDictTypeDeleteRequest {
 	// @inject_tag: gorm:"column:id" json:"id"
 	int64 id = 1; //编号
 }
-// DictTypeDeleteResponse 删除数据响应
-message DictTypeDeleteResponse {
+// SysDictTypeDeleteResponse 删除数据响应
+message SysDictTypeDeleteResponse {
 	int64 code = 1;
 	string msg = 2;
 }
-// DictTypeRequest 查询单条数据请求
-message DictTypeRequest {
+// SysDictTypeRequest 查询单条数据请求
+message SysDictTypeRequest {
 	// @inject_tag: gorm:"column:id" json:"id"
 	int64 id = 1; //编号
 }
-// DictTypeResponse 查询单条数据响应
-message DictTypeResponse {
+// SysDictTypeResponse 查询单条数据响应
+message SysDictTypeResponse {
 	int64 code = 1;
 	string msg = 2;
-	DictTypeObject data = 3;
+	SysDictTypeObject data = 3;
 }
-// DictTypeTypeRequest 查询单条数据请求
-message DictTypeTypeRequest {
+// SysDictTypeTypeRequest 查询单条数据请求
+message SysDictTypeTypeRequest {
 	
 	// @inject_tag: db:"type" json:"type"
 	optional string type = 1; // 字典类型
 
 }
-// DictTypeTypeResponse 查询单条数据响应
-message DictTypeTypeResponse {
+// SysDictTypeTypeResponse 查询单条数据响应
+message SysDictTypeTypeResponse {
 	int64 code = 1;
 	string msg = 2;
-	DictTypeObject data = 3;
+	SysDictTypeObject data = 3;
 }
-// DictTypeListRequest 列表数据
-message DictTypeListRequest {
+// SysDictTypeListRequest 列表数据
+message SysDictTypeListRequest {
 	
 	// @inject_tag: db:"type" json:"type"
 	optional string type = 1; // 字典类型
@@ -101,14 +101,14 @@ message DictTypeListRequest {
 	optional pagination.PaginationRequest pagination = 4; // 分页
 }
 
-// DictTypeListResponse 数据响应
-message DictTypeListResponse {
+// SysDictTypeListResponse 数据响应
+message SysDictTypeListResponse {
 	int64 code = 1;
   	string msg = 2;
-	repeated DictTypeObject data = 3;
+	repeated SysDictTypeObject data = 3;
 }
-// DictTypeListTotalRequest 列表数据
-message DictTypeListTotalRequest {
+// SysDictTypeListTotalRequest 列表数据
+message SysDictTypeListTotalRequest {
 	
 	// @inject_tag: db:"type" json:"type"
 	optional string type = 1; // 字典类型
@@ -120,13 +120,13 @@ message DictTypeListTotalRequest {
 }
 
 
-// DictTypeService 服务
-service DictTypeService{
-	rpc DictTypeCreate(DictTypeCreateRequest) returns (DictTypeCreateResponse);
-	rpc DictTypeUpdate(DictTypeUpdateRequest) returns (DictTypeUpdateResponse);
-	rpc DictTypeDelete(DictTypeDeleteRequest) returns (DictTypeDeleteResponse);
-	rpc DictType(DictTypeRequest) returns (DictTypeResponse);
-	rpc DictTypeType(DictTypeTypeRequest) returns (DictTypeTypeResponse);
-	rpc DictTypeList(DictTypeListRequest) returns (DictTypeListResponse);
-	rpc DictTypeListTotal(DictTypeListTotalRequest) returns (DictTypeTotalResponse);
+// SysDictTypeService 服务
+service SysDictTypeService{
+	rpc SysDictTypeCreate(SysDictTypeCreateRequest) returns (SysDictTypeCreateResponse);
+	rpc SysDictTypeUpdate(SysDictTypeUpdateRequest) returns (SysDictTypeUpdateResponse);
+	rpc SysDictTypeDelete(SysDictTypeDeleteRequest) returns (SysDictTypeDeleteResponse);
+	rpc SysDictType(SysDictTypeRequest) returns (SysDictTypeResponse);
+	rpc SysDictTypeType(SysDictTypeTypeRequest) returns (SysDictTypeTypeResponse);
+	rpc SysDictTypeList(SysDictTypeListRequest) returns (SysDictTypeListResponse);
+	rpc SysDictTypeListTotal(SysDictTypeListTotalRequest) returns (SysDictTypeTotalResponse);
 }

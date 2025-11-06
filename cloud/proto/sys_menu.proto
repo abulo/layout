@@ -33,12 +33,12 @@ message SysMenuObject {
 	optional string link = 12; //外部地址
 	// @inject_tag: gorm:"column:cache" json:"cache"
 	optional int32 cache = 13; //缓存:0否/1 是
-	// @inject_tag: gorm:"column:affix" json:"affix"
-	optional int32 affix = 14; //固定:0否/1 是
+	// @inject_tag: gorm:"column:remark" json:"remark"
+	optional string remark = 14; //备注
 	// @inject_tag: gorm:"column:active" json:"active"
 	optional string active = 15; //激活地址
 	// @inject_tag: gorm:"column:full" json:"full"
-	optional int32 full = 16; //
+	optional int32 full = 16; //全屏:1 开/0 关
 	// @inject_tag: gorm:"column:redirect" json:"redirect"
 	optional string redirect = 17; //重定向
 	// @inject_tag: gorm:"column:status" json:"status"

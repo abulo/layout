@@ -1,4 +1,4 @@
-package menu
+package dict
 
 import (
 	"context"
@@ -7,7 +7,8 @@ import (
 	"cloud/dao"
 	"cloud/initial"
 	"cloud/internal/response"
-	"cloud/service/sys/menu"
+	"cloud/service/pagination"
+	"cloud/service/sys/dict"
 
 	globalLogger "github.com/abulo/ratel/v3/core/logger"
 	"github.com/abulo/ratel/v3/stores/null"
@@ -21,41 +22,41 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-// sys_menu 菜单
-// SysMenuItem 查询单条数据
-func SysMenuItem(ctx context.Context, newCtx *app.RequestContext, id int64) (*menu.SysMenuResponse, error) {
+// sys_dict 字典
+// SysDictItem 查询单条数据
+func SysDictItem(ctx context.Context, newCtx *app.RequestContext, id int64) (*dict.SysDictResponse, error) {
 	//判断这个服务能不能链接
 	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"err": err,
-		}).Error("Grpc:菜单:sys_menu:SysMenuItem")
+		}).Error("Grpc:字典:sys_dict:SysDictItem")
 		return nil, status.Error(code.ConvertToGrpc(code.RPCError), code.StatusText(code.RPCError))
 	}
 	//链接服务
-	client := menu.NewSysMenuServiceClient(grpcClient)
-	request := &menu.SysMenuRequest{}
+	client := dict.NewSysDictServiceClient(grpcClient)
+	request := &dict.SysDictRequest{}
 	request.Id = id
 	// 执行服务
-	res, err := client.SysMenu(ctx, request)
+	res, err := client.SysDict(ctx, request)
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:菜单:sys_menu:SysMenuItem")
+		}).Error("GrpcCall:字典:sys_dict:SysDictItem")
 		return nil, err
 	}
 	return res, nil
 }
 
-// SysMenuCreate 创建数据
-func SysMenuCreate(ctx context.Context, newCtx *app.RequestContext) {
+// SysDictCreate 创建数据
+func SysDictCreate(ctx context.Context, newCtx *app.RequestContext) {
 	//判断这个服务能不能链接
 	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"err": err,
-		}).Error("Grpc:菜单:sys_menu:SysMenuCreate")
+		}).Error("Grpc:字典:sys_dict:SysDictCreate")
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.RPCError,
 			"msg":  code.StatusText(code.RPCError),
@@ -63,10 +64,10 @@ func SysMenuCreate(ctx context.Context, newCtx *app.RequestContext) {
 		return
 	}
 	//链接服务
-	client := menu.NewSysMenuServiceClient(grpcClient)
-	request := &menu.SysMenuCreateRequest{}
+	client := dict.NewSysDictServiceClient(grpcClient)
+	request := &dict.SysDictCreateRequest{}
 	// 数据绑定
-	var reqInfo dao.SysMenu
+	var reqInfo dao.SysDict
 	if err := newCtx.BindAndValidate(&reqInfo); err != nil {
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ParamInvalid,
@@ -77,14 +78,14 @@ func SysMenuCreate(ctx context.Context, newCtx *app.RequestContext) {
 	reqInfo.Id = nil
 	reqInfo.Creator = null.StringFrom(newCtx.GetString("userName"))
 	reqInfo.CreateTime = null.DateTimeFrom(util.Now())
-	request.Data = menu.SysMenuProto(reqInfo)
+	request.Data = dict.SysDictProto(reqInfo)
 	// 执行服务
-	res, err := client.SysMenuCreate(ctx, request)
+	res, err := client.SysDictCreate(ctx, request)
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:菜单:sys_menu:SysMenuCreate")
+		}).Error("GrpcCall:字典:sys_dict:SysDictCreate")
 		fromError := status.Convert(err)
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
@@ -98,10 +99,10 @@ func SysMenuCreate(ctx context.Context, newCtx *app.RequestContext) {
 	})
 }
 
-// SysMenuUpdate 更新数据
-func SysMenuUpdate(ctx context.Context, newCtx *app.RequestContext) {
+// SysDictUpdate 更新数据
+func SysDictUpdate(ctx context.Context, newCtx *app.RequestContext) {
 	id := cast.ToInt64(newCtx.Param("id"))
-	if _, err := SysMenuItem(ctx, newCtx, id); err != nil {
+	if _, err := SysDictItem(ctx, newCtx, id); err != nil {
 		fromError := status.Convert(err)
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
@@ -114,7 +115,7 @@ func SysMenuUpdate(ctx context.Context, newCtx *app.RequestContext) {
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"err": err,
-		}).Error("Grpc:菜单:sys_menu:SysMenuUpdate")
+		}).Error("Grpc:字典:sys_dict:SysDictUpdate")
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.RPCError,
 			"msg":  code.StatusText(code.RPCError),
@@ -122,11 +123,11 @@ func SysMenuUpdate(ctx context.Context, newCtx *app.RequestContext) {
 		return
 	}
 	//链接服务
-	client := menu.NewSysMenuServiceClient(grpcClient)
-	request := &menu.SysMenuUpdateRequest{}
+	client := dict.NewSysDictServiceClient(grpcClient)
+	request := &dict.SysDictUpdateRequest{}
 	request.Id = id
 	// 数据绑定
-	var reqInfo dao.SysMenu
+	var reqInfo dao.SysDict
 	if err := newCtx.BindAndValidate(&reqInfo); err != nil {
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ParamInvalid,
@@ -139,14 +140,14 @@ func SysMenuUpdate(ctx context.Context, newCtx *app.RequestContext) {
 	reqInfo.UpdateTime = null.DateTimeFrom(util.Now())
 	reqInfo.Creator = null.StringFromPtr(nil)
 	reqInfo.CreateTime = null.DateTimeFromPtr(nil)
-	request.Data = menu.SysMenuProto(reqInfo)
+	request.Data = dict.SysDictProto(reqInfo)
 	// 执行服务
-	res, err := client.SysMenuUpdate(ctx, request)
+	res, err := client.SysDictUpdate(ctx, request)
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:菜单:sys_menu:SysMenuUpdate")
+		}).Error("GrpcCall:字典:sys_dict:SysDictUpdate")
 		fromError := status.Convert(err)
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
@@ -160,10 +161,10 @@ func SysMenuUpdate(ctx context.Context, newCtx *app.RequestContext) {
 	})
 }
 
-// SysMenuDelete 删除数据
-func SysMenuDelete(ctx context.Context, newCtx *app.RequestContext) {
+// SysDictDelete 删除数据
+func SysDictDelete(ctx context.Context, newCtx *app.RequestContext) {
 	id := cast.ToInt64(newCtx.Param("id"))
-	if _, err := SysMenuItem(ctx, newCtx, id); err != nil {
+	if _, err := SysDictItem(ctx, newCtx, id); err != nil {
 		fromError := status.Convert(err)
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
@@ -175,7 +176,7 @@ func SysMenuDelete(ctx context.Context, newCtx *app.RequestContext) {
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"err": err,
-		}).Error("Grpc:菜单:sys_menu:SysMenuDelete")
+		}).Error("Grpc:字典:sys_dict:SysDictDelete")
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.RPCError,
 			"msg":  code.StatusText(code.RPCError),
@@ -183,16 +184,16 @@ func SysMenuDelete(ctx context.Context, newCtx *app.RequestContext) {
 		return
 	}
 	//链接服务
-	client := menu.NewSysMenuServiceClient(grpcClient)
-	request := &menu.SysMenuDeleteRequest{}
+	client := dict.NewSysDictServiceClient(grpcClient)
+	request := &dict.SysDictDeleteRequest{}
 	request.Id = id
 	// 执行服务
-	res, err := client.SysMenuDelete(ctx, request)
+	res, err := client.SysDictDelete(ctx, request)
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:菜单:sys_menu:SysMenuDelete")
+		}).Error("GrpcCall:字典:sys_dict:SysDictDelete")
 		fromError := status.Convert(err)
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
@@ -206,11 +207,11 @@ func SysMenuDelete(ctx context.Context, newCtx *app.RequestContext) {
 	})
 }
 
-// SysMenu 查询单条数据
-func SysMenu(ctx context.Context, newCtx *app.RequestContext) {
+// SysDict 查询单条数据
+func SysDict(ctx context.Context, newCtx *app.RequestContext) {
 	id := cast.ToInt64(newCtx.Param("id"))
 	// 执行服务
-	res, err := SysMenuItem(ctx, newCtx, id)
+	res, err := SysDictItem(ctx, newCtx, id)
 	if err != nil {
 		fromError := status.Convert(err)
 		response.JSON(newCtx, consts.StatusOK, utils.H{
@@ -222,17 +223,17 @@ func SysMenu(ctx context.Context, newCtx *app.RequestContext) {
 	response.JSON(newCtx, consts.StatusOK, utils.H{
 		"code": res.GetCode(),
 		"msg":  res.GetMsg(),
-		"data": menu.SysMenuDao(res.GetData()),
+		"data": dict.SysDictDao(res.GetData()),
 	})
 }
 
-// SysMenuList 列表数据
-func SysMenuList(ctx context.Context, newCtx *app.RequestContext) {
+// SysDictList 列表数据
+func SysDictList(ctx context.Context, newCtx *app.RequestContext) {
 	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"err": err,
-		}).Error("Grpc:菜单:sys_menu:SysMenuList")
+		}).Error("Grpc:字典:sys_dict:SysDictList")
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.RPCError,
 			"msg":  code.StatusText(code.RPCError),
@@ -240,21 +241,27 @@ func SysMenuList(ctx context.Context, newCtx *app.RequestContext) {
 		return
 	}
 	//链接服务
-	client := menu.NewSysMenuServiceClient(grpcClient)
+	client := dict.NewSysDictServiceClient(grpcClient)
 	// 构造查询条件
-	request := &menu.SysMenuListRequest{}
+	request := &dict.SysDictListRequest{}
+	requestTotal := &dict.SysDictListTotalRequest{}
 
+	if val, ok := newCtx.GetQuery("dictId"); ok {
+		request.DictId = proto.Int64(cast.ToInt64(val))      // 字典类型
+		requestTotal.DictId = proto.Int64(cast.ToInt64(val)) // 字典类型
+	}
 	if val, ok := newCtx.GetQuery("status"); ok {
-		request.Status = proto.Int32(cast.ToInt32(val)) // 状态:0正常/1停用
+		request.Status = proto.Int32(cast.ToInt32(val))      // 状态:0正常/1停用
+		requestTotal.Status = proto.Int32(cast.ToInt32(val)) // 状态:0正常/1停用
 	}
 
-	// 执行服务
-	res, err := client.SysMenuList(ctx, request)
+	// 执行服务,获取数据量
+	resTotal, err := client.SysDictListTotal(ctx, requestTotal)
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:菜单:sys_menu:SysMenuList")
+		}).Error("GrpcCall:字典:sys_dict:SysDictList")
 		fromError := status.Convert(err)
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
@@ -262,27 +269,54 @@ func SysMenuList(ctx context.Context, newCtx *app.RequestContext) {
 		})
 		return
 	}
-	var list []dao.SysMenu
+	var total int64
+	paginationRequest := &pagination.PaginationRequest{}
+	paginationRequest.PageNum = proto.Int64(cast.ToInt64(newCtx.Query("pageNum")))
+	paginationRequest.PageSize = proto.Int64(cast.ToInt64(newCtx.Query("pageSize")))
+	request.Pagination = paginationRequest
+	if resTotal.GetCode() == code.Success {
+		total = resTotal.GetData()
+	}
+	// 执行服务
+	res, err := client.SysDictList(ctx, request)
+	if err != nil {
+		globalLogger.Logger.WithFields(logrus.Fields{
+			"req": request,
+			"err": err,
+		}).Error("GrpcCall:字典:sys_dict:SysDictList")
+		fromError := status.Convert(err)
+		response.JSON(newCtx, consts.StatusOK, utils.H{
+			"code": code.ConvertToHttp(fromError.Code()),
+			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
+		})
+		return
+	}
+	var list []*dao.SysDict
 	if res.GetCode() == code.Success {
 		rpcList := res.GetData()
 		for _, item := range rpcList {
-			list = append(list, *menu.SysMenuDao(item))
+			list = append(list, dict.SysDictDao(item))
 		}
 	}
 	response.JSON(newCtx, consts.StatusOK, utils.H{
 		"code": res.GetCode(),
 		"msg":  res.GetMsg(),
-		"data": list,
+		"data": utils.H{
+			"total":    total,
+			"list":     list,
+			"pageNum":  paginationRequest.PageNum,
+			"pageSize": paginationRequest.PageSize,
+		},
 	})
 }
 
-// SysMenuListSimple 列表精简数据
-func SysMenuListSimple(ctx context.Context, newCtx *app.RequestContext) {
+// SysDictListSimple 列表精简数据
+func SysDictListSimple(ctx context.Context, newCtx *app.RequestContext) {
 	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"err": err,
-		}).Error("Grpc:菜单:sys_menu:SysMenuListSimple")
+		}).Error("Grpc:字典:sys_dict:SysDictListSimple")
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.RPCError,
 			"msg":  code.StatusText(code.RPCError),
@@ -290,21 +324,27 @@ func SysMenuListSimple(ctx context.Context, newCtx *app.RequestContext) {
 		return
 	}
 	//链接服务
-	client := menu.NewSysMenuServiceClient(grpcClient)
+	client := dict.NewSysDictServiceClient(grpcClient)
 	// 构造查询条件
-	request := &menu.SysMenuListRequest{}
+	request := &dict.SysDictListRequest{}
+	requestTotal := &dict.SysDictListTotalRequest{}
 
+	if val, ok := newCtx.GetQuery("dictId"); ok {
+		request.DictId = proto.Int64(cast.ToInt64(val))      // 字典类型
+		requestTotal.DictId = proto.Int64(cast.ToInt64(val)) // 字典类型
+	}
 	if val, ok := newCtx.GetQuery("status"); ok {
-		request.Status = proto.Int32(cast.ToInt32(val)) // 状态:0正常/1停用
+		request.Status = proto.Int32(cast.ToInt32(val))      // 状态:0正常/1停用
+		requestTotal.Status = proto.Int32(cast.ToInt32(val)) // 状态:0正常/1停用
 	}
 
-	// 执行服务
-	res, err := client.SysMenuList(ctx, request)
+	// 执行服务,获取数据量
+	resTotal, err := client.SysDictListTotal(ctx, requestTotal)
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:菜单:sys_menu:SysMenuListSimple")
+		}).Error("GrpcCall:字典:sys_dict:SysDictListSimple")
 		fromError := status.Convert(err)
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
@@ -312,16 +352,43 @@ func SysMenuListSimple(ctx context.Context, newCtx *app.RequestContext) {
 		})
 		return
 	}
-	var list []dao.SysMenu
+	var total int64
+	paginationRequest := &pagination.PaginationRequest{}
+	paginationRequest.PageNum = proto.Int64(cast.ToInt64(newCtx.Query("pageNum")))
+	paginationRequest.PageSize = proto.Int64(cast.ToInt64(newCtx.Query("pageSize")))
+	request.Pagination = paginationRequest
+	if resTotal.GetCode() == code.Success {
+		total = resTotal.GetData()
+	}
+	// 执行服务
+	res, err := client.SysDictList(ctx, request)
+	if err != nil {
+		globalLogger.Logger.WithFields(logrus.Fields{
+			"req": request,
+			"err": err,
+		}).Error("GrpcCall:字典:sys_dict:SysDictListSimple")
+		fromError := status.Convert(err)
+		response.JSON(newCtx, consts.StatusOK, utils.H{
+			"code": code.ConvertToHttp(fromError.Code()),
+			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
+		})
+		return
+	}
+	var list []*dao.SysDict
 	if res.GetCode() == code.Success {
 		rpcList := res.GetData()
 		for _, item := range rpcList {
-			list = append(list, *menu.SysMenuDao(item))
+			list = append(list, dict.SysDictDao(item))
 		}
 	}
 	response.JSON(newCtx, consts.StatusOK, utils.H{
 		"code": res.GetCode(),
 		"msg":  res.GetMsg(),
-		"data": list,
+		"data": utils.H{
+			"total":    total,
+			"list":     list,
+			"pageNum":  paginationRequest.PageNum,
+			"pageSize": paginationRequest.PageSize,
+		},
 	})
 }

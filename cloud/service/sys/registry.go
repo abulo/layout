@@ -2,6 +2,7 @@ package sys
 
 import (
 	"cloud/service/sys/dept"
+	"cloud/service/sys/dict"
 	"cloud/service/sys/logger"
 	"cloud/service/sys/menu"
 	"cloud/service/sys/post"
@@ -59,6 +60,14 @@ func Registry(server *xgrpc.Server) {
 	})
 	// 开发日志->sys_logger_dev
 	logger.RegisterSysLoggerDevServiceServer(server.Server, &logger.SrvSysLoggerDevServiceServer{
+		Server: server,
+	})
+	// 字典类型->sys_dict_type
+	dict.RegisterSysDictTypeServiceServer(server.Server, &dict.SrvSysDictTypeServiceServer{
+		Server: server,
+	})
+	// 字典->sys_dict
+	dict.RegisterSysDictServiceServer(server.Server, &dict.SrvSysDictServiceServer{
 		Server: server,
 	})
 }
