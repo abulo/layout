@@ -17,16 +17,15 @@ type SysMenu struct {
 	Hide          *int32        `gorm:"column:hide" json:"hide"`                      //tinyint 隐藏:0 否/1 是
 	Link          null.String   `gorm:"column:link" json:"link"`                      //varchar 外部地址
 	Cache         *int32        `gorm:"column:cache" json:"cache"`                    //tinyint 缓存:0否/1 是
-	Affix         *int32        `gorm:"column:affix" json:"affix"`                    //tinyint 固定:0否/1 是
+	Remark        null.String   `gorm:"column:remark" json:"remark"`                  //varchar 备注
 	Active        null.String   `gorm:"column:active" json:"active"`                  //varchar 激活地址
-	Full          *int32        `gorm:"column:full" json:"full"`                      //tinyint
+	Full          *int32        `gorm:"column:full" json:"full"`                      //tinyint 全屏:1 开/0 关
 	Redirect      null.String   `gorm:"column:redirect" json:"redirect"`              //varchar 重定向
 	Status        *int32        `gorm:"column:status" json:"status"`                  //tinyint 状态:0正常/1停用
 	Creator       null.String   `gorm:"column:creator" json:"creator"`                //varchar 创建人
 	CreateTime    null.DateTime `gorm:"column:create_time" json:"createTime"`         //datetime 创建时间
 	Updater       null.String   `gorm:"column:updater" json:"updater"`                //varchar 更新人
 	UpdateTime    null.DateTime `gorm:"column:update_time" json:"updateTime"`         //datetime 更新时间
-	Children      []*SysMenu    `db:"-" json:"children"`
 }
 
 func (SysMenu) TableName() string {

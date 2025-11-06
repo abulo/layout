@@ -2,8 +2,8 @@ package dao
 
 import "github.com/abulo/ratel/v3/stores/null"
 
-// DictType 字典类型 dict_type
-type DictType struct {
+// SysDictType 字典类型 sys_dict_type
+type SysDictType struct {
 	Id         *int64        `gorm:"primaryKey;autoIncrement;column:id" json:"id"` //bigint 编号,PRI
 	Name       *string       `gorm:"column:name" json:"name"`                      //varchar 字典名称
 	Type       *string       `gorm:"column:type" json:"type"`                      //varchar 字典类型
@@ -15,6 +15,6 @@ type DictType struct {
 	UpdateTime null.DateTime `gorm:"column:update_time" json:"updateTime"`         //datetime 更新时间
 }
 
-func (DictType) TableName() string {
-	return "dict_type"
+func (SysDictType) TableName() string {
+	return "sys_dict_type"
 }
