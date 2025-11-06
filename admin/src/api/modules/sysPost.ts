@@ -29,3 +29,8 @@ export const dropSysPostApi = (id: number) => {
 export const getSysPostListApi = (params?: ReqSysPostParams) => {
   return http.get<ResultPage<ResSysPost>>(`/v1/sys/post`, params)
 }
+
+// 职位列表(精简)数据
+export const getSysPostListSimpleApi = (params?: ReqSysPostParams) => {
+  return http.get<ResultPage<ResSysPost>>(`/v1/sys/post/simple`, params)
+}
