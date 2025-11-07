@@ -2,9 +2,6 @@ export const SERVER_ENDPOINTS = {
   geeker: '/geeker',
   api: '/api',
 }
-// 字典缓存时间 30 天
-export const DICT_CACHE_TIME = 1000 * 60 * 60 * 24 * 30
-
 // 状态码提示信息
 export const statusMessages: Record<number, string> = {
   400: '请求失败！请您稍后重试',
