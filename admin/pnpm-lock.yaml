@@ -14,6 +14,9 @@ importers:
       '@icon-space/vue-next':
         specifier: ^1.0.7
         version: 1.0.7(vue@3.5.23(typescript@5.9.3))
+      '@pureadmin/utils':
+        specifier: ^2.6.2
+        version: 2.6.2(echarts@6.0.0)(vue@3.5.23(typescript@5.9.3))
       '@tailwindcss/vite':
         specifier: ^4.1.16
         version: 4.1.16(vite@7.2.0(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.93.3)(terser@5.43.1)(yaml@2.8.1))
@@ -1318,6 +1321,17 @@ packages:
 
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
+
+  '@pureadmin/utils@2.6.2':
+    resolution: {integrity: sha512-Dqk7R9Dm9YAzAvMlOO3uudu/eCb5B2eZSPexKlaedTngO/A+OtcFH0870T69nXsUqrwd3LJI6ETL19C9ihofIw==}
+    peerDependencies:
+      echarts: '*'
+      vue: '*'
+    peerDependenciesMeta:
+      echarts:
+        optional: true
+      vue:
+        optional: true
 
   '@rolldown/pluginutils@1.0.0-beta.29':
     resolution: {integrity: sha512-NIJgOsMjbxAXvoGq/X0gD7VPMQ8j9g0BiDaNjVNVjvl+iKXxL3Jre0v31RmBYeLEmkbj2s02v8vFTbUXi5XS2Q==}
@@ -5715,7 +5729,7 @@ snapshots:
     dependencies:
       '@babel/template': 7.27.2
       '@babel/traverse': 7.28.3
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -5993,7 +6007,7 @@ snapshots:
       '@babel/core': 7.28.3
       '@babel/helper-module-transforms': 7.28.3(@babel/core@7.28.3)
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/helper-validator-identifier': 7.27.1
+      '@babel/helper-validator-identifier': 7.28.5
       '@babel/traverse': 7.28.3
     transitivePeerDependencies:
       - supports-color
@@ -6244,7 +6258,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.3
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
       esutils: 2.0.3
 
   '@babel/runtime@7.28.2': {}
@@ -6747,6 +6761,11 @@ snapshots:
   '@pkgr/core@0.2.9': {}
 
   '@polka/url@1.0.0-next.29': {}
+
+  '@pureadmin/utils@2.6.2(echarts@6.0.0)(vue@3.5.23(typescript@5.9.3))':
+    optionalDependencies:
+      echarts: 6.0.0
+      vue: 3.5.23(typescript@5.9.3)
 
   '@rolldown/pluginutils@1.0.0-beta.29': {}
 

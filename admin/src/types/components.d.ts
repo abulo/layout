@@ -16,6 +16,7 @@ declare module 'vue' {
     500: typeof import('./../components/ErrorMessage/500.vue')['default']
     ColSetting: typeof import('./../components/ProTable/components/ColSetting.vue')['default']
     Dict: typeof import('./../components/Dict/index.vue')['default']
+    DictTag: typeof import('./../components/DictTag/DictTag.vue')['default']
     ECharts: typeof import('./../components/ECharts/index.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAside: typeof import('element-plus/es')['ElAside']

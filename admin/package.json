@@ -50,6 +50,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
     "@icon-space/vue-next": "^1.0.7",
+    "@pureadmin/utils": "^2.6.2",
     "@tailwindcss/vite": "^4.1.16",
     "@vueuse/core": "^14.0.0",
     "@wangeditor/editor": "^5.1.23",
