@@ -66,6 +66,8 @@ func SysInitRoute(handle *xhertz.Server) {
 		route.GET("/sys/dict", dict.SysDictList)
 		// sys_dict->字典->列表(精简)
 		route.GET("/sys/dict/simple", dict.SysDictListSimple)
+		// sys_dict->字典->列表
+		route.GET("/dict", dict.DictList)
 
 	}
 }
