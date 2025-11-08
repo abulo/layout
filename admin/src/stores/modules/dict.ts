@@ -3,7 +3,7 @@ import type { Dict } from '@/api/interface/sysDict'
 import { getSysDictDataApi } from '@/api/modules/sysDict'
 
 export const useDictStore = defineStore('admin-dict', () => {
-  const state = ref<Record<string, Dict[]>>({})
+  const state = ref<Dict>({})
 
   const actions = {
     async setDict() {

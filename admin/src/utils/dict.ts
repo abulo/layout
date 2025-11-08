@@ -2,7 +2,7 @@ import { useDictStore } from '@/stores/modules/dict'
 export interface DictDataType {
   label: string
   value: string | number | boolean
-  colorType: 'success' | 'info' | 'warning' | 'danger' | ''
+  colorType: 'success' | 'primary' | 'warning' | 'info' | 'danger'
   cssClass: string
 }
 

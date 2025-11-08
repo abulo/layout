@@ -32,5 +32,5 @@ export const getSysPostListApi = (params?: ReqSysPostParams) => {
 
 // 职位列表(精简)数据
 export const getSysPostListSimpleApi = (params?: ReqSysPostParams) => {
-  return http.get<ResultPage<ResSysPost>>(`/v1/sys/post/simple`, params)
+  return http.get<ResultPage<ResSysPost>>(`/v1/sys/post`, params)
 }

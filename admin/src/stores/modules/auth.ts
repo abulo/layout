@@ -24,6 +24,7 @@ export const useAuthStore = defineStore('admin-auth', () => {
   const flatMenuListGet = computed(() => getFlatMenuList(state.authMenuList))
   const breadcrumbListGet = computed(() => getAllBreadcrumbList(state.authMenuList))
   const authMenuListGet = computed(() => state.authMenuList)
+  const authButtonListGet = computed(() => state.allAuthButtonList)
 
   const actions = {
     async getAuthButtonList() {
@@ -41,6 +42,7 @@ export const useAuthStore = defineStore('admin-auth', () => {
   return {
     ...toRefs(state),
     authButtonList,
+    authButtonListGet,
     showMenuListGet,
     flatMenuListGet,
     breadcrumbListGet,

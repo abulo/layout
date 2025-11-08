@@ -30,6 +30,12 @@ export const HasAuthItem = (permission: string) => {
   } else {
     itemName = permission
   }
-  const authButtons = authStore.authButtonListGet[itemName] || []
+  // 修复：先检查 authStore.authButtonListGet 是否存在
+  const authButtonList = authStore.authButtonListGet
+  if (!authButtonList) {
+    return false
+  }
+  const authButtons = authButtonList[itemName] || []
+  // console.log('authButtons.includes(permission)', authButtons.includes(permission))
   return authButtons.includes(permission)
 }

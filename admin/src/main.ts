@@ -29,6 +29,7 @@ import errorHandler from '@/utils/errorHandler'
 const app = createApp(App)
 
 app.config.errorHandler = errorHandler
+app.config.warnHandler = () => null
 
 // register the element Icons component
 Object.keys(Icons).forEach(key => {
