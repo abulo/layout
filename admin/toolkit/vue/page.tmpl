@@ -169,7 +169,7 @@ import { getIntDictOptions } from "@/utils/dict";
 import { DictTag } from "@/components/DictTag";
 {{- end}}
 import { useHandleData, useHandleSet } from "@/hooks/useHandleData";
-import { HasPermission } from "@/utils/permission";
+import { HasAuth } from "@/utils/permission";
 //加载
 const loading = ref(false)
 //禁用
@@ -336,7 +336,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 const deletedEnum = getIntDictOptions("delete");
 // 表格配置项
 const deleteSearch = reactive<SearchProps>(
-  HasPermission("{{.Pkg}}.{{CamelStr .Table.TableName}}Delete")
+  HasAuth("{{.Pkg}}.{{CamelStr .Table.TableName}}Delete")
     ? {
         el: "switch",
         span: 2,
@@ -356,7 +356,7 @@ const columns: ColumnProps<Res{{CamelStr .Table.TableName}}>[] = [
 		label: "操作",
 		width: 150,
 		fixed: "right",
-		isShow: HasPermission(
+		isShow: HasAuth(
       {{- if InMethod .Method "Update"}}
       "{{.Pkg}}.{{CamelStr .Table.TableName}}Update",
       {{- end}}
