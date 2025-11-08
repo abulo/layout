@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { Dict } from '@/api/interface/dict'
+import type { Dict } from '@/api/interface/sysDict'
 import { getSysDictDataApi } from '@/api/modules/sysDict'
 
 export const useDictStore = defineStore('admin-dict', () => {

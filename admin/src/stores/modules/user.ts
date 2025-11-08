@@ -5,7 +5,8 @@ import piniaPersistConfig from '@/stores/helper/persist'
 export const useUserStore = defineStore('admin-user', {
   state: (): UserState => ({
     token: '',
-    userInfo: { name: 'Geeker' },
+    refreshToken: '',
+    userName: '',
   }),
   getters: {},
   actions: {
@@ -13,9 +14,13 @@ export const useUserStore = defineStore('admin-user', {
     setToken(token: string) {
       this.token = token
     },
-    // Set setUserInfo
-    setUserInfo(userInfo: UserState['userInfo']) {
-      this.userInfo = userInfo
+    // Set setUserName
+    setUserName(userName: string) {
+      this.userName = userName
+    },
+    // Set RefreshToken
+    setRefreshToken(refreshToken: string) {
+      this.refreshToken = refreshToken
     },
   },
   persist: piniaPersistConfig('admin-user'),

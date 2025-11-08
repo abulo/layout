@@ -38,7 +38,7 @@ import PasswordDialog from './PasswordDialog.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
-const username = computed(() => userStore.userInfo.name)
+const username = computed(() => userStore.userName)
 
 // 退出登录
 const logout = () => {

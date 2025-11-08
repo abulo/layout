@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { isHexColor } from '@/utils/color'
 import { ElTag } from 'element-plus'
-import type { DictDataType, getDictOptions } from '@/utils/dict'
+import { type DictDataType, getDictOptions } from '@/utils/dict'
 
 export default defineComponent({
   name: 'DictTag',
