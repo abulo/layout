@@ -8,12 +8,12 @@ const auth: Directive = {
   mounted(el: HTMLElement, binding: DirectiveBinding) {
     const { value } = binding
     if (value instanceof Array && value.length) {
-      let hasPermission = false
+      let HasAuth = false
       for (let index = 0; index < value.length; index++) {
-        hasPermission = HasAuthItem(value[index])
-        if (hasPermission) break
+        HasAuth = HasAuthItem(value[index])
+        if (HasAuth) break
       }
-      if (!hasPermission) el.remove()
+      if (!HasAuth) el.remove()
     } else {
       if (!HasAuthItem(value)) el.remove()
     }
