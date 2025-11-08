@@ -3,23 +3,23 @@ import type { Dict } from '@/api/interface/dict'
 import { getSysDictDataApi } from '@/api/modules/sysDict'
 
 export const useDictStore = defineStore('admin-dict', () => {
-  const state = reactive<Record<string, Dict[]>>({})
+  const state = ref<Record<string, Dict[]>>({})
 
   const actions = {
     async setDict() {
       const data = await getSysDictDataApi()
-      state = data
+      state.value = data
     },
   }
   const getters = {
     getDict: (code: string) => {
-      return state[code]
+      return state.value[code]
     },
     getAllDict: () => {
-      return state
+      return state.value
     },
     clearDict: () => {
-      state = {}
+      state.value = {}
     },
   }
   return { ...actions, ...getters }

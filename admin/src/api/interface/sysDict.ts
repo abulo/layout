@@ -2,7 +2,6 @@
 export interface ReqSysDictParams extends RequestPage {
   dictId?: number // 字典类型
   status?: number // 状态:0正常/1停用
-  sort?: number // 排序
 }
 
 export interface ResSysDict {

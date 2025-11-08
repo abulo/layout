@@ -118,7 +118,11 @@
 <script setup lang="tsx">
 defineOptions({ name: '{{CamelStr .Table.TableName}}' })
 import type { Res{{CamelStr .Table.TableName}} } from '@/api/interface/{{Helper .Table.TableName}}'
-import type { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
+import type { ProTableInstance, ColumnProps
+{{- if .SoftDelete}}
+, SearchProps
+{{- end}}
+} from '@/components/ProTable/interface'
 import {
 	{{- if InMethod .Method "Update"}}
 	EditPen,

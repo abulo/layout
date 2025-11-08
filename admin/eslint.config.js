@@ -98,6 +98,7 @@ export default [
 
       // Vue 规则
       'vue/multi-word-component-names': 'off',
+      '@typescript-eslint/ban-types': 'off', // 禁止使用特定类型
       'vue/max-attributes-per-line': 'off',
       'vue/html-self-closing': 'off',
       'vue/html-indent': 'off',

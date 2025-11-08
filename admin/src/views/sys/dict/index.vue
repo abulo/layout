@@ -112,7 +112,7 @@ import {
 } from '@/api/modules/sysDictType'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
-import { HasPermission } from '@/utils/permission'
+import { HasAuth } from '@/utils/auth'
 //加载
 const loading = ref(false)
 //禁用
@@ -259,9 +259,9 @@ const submitForm = (formEl: FormInstance | undefined) => {
 
 const columns: ColumnProps<ResSysDictType>[] = [
   { prop: 'id', label: '编号' },
-  { prop: 'name', label: '字典名称', search: { valueType: 'input' } },
-  { prop: 'type', label: '字典类型', search: { valueType: 'input' } },
-  { prop: 'status', label: '状态:0正常/1停用', search: { valueType: 'input' } },
+  { prop: 'name', label: '字典名称', search: { el: 'input' } },
+  { prop: 'type', label: '字典类型', search: { el: 'input' } },
+  { prop: 'status', label: '状态:0正常/1停用', search: { el: 'input' } },
   { prop: 'remark', label: '备注' },
   { prop: 'creator', label: '创建人' },
   { prop: 'createTime', label: '创建时间' },
@@ -273,7 +273,7 @@ const columns: ColumnProps<ResSysDictType>[] = [
     label: '操作',
     width: 150,
     fixed: 'right',
-    isShow: HasPermission('dict.SysDictTypeUpdate', 'dict.SysDictTypeDelete', 'dict.SysDictType'),
+    isShow: HasAuth('dict.SysDictTypeUpdate', 'dict.SysDictTypeDelete', 'dict.SysDictType'),
   },
 ]
 </script>

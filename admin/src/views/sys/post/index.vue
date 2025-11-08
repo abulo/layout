@@ -138,7 +138,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 // import { getIntDictOptions } from '@/utils/dict'
 // import { DictTag } from '@/components/DictTag'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
-// import { HasPermission } from '@/utils/permission'
+// import { HasAuth } from '@/utils/permission'
 //加载
 const loading = ref(false)
 //禁用
@@ -305,7 +305,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 // const deletedEnum = getIntDictOptions('delete')
 // 表格配置项
 // const deleteSearch = reactive<SearchProps>(
-//   // HasPermission('post.SysPostDelete')
+//   // HasAuth('post.SysPostDelete')
 //   // ?
 //   {
 //     el: 'switch',
@@ -320,9 +320,9 @@ const submitForm = (formEl: FormInstance | undefined) => {
 
 const columns: ColumnProps<ResSysPost>[] = [
   { prop: 'id', label: '编号' },
-  { prop: 'name', label: '名称', search: { valueType: 'input' } },
+  { prop: 'name', label: '名称', search: { el: 'input' } },
   { prop: 'sort', label: '排序' },
-  { prop: 'status', label: '状态:0正常/1停用', search: { valueType: 'input' } },
+  { prop: 'status', label: '状态:0正常/1停用', search: { el: 'input' } },
   { prop: 'deleted', label: '删除:0否/1是' },
   { prop: 'tenantId', label: '租户' },
   { prop: 'creator', label: '创建人' },
@@ -334,7 +334,7 @@ const columns: ColumnProps<ResSysPost>[] = [
     label: '操作',
     width: 150,
     fixed: 'right',
-    // isShow: HasPermission(
+    // isShow: HasAuth(
     //   'post.SysPostUpdate',
     //   'post.SysPostDelete',
     //   'post.SysPostDrop',

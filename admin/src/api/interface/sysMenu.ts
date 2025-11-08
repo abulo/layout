@@ -1,9 +1,7 @@
 // sys_menu 菜单
 export interface ReqSysMenuParams extends RequestPage {
-  status?: number // 状态:0正常/1停用
   type?: number // 类型:0 目录/1 菜单/2 按钮
   status?: number // 状态:0正常/1停用
-  type?: number // 类型:0 目录/1 菜单/2 按钮
 }
 
 export interface ResSysMenu {
