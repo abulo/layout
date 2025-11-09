@@ -246,9 +246,9 @@ func SysDictList(ctx context.Context, newCtx *app.RequestContext) {
 	request := &dict.SysDictListRequest{}
 	requestTotal := &dict.SysDictListTotalRequest{}
 
-	if val, ok := newCtx.GetQuery("dictId"); ok {
-		request.DictId = proto.Int64(cast.ToInt64(val))      // 字典类型
-		requestTotal.DictId = proto.Int64(cast.ToInt64(val)) // 字典类型
+	if val, ok := newCtx.GetQuery("dictTypeId"); ok {
+		request.DictTypeId = proto.Int64(cast.ToInt64(val))      // 字典类型
+		requestTotal.DictTypeId = proto.Int64(cast.ToInt64(val)) // 字典类型
 	}
 	if val, ok := newCtx.GetQuery("status"); ok {
 		request.Status = proto.Int32(cast.ToInt32(val))      // 状态:0正常/1停用
@@ -329,9 +329,9 @@ func SysDictListSimple(ctx context.Context, newCtx *app.RequestContext) {
 	request := &dict.SysDictListRequest{}
 	requestTotal := &dict.SysDictListTotalRequest{}
 
-	if val, ok := newCtx.GetQuery("dictId"); ok {
-		request.DictId = proto.Int64(cast.ToInt64(val))      // 字典类型
-		requestTotal.DictId = proto.Int64(cast.ToInt64(val)) // 字典类型
+	if val, ok := newCtx.GetQuery("dictTypeId"); ok {
+		request.DictTypeId = proto.Int64(cast.ToInt64(val))      // 字典类型
+		requestTotal.DictTypeId = proto.Int64(cast.ToInt64(val)) // 字典类型
 	}
 	if val, ok := newCtx.GetQuery("status"); ok {
 		request.Status = proto.Int32(cast.ToInt32(val))      // 状态:0正常/1停用

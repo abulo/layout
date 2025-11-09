@@ -46,8 +46,8 @@ func SysDict(ctx context.Context, id int64) (res dao.SysDict, err error) {
 func SysDictList(ctx context.Context, condition map[string]any) (res []dao.SysDict, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysDict{})
-	if val, ok := condition["dictId"]; ok {
-		builder.Where("dict_id = ?", val)
+	if val, ok := condition["dictTypeId"]; ok {
+		builder.Where("dict_type_id = ?", val)
 	}
 	if val, ok := condition["status"]; ok {
 		builder.Where("status = ?", val)
@@ -71,8 +71,8 @@ func SysDictList(ctx context.Context, condition map[string]any) (res []dao.SysDi
 func SysDictListTotal(ctx context.Context, condition map[string]any) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysDict{})
-	if val, ok := condition["dictId"]; ok {
-		builder.Where("dict_id = ?", val)
+	if val, ok := condition["dictTypeId"]; ok {
+		builder.Where("dict_type_id = ?", val)
 	}
 	if val, ok := condition["status"]; ok {
 		builder.Where("status = ?", val)

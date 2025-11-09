@@ -36,8 +36,8 @@ type SysDictObject struct {
 	Label *string `protobuf:"bytes,3,opt,name=label,proto3,oneof" json:"label" gorm:"column:label"` //标签
 	// @inject_tag: gorm:"column:value" json:"value"
 	Value *string `protobuf:"bytes,4,opt,name=value,proto3,oneof" json:"value" gorm:"column:value"` //键值
-	// @inject_tag: gorm:"column:dict_id" json:"dictId"
-	DictId *int64 `protobuf:"varint,5,opt,name=dict_id,json=dictId,proto3,oneof" json:"dictId" gorm:"column:dict_id"` //字典类型
+	// @inject_tag: gorm:"column:dict_type_id" json:"dictTypeId"
+	DictTypeId *int64 `protobuf:"varint,5,opt,name=dict_type_id,json=dictTypeId,proto3,oneof" json:"dictTypeId" gorm:"column:dict_type_id"` //字典类型
 	// @inject_tag: gorm:"column:color_type" json:"colorType"
 	ColorType *string `protobuf:"bytes,6,opt,name=color_type,json=colorType,proto3,oneof" json:"colorType" gorm:"column:color_type"` //颜色类型
 	// @inject_tag: gorm:"column:css_class" json:"cssClass"
@@ -116,9 +116,9 @@ func (x *SysDictObject) GetValue() string {
 	return ""
 }
 
-func (x *SysDictObject) GetDictId() int64 {
-	if x != nil && x.DictId != nil {
-		return *x.DictId
+func (x *SysDictObject) GetDictTypeId() int64 {
+	if x != nil && x.DictTypeId != nil {
+		return *x.DictTypeId
 	}
 	return 0
 }
@@ -662,8 +662,8 @@ func (x *SysDictResponse) GetData() *SysDictObject {
 // SysDictListRequest 列表数据
 type SysDictListRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// @inject_tag: db:"dict_id" json:"dictId"
-	DictId *int64 `protobuf:"varint,1,opt,name=dict_id,json=dictId,proto3,oneof" json:"dictId" db:"dict_id"` // 字典类型
+	// @inject_tag: db:"dict_type_id" json:"dictTypeId"
+	DictTypeId *int64 `protobuf:"varint,1,opt,name=dict_type_id,json=dictTypeId,proto3,oneof" json:"dictTypeId" db:"dict_type_id"` // 字典类型
 	// @inject_tag: db:"status" json:"status"
 	Status *int32 `protobuf:"varint,2,opt,name=status,proto3,oneof" json:"status" db:"status"` // 状态:0正常/1停用
 	// @inject_tag: json:"pagination"
@@ -702,9 +702,9 @@ func (*SysDictListRequest) Descriptor() ([]byte, []int) {
 	return file_sys_dict_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *SysDictListRequest) GetDictId() int64 {
-	if x != nil && x.DictId != nil {
-		return *x.DictId
+func (x *SysDictListRequest) GetDictTypeId() int64 {
+	if x != nil && x.DictTypeId != nil {
+		return *x.DictTypeId
 	}
 	return 0
 }
@@ -787,8 +787,8 @@ func (x *SysDictListResponse) GetData() []*SysDictObject {
 // SysDictListTotalRequest 列表数据
 type SysDictListTotalRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// @inject_tag: db:"dict_id" json:"dictId"
-	DictId *int64 `protobuf:"varint,1,opt,name=dict_id,json=dictId,proto3,oneof" json:"dictId" db:"dict_id"` // 字典类型
+	// @inject_tag: db:"dict_type_id" json:"dictTypeId"
+	DictTypeId *int64 `protobuf:"varint,1,opt,name=dict_type_id,json=dictTypeId,proto3,oneof" json:"dictTypeId" db:"dict_type_id"` // 字典类型
 	// @inject_tag: db:"status" json:"status"
 	Status        *int32 `protobuf:"varint,2,opt,name=status,proto3,oneof" json:"status" db:"status"` // 状态:0正常/1停用
 	unknownFields protoimpl.UnknownFields
@@ -825,9 +825,9 @@ func (*SysDictListTotalRequest) Descriptor() ([]byte, []int) {
 	return file_sys_dict_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *SysDictListTotalRequest) GetDictId() int64 {
-	if x != nil && x.DictId != nil {
-		return *x.DictId
+func (x *SysDictListTotalRequest) GetDictTypeId() int64 {
+	if x != nil && x.DictTypeId != nil {
+		return *x.DictTypeId
 	}
 	return 0
 }
@@ -843,13 +843,14 @@ var File_sys_dict_proto protoreflect.FileDescriptor
 
 const file_sys_dict_proto_rawDesc = "" +
 	"\n" +
-	"\x0esys_dict.proto\x12\x04dict\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\xc4\x04\n" +
+	"\x0esys_dict.proto\x12\x04dict\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\xd2\x04\n" +
 	"\rSysDictObject\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12\x17\n" +
 	"\x04sort\x18\x02 \x01(\x05H\x01R\x04sort\x88\x01\x01\x12\x19\n" +
 	"\x05label\x18\x03 \x01(\tH\x02R\x05label\x88\x01\x01\x12\x19\n" +
-	"\x05value\x18\x04 \x01(\tH\x03R\x05value\x88\x01\x01\x12\x1c\n" +
-	"\adict_id\x18\x05 \x01(\x03H\x04R\x06dictId\x88\x01\x01\x12\"\n" +
+	"\x05value\x18\x04 \x01(\tH\x03R\x05value\x88\x01\x01\x12%\n" +
+	"\fdict_type_id\x18\x05 \x01(\x03H\x04R\n" +
+	"dictTypeId\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"color_type\x18\x06 \x01(\tH\x05R\tcolorType\x88\x01\x01\x12 \n" +
 	"\tcss_class\x18\a \x01(\tH\x06R\bcssClass\x88\x01\x01\x12\x1b\n" +
@@ -866,9 +867,8 @@ const file_sys_dict_proto_rawDesc = "" +
 	"\x03_idB\a\n" +
 	"\x05_sortB\b\n" +
 	"\x06_labelB\b\n" +
-	"\x06_valueB\n" +
-	"\n" +
-	"\b_dict_idB\r\n" +
+	"\x06_valueB\x0f\n" +
+	"\r_dict_type_idB\r\n" +
 	"\v_color_typeB\f\n" +
 	"\n" +
 	"_css_classB\t\n" +
@@ -904,26 +904,26 @@ const file_sys_dict_proto_rawDesc = "" +
 	"\x0fSysDictResponse\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x03R\x04code\x12\x10\n" +
 	"\x03msg\x18\x02 \x01(\tR\x03msg\x12'\n" +
-	"\x04data\x18\x03 \x01(\v2\x13.dict.SysDictObjectR\x04data\"\xb9\x01\n" +
-	"\x12SysDictListRequest\x12\x1c\n" +
-	"\adict_id\x18\x01 \x01(\x03H\x00R\x06dictId\x88\x01\x01\x12\x1b\n" +
+	"\x04data\x18\x03 \x01(\v2\x13.dict.SysDictObjectR\x04data\"\xc7\x01\n" +
+	"\x12SysDictListRequest\x12%\n" +
+	"\fdict_type_id\x18\x01 \x01(\x03H\x00R\n" +
+	"dictTypeId\x88\x01\x01\x12\x1b\n" +
 	"\x06status\x18\x02 \x01(\x05H\x01R\x06status\x88\x01\x01\x12B\n" +
 	"\n" +
 	"pagination\x18\x03 \x01(\v2\x1d.pagination.PaginationRequestH\x02R\n" +
-	"pagination\x88\x01\x01B\n" +
-	"\n" +
-	"\b_dict_idB\t\n" +
+	"pagination\x88\x01\x01B\x0f\n" +
+	"\r_dict_type_idB\t\n" +
 	"\a_statusB\r\n" +
 	"\v_pagination\"d\n" +
 	"\x13SysDictListResponse\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x03R\x04code\x12\x10\n" +
 	"\x03msg\x18\x02 \x01(\tR\x03msg\x12'\n" +
-	"\x04data\x18\x03 \x03(\v2\x13.dict.SysDictObjectR\x04data\"k\n" +
-	"\x17SysDictListTotalRequest\x12\x1c\n" +
-	"\adict_id\x18\x01 \x01(\x03H\x00R\x06dictId\x88\x01\x01\x12\x1b\n" +
-	"\x06status\x18\x02 \x01(\x05H\x01R\x06status\x88\x01\x01B\n" +
-	"\n" +
-	"\b_dict_idB\t\n" +
+	"\x04data\x18\x03 \x03(\v2\x13.dict.SysDictObjectR\x04data\"y\n" +
+	"\x17SysDictListTotalRequest\x12%\n" +
+	"\fdict_type_id\x18\x01 \x01(\x03H\x00R\n" +
+	"dictTypeId\x88\x01\x01\x12\x1b\n" +
+	"\x06status\x18\x02 \x01(\x05H\x01R\x06status\x88\x01\x01B\x0f\n" +
+	"\r_dict_type_idB\t\n" +
 	"\a_status2\xb9\x03\n" +
 	"\x0eSysDictService\x12H\n" +
 	"\rSysDictCreate\x12\x1a.dict.SysDictCreateRequest\x1a\x1b.dict.SysDictCreateResponse\x12H\n" +

@@ -27,7 +27,7 @@ func SysDictTypeDao(item *SysDictTypeObject) *dao.SysDictType {
 		daoItem.Status = item.Status // 状态:0正常/1停用
 	}
 	if item != nil && item.Remark != nil {
-		daoItem.Remark = item.Remark // 备注
+		daoItem.Remark = null.StringFrom(item.GetRemark()) // 备注
 	}
 	if item != nil && item.Creator != nil {
 		daoItem.Creator = null.StringFrom(item.GetCreator()) // 创建人
@@ -60,8 +60,8 @@ func SysDictTypeProto(item dao.SysDictType) *SysDictTypeObject {
 	if item.Status != nil {
 		res.Status = item.Status
 	}
-	if item.Remark != nil {
-		res.Remark = item.Remark
+	if item.Remark.IsValid() {
+		res.Remark = item.Remark.Ptr()
 	}
 	if item.Creator.IsValid() {
 		res.Creator = item.Creator.Ptr()

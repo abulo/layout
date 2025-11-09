@@ -15,8 +15,8 @@ message SysDictObject {
 	optional string label = 3; //标签
 	// @inject_tag: gorm:"column:value" json:"value"
 	optional string value = 4; //键值
-	// @inject_tag: gorm:"column:dict_id" json:"dictId"
-	optional int64 dict_id = 5; //字典类型
+	// @inject_tag: gorm:"column:dict_type_id" json:"dictTypeId"
+	optional int64 dict_type_id = 5; //字典类型
 	// @inject_tag: gorm:"column:color_type" json:"colorType"
 	optional string color_type = 6; //颜色类型
 	// @inject_tag: gorm:"column:css_class" json:"cssClass"
@@ -85,8 +85,8 @@ message SysDictResponse {
 // SysDictListRequest 列表数据
 message SysDictListRequest {
 	
-	// @inject_tag: db:"dict_id" json:"dictId"
-	optional int64 dict_id = 1; // 字典类型
+	// @inject_tag: db:"dict_type_id" json:"dictTypeId"
+	optional int64 dict_type_id = 1; // 字典类型
 	// @inject_tag: db:"status" json:"status"
 	optional int32 status = 2; // 状态:0正常/1停用
 
@@ -103,8 +103,8 @@ message SysDictListResponse {
 // SysDictListTotalRequest 列表数据
 message SysDictListTotalRequest {
 	
-	// @inject_tag: db:"dict_id" json:"dictId"
-	optional int64 dict_id = 1; // 字典类型
+	// @inject_tag: db:"dict_type_id" json:"dictTypeId"
+	optional int64 dict_type_id = 1; // 字典类型
 	// @inject_tag: db:"status" json:"status"
 	optional int32 status = 2; // 状态:0正常/1停用
 

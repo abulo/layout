@@ -26,8 +26,8 @@ func SysDictDao(item *SysDictObject) *dao.SysDict {
 	if item != nil && item.Value != nil {
 		daoItem.Value = item.Value // 键值
 	}
-	if item != nil && item.DictId != nil {
-		daoItem.DictId = item.DictId // 字典类型
+	if item != nil && item.DictTypeId != nil {
+		daoItem.DictTypeId = item.DictTypeId // 字典类型
 	}
 	if item != nil && item.ColorType != nil {
 		daoItem.ColorType = null.StringFrom(item.GetColorType()) // 颜色类型
@@ -39,7 +39,7 @@ func SysDictDao(item *SysDictObject) *dao.SysDict {
 		daoItem.Status = item.Status // 状态:0正常/1停用
 	}
 	if item != nil && item.Remark != nil {
-		daoItem.Remark = item.Remark // 备注
+		daoItem.Remark = null.StringFrom(item.GetRemark()) // 备注
 	}
 	if item != nil && item.Creator != nil {
 		daoItem.Creator = null.StringFrom(item.GetCreator()) // 创建人
@@ -72,8 +72,8 @@ func SysDictProto(item dao.SysDict) *SysDictObject {
 	if item.Value != nil {
 		res.Value = item.Value
 	}
-	if item.DictId != nil {
-		res.DictId = item.DictId
+	if item.DictTypeId != nil {
+		res.DictTypeId = item.DictTypeId
 	}
 	if item.ColorType.IsValid() {
 		res.ColorType = item.ColorType.Ptr()
@@ -84,8 +84,8 @@ func SysDictProto(item dao.SysDict) *SysDictObject {
 	if item.Status != nil {
 		res.Status = item.Status
 	}
-	if item.Remark != nil {
-		res.Remark = item.Remark
+	if item.Remark.IsValid() {
+		res.Remark = item.Remark.Ptr()
 	}
 	if item.Creator.IsValid() {
 		res.Creator = item.Creator.Ptr()

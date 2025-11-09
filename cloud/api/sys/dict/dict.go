@@ -58,7 +58,7 @@ func DictList(ctx context.Context, newCtx *app.RequestContext) {
 		requestDict := &dict.SysDictListRequest{}
 		requestDict.Status = proto.Int32(0) // 状态（0正常 1停用）
 		for _, itemType := range rpcList {
-			requestDict.DictId = itemType.Id
+			requestDict.DictTypeId = itemType.Id
 			requestDict.Status = itemType.Status
 			// 执行服务
 			resDict, errDict := clientDict.SysDictList(ctx, requestDict)

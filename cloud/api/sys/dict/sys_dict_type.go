@@ -346,28 +346,6 @@ func SysDictTypeListSimple(ctx context.Context, newCtx *app.RequestContext) {
 		requestTotal.Name = proto.String(val) // 字典名称
 	}
 
-	// 执行服务,获取数据量
-	resTotal, err := client.SysDictTypeListTotal(ctx, requestTotal)
-	if err != nil {
-		globalLogger.Logger.WithFields(logrus.Fields{
-			"req": request,
-			"err": err,
-		}).Error("GrpcCall:字典类型:sys_dict_type:SysDictTypeListSimple")
-		fromError := status.Convert(err)
-		response.JSON(newCtx, consts.StatusOK, utils.H{
-			"code": code.ConvertToHttp(fromError.Code()),
-			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
-		})
-		return
-	}
-	var total int64
-	paginationRequest := &pagination.PaginationRequest{}
-	paginationRequest.PageNum = proto.Int64(cast.ToInt64(newCtx.Query("pageNum")))
-	paginationRequest.PageSize = proto.Int64(cast.ToInt64(newCtx.Query("pageSize")))
-	request.Pagination = paginationRequest
-	if resTotal.GetCode() == code.Success {
-		total = resTotal.GetData()
-	}
 	// 执行服务
 	res, err := client.SysDictTypeList(ctx, request)
 	if err != nil {
@@ -392,11 +370,6 @@ func SysDictTypeListSimple(ctx context.Context, newCtx *app.RequestContext) {
 	response.JSON(newCtx, consts.StatusOK, utils.H{
 		"code": res.GetCode(),
 		"msg":  res.GetMsg(),
-		"data": utils.H{
-			"total":    total,
-			"list":     list,
-			"pageNum":  paginationRequest.PageNum,
-			"pageSize": paginationRequest.PageSize,
-		},
+		"data": list,
 	})
 }
