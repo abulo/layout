@@ -134,6 +134,8 @@ const loading = ref(false)
 const disabled = ref(true)
 //弹出层标题
 const title = ref('')
+// 状态枚举
+const statusEnum = getIntDictOptions('status')
 //列表数据
 const proTable = ref<ProTableInstance>()
 //显示弹出层

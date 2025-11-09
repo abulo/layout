@@ -10,6 +10,7 @@
       :request-auto="true"
       :pagination="false"
       :search-col="12"
+      :indent="20"
     >
       <template #toolbarLeft>
         <el-button v-auth="'menu.SysMenuCreate'" type="primary" :icon="CirclePlus" @click="handleAdd">新增</el-button>
@@ -51,71 +52,76 @@
       class="dialog-settings"
     >
       <el-form ref="refSysMenuForm" :model="sysMenuForm" :rules="rulesSysMenuForm" label-width="100px">
-        <el-form-item label="编号" prop="id">
-          <el-input v-model="sysMenuForm.id" :disabled="disabled" />
+        <el-form-item label="上级菜单" prop="parentId">
+          <el-tree-select
+            v-model="sysMenuForm.parentId"
+            :data="menuOptions"
+            :props="{ value: 'id', label: 'name' }"
+            value-key="id"
+            node-key="id"
+            placeholder="请选择"
+            check-strictly
+            :disabled="disabled"
+            :render-after-expand="false"
+          />
         </el-form-item>
         <el-form-item label="名称" prop="name">
           <el-input v-model="sysMenuForm.name" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="编码" prop="code">
+        <el-form-item v-if="sysMenuForm.type !== 0" label="编码" prop="code">
           <el-input v-model="sysMenuForm.code" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="类型:0 目录/1 菜单/2 按钮" prop="type">
-          <el-input v-model="sysMenuForm.type" :disabled="disabled" />
+        <el-form-item label="类型" prop="type">
+          <el-radio-group v-model="sysMenuForm.type">
+            <el-radio-button v-for="dict in menuTypeEnum" :key="dict.value" :value="dict.value" :disabled="disabled">
+              {{ dict.label }}
+            </el-radio-button>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="排序" prop="sort">
-          <el-input v-model="sysMenuForm.sort" :disabled="disabled" />
+          <el-input-number v-model="sysMenuForm.sort" controls-position="right" :min="0" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="上级" prop="parentId">
-          <el-input v-model="sysMenuForm.parentId" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="地址" prop="path">
+        <el-form-item v-if="sysMenuForm.type !== 2" label="地址" prop="path">
           <el-input v-model="sysMenuForm.path" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="图标" prop="icon">
-          <el-input v-model="sysMenuForm.icon" :disabled="disabled" />
+        <el-form-item v-if="sysMenuForm.type !== 2" label="图标" prop="icon">
+          <SelectIcon v-model="sysMenuForm.icon" title="请选择图标" placeholder="搜索图标" :show-icon-name="true" />
         </el-form-item>
-        <el-form-item label="组件路径" prop="component">
+        <el-form-item v-if="sysMenuForm.type === 1" label="组件路径" prop="component">
           <el-input v-model="sysMenuForm.component" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="组件名称" prop="componentName">
+        <el-form-item v-if="sysMenuForm.type === 1" label="组件名称" prop="componentName">
           <el-input v-model="sysMenuForm.componentName" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="隐藏:0 否/1 是" prop="hide">
+        <el-form-item v-if="sysMenuForm.type !== 2" label="隐藏:0 否/1 是" prop="hide">
           <el-input v-model="sysMenuForm.hide" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="外部地址" prop="link">
-          <el-input v-model="sysMenuForm.link" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="缓存:0否/1 是" prop="cache">
+        <el-form-item v-if="sysMenuForm.type === 1" label="缓存:0否/1 是" prop="cache">
           <el-input v-model="sysMenuForm.cache" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
+        <el-form-item v-if="sysMenuForm.type !== 2" label="备注" prop="remark">
           <el-input v-model="sysMenuForm.remark" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="激活地址" prop="active">
+        <el-form-item v-if="sysMenuForm.type === 1" label="激活地址" prop="active">
           <el-input v-model="sysMenuForm.active" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="全屏:1 开/0 关" prop="full">
+        <el-form-item v-if="sysMenuForm.type === 1" label="全屏:1 开/0 关" prop="full">
           <el-input v-model="sysMenuForm.full" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="重定向" prop="redirect">
+        <el-form-item v-if="sysMenuForm.type !== 2" label="重定向" prop="redirect">
           <el-input v-model="sysMenuForm.redirect" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="状态:0正常/1停用" prop="status">
-          <el-input v-model="sysMenuForm.status" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="创建人" prop="creator">
-          <el-input v-model="sysMenuForm.creator" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="创建时间" prop="createTime">
-          <el-input v-model="sysMenuForm.createTime" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="更新人" prop="updater">
-          <el-input v-model="sysMenuForm.updater" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="更新时间" prop="updateTime">
-          <el-input v-model="sysMenuForm.updateTime" :disabled="disabled" />
+        <el-form-item label="状态" prop="status">
+          <el-radio-group v-model="sysMenuForm.status">
+            <el-radio-button
+              v-for="dict in statusEnum"
+              :key="Number(dict.value)"
+              :value="dict.value"
+              :disabled="disabled"
+            >
+              {{ dict.label }}
+            </el-radio-button>
+          </el-radio-group>
         </el-form-item>
       </el-form>
       <template v-if="!disabled" #footer>
@@ -144,6 +150,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
 import { HasAuth } from '@/utils/auth'
 import { handleTree } from '@pureadmin/utils'
+import { getIntDictOptions } from '@/utils/dict'
 //加载
 const loading = ref(false)
 //禁用
@@ -154,6 +161,10 @@ const title = ref('')
 const proTable = ref<ProTableInstance>()
 //显示弹出层
 const dialogVisible = ref(false)
+//菜单类别
+const menuTypeEnum = getIntDictOptions('menu.type')
+// 状态枚举
+const statusEnum = getIntDictOptions('status')
 //数据接口
 const sysMenuForm = ref<ResSysMenu>({
   id: 0, // 编号
@@ -329,34 +340,30 @@ const submitForm = (formEl: FormInstance | undefined) => {
 // 获取菜单选项
 const getMenuOptions = async () => {
   const data = await getSysMenuListSimpleApi()
-  menuOptions.value = handleTree(data)
+  menuOptions.value = {
+    id: 0,
+    name: '主类目',
+    children: handleTree(data),
+  }
 }
 
 // 定义列配置项
 const columns: ColumnProps<ResSysMenu>[] = [
-  { prop: 'id', label: '编号' },
-  { prop: 'name', label: '名称' },
+  { prop: 'name', label: '名称', fixed: 'left', align: 'left' },
   { prop: 'code', label: '编码' },
   { prop: 'type', label: '类型:0 目录/1 菜单/2 按钮', search: { el: 'input', span: 2 } },
   { prop: 'sort', label: '排序' },
-  { prop: 'parentId', label: '上级' },
   { prop: 'path', label: '地址' },
   { prop: 'icon', label: '图标' },
   { prop: 'component', label: '组件路径' },
   { prop: 'componentName', label: '组件名称' },
   { prop: 'hide', label: '隐藏:0 否/1 是' },
-  { prop: 'link', label: '外部地址' },
   { prop: 'cache', label: '缓存:0否/1 是' },
   { prop: 'remark', label: '备注' },
   { prop: 'active', label: '激活地址' },
   { prop: 'full', label: '全屏:1 开/0 关' },
   { prop: 'redirect', label: '重定向' },
   { prop: 'status', label: '状态:0正常/1停用', search: { el: 'input', span: 2 } },
-  { prop: 'creator', label: '创建人' },
-  { prop: 'createTime', label: '创建时间' },
-  { prop: 'updater', label: '更新人' },
-  { prop: 'updateTime', label: '更新时间' },
-
   {
     prop: 'operation',
     label: '操作',
