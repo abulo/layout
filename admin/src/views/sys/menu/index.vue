@@ -8,7 +8,7 @@
       :toolbar-right="['search', 'refresh', 'export', 'layout']"
       :request-api="getTableList"
       :request-auto="true"
-      :pagination="true"
+      :pagination="false"
       :search-col="12"
     >
       <template #toolbarLeft>
@@ -25,17 +25,14 @@
           </el-button>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item v-auth="'menu.SysMenuUpdate'" :icon="EditPen" @click="handleUpdate(scope.row)">
-                编辑
-              </el-dropdown-item>
-              <el-dropdown-item
-                v-if="scope.row.deleted === 0"
-                v-auth="'menu.SysMenuDelete'"
-                :icon="Delete"
-                @click="handleDelete(scope.row)"
-              >
-                删除
-              </el-dropdown-item>
+              <div v-auth="'menu.SysMenuUpdate'">
+                <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>
+              </div>
+              <div v-auth="'menu.SysMenuDelete'">
+                <el-dropdown-item v-if="scope.row.deleted === 0" :icon="Delete" @click="handleDelete(scope.row)">
+                  删除
+                </el-dropdown-item>
+              </div>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -141,10 +138,12 @@ import {
   getSysMenuApi,
   addSysMenuApi,
   updateSysMenuApi,
+  getSysMenuListSimpleApi,
 } from '@/api/modules/sysMenu'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
 import { HasAuth } from '@/utils/auth'
+import { handleTree } from '@pureadmin/utils'
 //加载
 const loading = ref(false)
 //禁用
@@ -180,6 +179,8 @@ const sysMenuForm = ref<ResSysMenu>({
   updater: undefined, // 更新人
   updateTime: undefined, // 更新时间
 })
+//下拉菜单选项
+const menuOptions = ref<ResSysMenu[]>([])
 //表单
 const refSysMenuForm = ref<FormInstance>()
 //校验
@@ -252,11 +253,15 @@ const reset = () => {
  * 处理新增操作
  * 该函数用于初始化对话框的状态
  */
-const handleAdd = () => {
+const handleAdd = async (row?: ResSysMenu) => {
   title.value = '新增菜单'
   dialogVisible.value = true
   reset()
   disabled.value = false
+  getMenuOptions()
+  if (row != null && row.id) {
+    sysMenuForm.value.parentId = row.id
+  }
 }
 /**
  * 处理更新操作
@@ -266,6 +271,7 @@ const handleUpdate = async (row: ResSysMenu) => {
   title.value = '编辑菜单'
   dialogVisible.value = true
   reset()
+  getMenuOptions()
   const data = await getSysMenuApi(Number(row.id))
   sysMenuForm.value = data
   disabled.value = false
@@ -278,6 +284,7 @@ const handleItem = async (row: ResSysMenu) => {
   title.value = '查看菜单'
   dialogVisible.value = true
   reset()
+  getMenuOptions()
   const data = await getSysMenuApi(Number(row.id))
   sysMenuForm.value = data
   disabled.value = true
@@ -308,6 +315,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
     if (!valid) return
     loading.value = true
     const data = sysMenuForm.value as unknown as ResSysMenu
+    delete data.children
     if (data.id !== 0) {
       await useHandleSet(updateSysMenuApi, data.id, data, '修改菜单')
     } else {
@@ -318,12 +326,18 @@ const submitForm = (formEl: FormInstance | undefined) => {
     proTable.value?.getTableList()
   })
 }
+// 获取菜单选项
+const getMenuOptions = async () => {
+  const data = await getSysMenuListSimpleApi()
+  menuOptions.value = handleTree(data)
+}
 
+// 定义列配置项
 const columns: ColumnProps<ResSysMenu>[] = [
   { prop: 'id', label: '编号' },
   { prop: 'name', label: '名称' },
   { prop: 'code', label: '编码' },
-  { prop: 'type', label: '类型:0 目录/1 菜单/2 按钮', search: { el: 'input' } },
+  { prop: 'type', label: '类型:0 目录/1 菜单/2 按钮', search: { el: 'input', span: 2 } },
   { prop: 'sort', label: '排序' },
   { prop: 'parentId', label: '上级' },
   { prop: 'path', label: '地址' },
@@ -337,7 +351,7 @@ const columns: ColumnProps<ResSysMenu>[] = [
   { prop: 'active', label: '激活地址' },
   { prop: 'full', label: '全屏:1 开/0 关' },
   { prop: 'redirect', label: '重定向' },
-  { prop: 'status', label: '状态:0正常/1停用', search: { el: 'input' } },
+  { prop: 'status', label: '状态:0正常/1停用', search: { el: 'input', span: 2 } },
   { prop: 'creator', label: '创建人' },
   { prop: 'createTime', label: '创建时间' },
   { prop: 'updater', label: '更新人' },

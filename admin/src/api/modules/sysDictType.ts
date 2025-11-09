@@ -21,3 +21,8 @@ export const getSysDictTypeApi = (id: number) => {
 export const getSysDictTypeListApi = (params?: ReqSysDictTypeParams) => {
   return http.get<ResultPage<ResSysDictType>>(`/v1/sys/dict/type`, params)
 }
+
+// 字典类型列表(精简)数据
+export const getSysDictTypeListSimpleApi = (params?: ReqSysDictTypeParams) => {
+  return http.get<ResSysDictType[]>(`/v1/sys/dict/type/simple`, params)
+}

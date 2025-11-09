@@ -10,7 +10,7 @@ export interface ResSysDictType {
   name: string // 字典名称
   type: string // 字典类型
   status: number // 状态:0正常/1停用
-  remark: string // 备注
+  remark: string | undefined // 备注
   creator: string | undefined // 创建人
   createTime: string | undefined // 创建时间
   updater: string | undefined // 更新人

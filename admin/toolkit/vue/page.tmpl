@@ -52,36 +52,41 @@
         <template #dropdown>
           <el-dropdown-menu>
             {{- if InMethod .Method "Update"}}
-            <el-dropdown-item v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}Update'" :icon="EditPen" @click="handleUpdate(scope.row)">
+            <div v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}Update'">
+            <el-dropdown-item  :icon="EditPen" @click="handleUpdate(scope.row)">
               编辑
             </el-dropdown-item>
+            </div>
             {{- end}}
             {{- if InMethod .Method "Delete"}}
+            <div v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}Delete'">
             <el-dropdown-item
               v-if="scope.row.deleted === 0"
-              v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}Delete'"
               :icon="Delete"
               @click="handleDelete(scope.row)">
               删除
             </el-dropdown-item>
+            </div>
             {{- end}}
             {{- if InMethod .Method "Recover"}}
+            <div v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}Recover'">
             <el-dropdown-item
               v-if="scope.row.deleted === 1"
-              v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}Recover'"
               :icon="Refresh"
               @click="handleRecover(scope.row)">
               恢复
             </el-dropdown-item>
+            </div>
             {{- end}}
             {{- if InMethod .Method "Drop"}}
+            <div v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}Drop'">
             <el-dropdown-item
               v-if="scope.row.deleted === 1"
-              v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}Drop'"
               :icon="DeleteFilled"
               @click="handleDrop(scope.row)">
               清理
             </el-dropdown-item>
+            </div>
             {{- end}}
           </el-dropdown-menu>
         </template>
@@ -337,7 +342,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 
 {{- if .SoftDelete}}
 //删除状态
-const deletedEnum = getIntDictOptions("delete");
+const deletedEnum = getIntDictOptions("deleted");
 // 表格配置项
 const deleteSearch = reactive<SearchProps>(
   HasAuth("{{.Pkg}}.{{CamelStr .Table.TableName}}Delete")

@@ -16,22 +16,11 @@ const auth: Directive = {
         if (hasAuth) break
       }
       if (!hasAuth) {
-        if (el.classList.contains('el-dropdown-menu__item')) {
-          // 对于下拉菜单项，需要隐藏整个 li 元素
-          el.parentNode && el.parentNode.removeChild(el)
-        } else {
-          el.remove()
-        }
+        el.remove()
       }
     } else {
       if (!HasAuthItem(value)) {
-        // 处理 el-dropdown-item 特殊情况
-        if (el.classList.contains('el-dropdown-menu__item')) {
-          // 对于下拉菜单项，需要隐藏整个 li 元素
-          el.parentNode && el.parentNode.removeChild(el)
-        } else {
-          el.remove()
-        }
+        el.remove()
       }
     }
   },

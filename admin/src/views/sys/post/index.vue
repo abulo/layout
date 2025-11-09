@@ -16,7 +16,7 @@
       </template>
       <!-- 删除状态 -->
       <template #deleted="scope">
-        <DictTag type="delete" :value="scope.row.deleted" />
+        <DictTag type="deleted" :value="scope.row.deleted" />
       </template>
       <!-- 菜单操作 -->
       <template #operation="scope">
@@ -34,33 +34,24 @@
           </el-button>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item v-auth="'post.SysPostUpdate'" :icon="EditPen" @click="handleUpdate(scope.row)">
-                编辑
-              </el-dropdown-item>
-              <el-dropdown-item
-                v-if="scope.row.deleted === 0"
-                v-auth="'post.SysPostDelete'"
-                :icon="Delete"
-                @click="handleDelete(scope.row)"
-              >
-                删除
-              </el-dropdown-item>
-              <el-dropdown-item
-                v-if="scope.row.deleted === 1"
-                v-auth="'post.SysPostRecover'"
-                :icon="Refresh"
-                @click="handleRecover(scope.row)"
-              >
-                恢复
-              </el-dropdown-item>
-              <el-dropdown-item
-                v-if="scope.row.deleted === 1"
-                v-auth="'post.SysPostDrop'"
-                :icon="DeleteFilled"
-                @click="handleDrop(scope.row)"
-              >
-                清理
-              </el-dropdown-item>
+              <div v-auth="'post.SysPostUpdate'">
+                <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>
+              </div>
+              <div v-auth="'post.SysPostDelete'">
+                <el-dropdown-item v-if="scope.row.deleted === 0" :icon="Delete" @click="handleDelete(scope.row)">
+                  删除
+                </el-dropdown-item>
+              </div>
+              <div v-auth="'post.SysPostRecover'">
+                <el-dropdown-item v-if="scope.row.deleted === 1" :icon="Refresh" @click="handleRecover(scope.row)">
+                  恢复
+                </el-dropdown-item>
+              </div>
+              <div v-auth="'post.SysPostDrop'">
+                <el-dropdown-item v-if="scope.row.deleted === 1" :icon="DeleteFilled" @click="handleDrop(scope.row)">
+                  清理
+                </el-dropdown-item>
+              </div>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -135,7 +126,6 @@ import {
 } from '@/api/modules/sysPost'
 import type { FormInstance, FormRules } from 'element-plus'
 import { getIntDictOptions } from '@/utils/dict'
-import { DictTag } from '@/components/DictTag'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
 import { HasAuth } from '@/utils/auth'
 //加载
@@ -301,7 +291,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
   })
 }
 //删除状态
-const deletedEnum = getIntDictOptions('delete')
+const deletedEnum = getIntDictOptions('deleted')
 // 表格配置项
 const deleteSearch = reactive<SearchProps>(
   HasAuth('post.SysPostDelete')

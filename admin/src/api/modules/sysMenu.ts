@@ -19,10 +19,9 @@ export const getSysMenuApi = (id: number) => {
 }
 // 菜单列表数据
 export const getSysMenuListApi = (params?: ReqSysMenuParams) => {
-  return http.get<ResultPage<ResSysMenu>>(`/v1/sys/menu`, params)
+  return http.get<ResSysMenu[]>(`/v1/sys/menu`, params)
 }
-
 // 菜单列表(精简)数据
 export const getSysMenuListSimpleApi = (params?: ReqSysMenuParams) => {
-  return http.get<ResultPage<ResSysMenu>>(`/v1/sys/menu/simple`, params)
+  return http.get<ResSysMenu[]>(`/v1/sys/menu/simple`, params)
 }

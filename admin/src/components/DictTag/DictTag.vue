@@ -65,6 +65,9 @@ export default defineComponent({
         >
           {dictOptions.map((dict: DictDataType) => {
             if (valueArr.value.includes(dict.value)) {
+              if (dict.colorType + '' === 'default') {
+                dict.colorType = ''
+              }
               return (
                 // 添加标签的文字颜色为白色，解决自定义背景颜色时标签文字看不清的问题
                 <ElTag

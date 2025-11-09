@@ -6,7 +6,7 @@ export const useDictStore = defineStore('admin-dict', () => {
   const state = ref<Dict>({})
 
   const actions = {
-    async setDict() {
+    async getDictList() {
       const data = await getSysDictDataApi()
       state.value = data
     },

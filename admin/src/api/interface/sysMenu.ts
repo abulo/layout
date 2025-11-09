@@ -1,7 +1,7 @@
 // sys_menu 菜单
-export interface ReqSysMenuParams extends RequestPage {
-  type?: number // 类型:0 目录/1 菜单/2 按钮
+export interface ReqSysMenuParams {
   status?: number // 状态:0正常/1停用
+  type?: number // 类型:0 目录/1 菜单/2 按钮
 }
 
 export interface ResSysMenu {
@@ -27,4 +27,5 @@ export interface ResSysMenu {
   createTime: string | undefined // 创建时间
   updater: string | undefined // 更新人
   updateTime: string | undefined // 更新时间
+  children?: ResSysMenu[]
 }

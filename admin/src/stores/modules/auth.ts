@@ -20,6 +20,7 @@ export const useAuthStore = defineStore('admin-auth', () => {
     return state.allAuthButtonList[route.name as string] || []
   })
 
+  //TODO 需要给菜单一个首页
   const showMenuListGet = computed(() => getShowMenuList(state.authMenuList))
   const flatMenuListGet = computed(() => getFlatMenuList(state.authMenuList))
   const breadcrumbListGet = computed(() => getAllBreadcrumbList(state.authMenuList))

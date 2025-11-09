@@ -13,6 +13,10 @@
     >
       <template #toolbarLeft>
         <el-button v-auth="'dict.SysDictCreate'" type="primary" :icon="CirclePlus" @click="handleAdd">新增</el-button>
+        <el-button type="primary" :icon="Remove" @click="closeTab">关闭</el-button>
+      </template>
+      <template #status="scope">
+        <DictTag type="status" :value="scope.row.status" />
       </template>
       <!-- 菜单操作 -->
       <template #operation="scope">
@@ -25,17 +29,14 @@
           </el-button>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item v-auth="'dict.SysDictUpdate'" :icon="EditPen" @click="handleUpdate(scope.row)">
-                编辑
-              </el-dropdown-item>
-              <el-dropdown-item
-                v-if="scope.row.deleted === 0"
-                v-auth="'dict.SysDictDelete'"
-                :icon="Delete"
-                @click="handleDelete(scope.row)"
-              >
-                删除
-              </el-dropdown-item>
+              <div v-auth="'dict.SysDictUpdate'">
+                <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>
+              </div>
+              <div v-auth="'dict.SysDictDelete'">
+                <el-dropdown-item v-if="scope.row.deleted === 0" :icon="Delete" @click="handleDelete(scope.row)">
+                  删除
+                </el-dropdown-item>
+              </div>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -54,44 +55,42 @@
       class="dialog-settings"
     >
       <el-form ref="refSysDictForm" :model="sysDictForm" :rules="rulesSysDictForm" label-width="100px">
-        <el-form-item label="编号" prop="id">
-          <el-input v-model="sysDictForm.id" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="排序" prop="sort">
-          <el-input v-model="sysDictForm.sort" :disabled="disabled" />
-        </el-form-item>
         <el-form-item label="标签" prop="label">
           <el-input v-model="sysDictForm.label" :disabled="disabled" />
         </el-form-item>
         <el-form-item label="键值" prop="value">
           <el-input v-model="sysDictForm.value" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="字典类型" prop="dictId">
-          <el-input v-model="sysDictForm.dictId" :disabled="disabled" />
+        <el-form-item label="排序" prop="sort">
+          <el-input-number v-model="sysDictForm.sort" controls-position="right" :min="0" :disabled="disabled" />
         </el-form-item>
         <el-form-item label="颜色类型" prop="colorType">
-          <el-input v-model="sysDictForm.colorType" :disabled="disabled" />
+          <el-select v-model="sysDictForm.colorType" clearable :disabled="disabled">
+            <el-option
+              v-for="item in colorTypeOptions"
+              :key="item.value"
+              :label="item.label + '(' + item.value + ')'"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="CSS样式" prop="cssClass">
           <el-input v-model="sysDictForm.cssClass" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="状态:0正常/1停用" prop="status">
-          <el-input v-model="sysDictForm.status" :disabled="disabled" />
+        <el-form-item label="状态" prop="status">
+          <el-radio-group v-model="sysDictForm.status">
+            <el-radio-button
+              v-for="dict in statusEnum"
+              :key="Number(dict.value)"
+              :value="dict.value"
+              :disabled="disabled"
+            >
+              {{ dict.label }}
+            </el-radio-button>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="sysDictForm.remark" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="创建人" prop="creator">
-          <el-input v-model="sysDictForm.creator" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="创建时间" prop="createTime">
-          <el-input v-model="sysDictForm.createTime" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="更新人" prop="updater">
-          <el-input v-model="sysDictForm.updater" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="更新时间" prop="updateTime">
-          <el-input v-model="sysDictForm.updateTime" :disabled="disabled" />
         </el-form-item>
       </el-form>
       <template v-if="!disabled" #footer>
@@ -106,8 +105,8 @@
 <script setup lang="tsx">
 defineOptions({ name: 'SysDict' })
 import type { ResSysDict } from '@/api/interface/sysDict'
-import type { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
-import { EditPen, CirclePlus, Delete, View, DArrowRight } from '@element-plus/icons-vue'
+import type { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
+import { EditPen, CirclePlus, Delete, View, DArrowRight, Remove } from '@element-plus/icons-vue'
 import {
   getSysDictListApi,
   deleteSysDictApi,
@@ -118,6 +117,20 @@ import {
 import type { FormInstance, FormRules } from 'element-plus'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
 import { HasAuth } from '@/utils/auth'
+import { useRoute } from 'vue-router'
+import { useTabsStore } from '@/stores/modules/tabs'
+import { useKeepAliveStore } from '@/stores/modules/keepAlive'
+import { getSysDictTypeListSimpleApi } from '@/api/modules/sysDictType'
+import { getIntDictOptions } from '@/utils/dict'
+import type { ResSysDictType } from '@/api/interface/sysDictType'
+// 获取当前路由信息
+const route = useRoute()
+// 获取标签页信息
+const tabStore = useTabsStore()
+// 缓存信息
+const keepAliveStore = useKeepAliveStore()
+// 字典类型id
+const dictTypeId = ref(Number(route.params.dictTypeId))
 //加载
 const loading = ref(false)
 //禁用
@@ -128,17 +141,21 @@ const title = ref('')
 const proTable = ref<ProTableInstance>()
 //显示弹出层
 const dialogVisible = ref(false)
+// 状态枚举
+const statusEnum = getIntDictOptions('status')
+// 字典类型所有数据
+const sysDictTypeList = ref<ResSysDictType[]>([])
 //数据接口
 const sysDictForm = ref<ResSysDict>({
   id: 0, // 编号
   sort: 0, // 排序
   label: '', // 标签
   value: '', // 键值
-  dictId: 0, // 字典类型
+  dictTypeId: dictTypeId.value, // 字典类型
   colorType: undefined, // 颜色类型
   cssClass: undefined, // CSS样式
   status: 0, // 状态:0正常/1停用
-  remark: '', // 备注
+  remark: undefined, // 备注
   creator: undefined, // 创建人
   createTime: undefined, // 创建时间
   updater: undefined, // 更新人
@@ -148,13 +165,10 @@ const sysDictForm = ref<ResSysDict>({
 const refSysDictForm = ref<FormInstance>()
 //校验
 const rulesSysDictForm = reactive<FormRules>({
-  id: [{ required: true, message: '编号不能为空', trigger: 'blur' }],
-  sort: [{ required: true, message: '排序不能为空', trigger: 'blur' }],
   label: [{ required: true, message: '标签不能为空', trigger: 'blur' }],
   value: [{ required: true, message: '键值不能为空', trigger: 'blur' }],
-  dictId: [{ required: true, message: '字典类型不能为空', trigger: 'blur' }],
-  status: [{ required: true, message: '状态:0正常/1停用不能为空', trigger: 'blur' }],
-  remark: [{ required: true, message: '备注不能为空', trigger: 'blur' }],
+  dictTypeId: [{ required: true, message: '字典类型不能为空', trigger: 'blur' }],
+  status: [{ required: true, message: '状态', trigger: 'blur' }],
 })
 
 /**
@@ -165,6 +179,10 @@ const rulesSysDictForm = reactive<FormRules>({
 const getTableList = (params: any) => {
   // 深拷贝参数对象，避免修改原始参数
   let newParams = JSON.parse(JSON.stringify(params))
+  if (newParams.dictTypeId) {
+    dictTypeId.value = Number(newParams.dictTypeId)
+    sysDictForm.value.dictTypeId = dictTypeId.value
+  }
   return getSysDictListApi(newParams)
 }
 
@@ -180,11 +198,11 @@ const resetSysDict = () => {
     sort: 0, // 排序
     label: '', // 标签
     value: '', // 键值
-    dictId: 0, // 字典类型
+    dictTypeId: dictTypeId.value, // 字典类型
     colorType: undefined, // 颜色类型
     cssClass: undefined, // CSS样式
     status: 0, // 状态:0正常/1停用
-    remark: '', // 备注
+    remark: undefined, // 备注
     creator: undefined, // 创建人
     createTime: undefined, // 创建时间
     updater: undefined, // 更新人
@@ -272,21 +290,67 @@ const submitForm = (formEl: FormInstance | undefined) => {
   })
 }
 
+// 关闭当前页
+const closeTab = () => {
+  if (route.meta.isAffix) return
+  tabStore.removeTabs(route.fullPath)
+  keepAliveStore.removeKeepAliveName(route.name as string)
+}
+
+// 数据标签回显样式
+const colorTypeOptions = ref([
+  {
+    value: 'default',
+    label: '默认',
+  },
+  {
+    value: 'primary',
+    label: '主要',
+  },
+  {
+    value: 'success',
+    label: '成功',
+  },
+  {
+    value: 'info',
+    label: '信息',
+  },
+  {
+    value: 'warning',
+    label: '警告',
+  },
+  {
+    value: 'danger',
+    label: '危险',
+  },
+])
+
+// 获取字典类型列表
+onMounted(async () => {
+  const data = await getSysDictTypeListSimpleApi()
+  sysDictTypeList.value = data
+})
+
 const columns: ColumnProps<ResSysDict>[] = [
-  { prop: 'id', label: '编号' },
-  { prop: 'sort', label: '排序', search: { el: 'input' } },
+  { prop: 'id', label: '编号', fixed: 'left' },
   { prop: 'label', label: '标签' },
   { prop: 'value', label: '键值' },
-  { prop: 'dictId', label: '字典类型', search: { el: 'input' } },
+  { prop: 'sort', label: '排序' },
+  {
+    prop: 'dictTypeId',
+    label: '字典类型',
+    enum: sysDictTypeList,
+    fieldNames: { label: 'name', value: 'id' },
+    search: { el: 'select', span: 2, defaultValue: dictTypeId.value },
+  },
   { prop: 'colorType', label: '颜色类型' },
   { prop: 'cssClass', label: 'CSS样式' },
-  { prop: 'status', label: '状态:0正常/1停用', search: { el: 'input' } },
+  { prop: 'status', label: '状态', tag: true, enum: statusEnum, search: { el: 'select', span: 2 } },
   { prop: 'remark', label: '备注' },
   { prop: 'creator', label: '创建人' },
   { prop: 'createTime', label: '创建时间' },
   { prop: 'updater', label: '更新人' },
   { prop: 'updateTime', label: '更新时间' },
-
   {
     prop: 'operation',
     label: '操作',

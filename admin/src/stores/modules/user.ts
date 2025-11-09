@@ -22,6 +22,11 @@ export const useUserStore = defineStore('admin-user', {
     setRefreshToken(refreshToken: string) {
       this.refreshToken = refreshToken
     },
+    clearUserState() {
+      this.token = ''
+      this.refreshToken = ''
+      this.userName = ''
+    },
   },
   persist: piniaPersistConfig('admin-user'),
 })
