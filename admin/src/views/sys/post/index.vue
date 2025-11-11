@@ -18,6 +18,9 @@
       <template #deleted="scope">
         <DictTag type="deleted" :value="scope.row.deleted" />
       </template>
+      <template #status="scope">
+        <DictTag type="status" :value="scope.row.status" />
+      </template>
       <!-- 菜单操作 -->
       <template #operation="scope">
         <el-button v-auth="'post.SysPost'" type="primary" link :icon="View" @click="handleItem(scope.row)">
@@ -70,35 +73,23 @@
       class="dialog-settings"
     >
       <el-form ref="refSysPostForm" :model="sysPostForm" :rules="rulesSysPostForm" label-width="100px">
-        <el-form-item label="编号" prop="id">
-          <el-input v-model="sysPostForm.id" :disabled="disabled" />
-        </el-form-item>
         <el-form-item label="名称" prop="name">
           <el-input v-model="sysPostForm.name" :disabled="disabled" />
         </el-form-item>
         <el-form-item label="排序" prop="sort">
-          <el-input v-model="sysPostForm.sort" :disabled="disabled" />
+          <el-input-number v-model="sysPostForm.sort" controls-position="right" :min="0" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="状态:0正常/1停用" prop="status">
-          <el-input v-model="sysPostForm.status" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="删除:0否/1是" prop="deleted">
-          <el-input v-model="sysPostForm.deleted" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="租户" prop="tenantId">
-          <el-input v-model="sysPostForm.tenantId" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="创建人" prop="creator">
-          <el-input v-model="sysPostForm.creator" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="创建时间" prop="createTime">
-          <el-input v-model="sysPostForm.createTime" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="更新人" prop="updater">
-          <el-input v-model="sysPostForm.updater" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="更新时间" prop="updateTime">
-          <el-input v-model="sysPostForm.updateTime" :disabled="disabled" />
+        <el-form-item label="状态" prop="status">
+          <el-radio-group v-model="sysPostForm.status">
+            <el-radio-button
+              v-for="dict in statusEnum"
+              :key="Number(dict.value)"
+              :value="dict.value"
+              :disabled="disabled"
+            >
+              {{ dict.label }}
+            </el-radio-button>
+          </el-radio-group>
         </el-form-item>
       </el-form>
       <template v-if="!disabled" #footer>
@@ -157,12 +148,9 @@ const sysPostForm = ref<ResSysPost>({
 const refSysPostForm = ref<FormInstance>()
 //校验
 const rulesSysPostForm = reactive<FormRules>({
-  id: [{ required: true, message: '编号不能为空', trigger: 'blur' }],
   name: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
   sort: [{ required: true, message: '排序不能为空', trigger: 'blur' }],
-  status: [{ required: true, message: '状态:0正常/1停用不能为空', trigger: 'blur' }],
-  deleted: [{ required: true, message: '删除:0否/1是不能为空', trigger: 'blur' }],
-  tenantId: [{ required: true, message: '租户不能为空', trigger: 'blur' }],
+  status: [{ required: true, message: '状态不能为空', trigger: 'blur' }],
 })
 
 /**
@@ -309,11 +297,11 @@ const deleteSearch = reactive<SearchProps>(
 )
 
 const columns: ColumnProps<ResSysPost>[] = [
-  { prop: 'id', label: '编号' },
+  { prop: 'id', label: '编号', fixed: 'left' },
   { prop: 'name', label: '名称', search: { el: 'input', span: 2 } },
   { prop: 'sort', label: '排序' },
-  { prop: 'status', label: '状态:0正常/1停用', search: { el: 'input', span: 2 } },
-  { prop: 'deleted', label: '删除:0否/1是', search: { el: 'input', span: 2 } },
+  { prop: 'status', label: '状态', tag: true, enum: statusEnum, search: { el: 'select', span: 2 } },
+  { prop: 'deleted', label: '删除', tag: true, enum: deletedEnum, search: deleteSearch },
   { prop: 'tenantId', label: '租户' },
   { prop: 'creator', label: '创建人' },
   { prop: 'createTime', label: '创建时间' },

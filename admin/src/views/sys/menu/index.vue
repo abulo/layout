@@ -15,17 +15,43 @@
       <template #toolbarLeft>
         <el-button v-auth="'menu.SysMenuCreate'" type="primary" :icon="CirclePlus" @click="handleAdd">新增</el-button>
       </template>
+      <template #type="scope">
+        <DictTag type="menu.type" :value="scope.row.type" />
+      </template>
+      <template #hide="scope">
+        <DictTag type="menu.hide" :value="scope.row.hide" />
+      </template>
+      <template #cache="scope">
+        <DictTag type="menu.cache" :value="scope.row.cache" />
+      </template>
+      <template #full="scope">
+        <DictTag type="menu.full" :value="scope.row.full" />
+      </template>
+      <template #status="scope">
+        <DictTag type="status" :value="scope.row.status" />
+      </template>
+      <template #icon="scope">
+        <Icon :icon="scope.row.icon" :custom-key="scope.row.id" :size="18" />
+      </template>
       <!-- 菜单操作 -->
       <template #operation="scope">
         <el-button v-auth="'menu.SysMenu'" type="primary" link :icon="View" @click="handleItem(scope.row)">
           查看
         </el-button>
         <el-dropdown trigger="click">
-          <el-button v-auth="['menu.SysMenuUpdate', 'menu.SysMenuDelete']" type="primary" link :icon="DArrowRight">
+          <el-button
+            v-auth="['menu.SysMenuUpdate', 'menu.SysMenuDelete', 'menu.SysMenuCreate']"
+            type="primary"
+            link
+            :icon="DArrowRight"
+          >
             更多
           </el-button>
           <template #dropdown>
             <el-dropdown-menu>
+              <div v-auth="'menu.SysMenuCreate'">
+                <el-dropdown-item :icon="CirclePlus" @click="handleAdd(scope.row)"> 新增 </el-dropdown-item>
+              </div>
               <div v-auth="'menu.SysMenuUpdate'">
                 <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>
               </div>
@@ -93,11 +119,19 @@
         <el-form-item v-if="sysMenuForm.type === 1" label="组件名称" prop="componentName">
           <el-input v-model="sysMenuForm.componentName" :disabled="disabled" />
         </el-form-item>
-        <el-form-item v-if="sysMenuForm.type !== 2" label="隐藏:0 否/1 是" prop="hide">
-          <el-input v-model="sysMenuForm.hide" :disabled="disabled" />
+        <el-form-item v-if="sysMenuForm.type !== 2" label="隐藏" prop="hide">
+          <el-radio-group v-model="sysMenuForm.hide">
+            <el-radio-button v-for="dict in menuHideEnum" :key="dict.value" :value="dict.value" :disabled="disabled">
+              {{ dict.label }}
+            </el-radio-button>
+          </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="sysMenuForm.type === 1" label="缓存:0否/1 是" prop="cache">
-          <el-input v-model="sysMenuForm.cache" :disabled="disabled" />
+        <el-form-item v-if="sysMenuForm.type === 1" label="缓存" prop="cache">
+          <el-radio-group v-model="sysMenuForm.cache">
+            <el-radio-button v-for="dict in menuCacheEnum" :key="dict.value" :value="dict.value" :disabled="disabled">
+              {{ dict.label }}
+            </el-radio-button>
+          </el-radio-group>
         </el-form-item>
         <el-form-item v-if="sysMenuForm.type !== 2" label="备注" prop="remark">
           <el-input v-model="sysMenuForm.remark" :disabled="disabled" />
@@ -105,8 +139,12 @@
         <el-form-item v-if="sysMenuForm.type === 1" label="激活地址" prop="active">
           <el-input v-model="sysMenuForm.active" :disabled="disabled" />
         </el-form-item>
-        <el-form-item v-if="sysMenuForm.type === 1" label="全屏:1 开/0 关" prop="full">
-          <el-input v-model="sysMenuForm.full" :disabled="disabled" />
+        <el-form-item v-if="sysMenuForm.type === 1" label="全屏" prop="full">
+          <el-radio-group v-model="sysMenuForm.full">
+            <el-radio-button v-for="dict in menuFullEnum" :key="dict.value" :value="dict.value" :disabled="disabled">
+              {{ dict.label }}
+            </el-radio-button>
+          </el-radio-group>
         </el-form-item>
         <el-form-item v-if="sysMenuForm.type !== 2" label="重定向" prop="redirect">
           <el-input v-model="sysMenuForm.redirect" :disabled="disabled" />
@@ -163,6 +201,12 @@ const proTable = ref<ProTableInstance>()
 const dialogVisible = ref(false)
 //菜单类别
 const menuTypeEnum = getIntDictOptions('menu.type')
+//菜单隐藏
+const menuHideEnum = getIntDictOptions('menu.hide')
+// 菜单缓存
+const menuCacheEnum = getIntDictOptions('menu.cache')
+//菜单全屏
+const menuFullEnum = getIntDictOptions('menu.full')
 // 状态枚举
 const statusEnum = getIntDictOptions('status')
 //数据接口
@@ -196,15 +240,10 @@ const menuOptions = ref<ResSysMenu[]>([])
 const refSysMenuForm = ref<FormInstance>()
 //校验
 const rulesSysMenuForm = reactive<FormRules>({
-  id: [{ required: true, message: '编号不能为空', trigger: 'blur' }],
   name: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
-  type: [{ required: true, message: '类型:0 目录/1 菜单/2 按钮不能为空', trigger: 'blur' }],
+  type: [{ required: true, message: '类型不能为空', trigger: 'blur' }],
   sort: [{ required: true, message: '排序不能为空', trigger: 'blur' }],
-  parentId: [{ required: true, message: '上级不能为空', trigger: 'blur' }],
-  hide: [{ required: true, message: '隐藏:0 否/1 是不能为空', trigger: 'blur' }],
-  cache: [{ required: true, message: '缓存:0否/1 是不能为空', trigger: 'blur' }],
-  full: [{ required: true, message: '全屏:1 开/0 关不能为空', trigger: 'blur' }],
-  status: [{ required: true, message: '状态:0正常/1停用不能为空', trigger: 'blur' }],
+  status: [{ required: true, message: '状态不能为空', trigger: 'blur' }],
 })
 
 /**
@@ -351,25 +390,25 @@ const getMenuOptions = async () => {
 const columns: ColumnProps<ResSysMenu>[] = [
   { prop: 'name', label: '名称', fixed: 'left', align: 'left' },
   { prop: 'code', label: '编码' },
-  { prop: 'type', label: '类型:0 目录/1 菜单/2 按钮', search: { el: 'input', span: 2 } },
+  { prop: 'type', label: '类型' },
   { prop: 'sort', label: '排序' },
   { prop: 'path', label: '地址' },
   { prop: 'icon', label: '图标' },
   { prop: 'component', label: '组件路径' },
   { prop: 'componentName', label: '组件名称' },
-  { prop: 'hide', label: '隐藏:0 否/1 是' },
-  { prop: 'cache', label: '缓存:0否/1 是' },
+  { prop: 'hide', label: '隐藏' },
+  { prop: 'cache', label: '缓存' },
   { prop: 'remark', label: '备注' },
   { prop: 'active', label: '激活地址' },
-  { prop: 'full', label: '全屏:1 开/0 关' },
+  { prop: 'full', label: '全屏' },
   { prop: 'redirect', label: '重定向' },
-  { prop: 'status', label: '状态:0正常/1停用', search: { el: 'input', span: 2 } },
+  { prop: 'status', label: '状态' },
   {
     prop: 'operation',
     label: '操作',
     width: 150,
     fixed: 'right',
-    isShow: HasAuth('menu.SysMenuUpdate', 'menu.SysMenuDelete', 'menu.SysMenu'),
+    isShow: HasAuth('menu.SysMenuUpdate', 'menu.SysMenuDelete', 'menu.SysMenu', 'menu.SysMenuCreate'),
   },
 ]
 </script>
