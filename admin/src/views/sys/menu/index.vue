@@ -388,6 +388,7 @@ const getMenuOptions = async () => {
 
 // 定义列配置项
 const columns: ColumnProps<ResSysMenu>[] = [
+  { prop: 'id', type: 'index', label: '#', width: 80 },
   { prop: 'name', label: '名称', fixed: 'left', align: 'left' },
   { prop: 'code', label: '编码' },
   { prop: 'type', label: '类型' },
