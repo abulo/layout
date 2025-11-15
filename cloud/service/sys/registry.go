@@ -7,6 +7,7 @@ import (
 	"cloud/service/sys/menu"
 	"cloud/service/sys/post"
 	"cloud/service/sys/role"
+	"cloud/service/sys/tenant"
 	"cloud/service/sys/user"
 
 	"github.com/abulo/ratel/v3/server/xgrpc"
@@ -68,6 +69,14 @@ func Registry(server *xgrpc.Server) {
 	})
 	// 字典->sys_dict
 	dict.RegisterSysDictServiceServer(server.Server, &dict.SrvSysDictServiceServer{
+		Server: server,
+	})
+	// 租户->sys_tenant
+	tenant.RegisterSysTenantServiceServer(server.Server, &tenant.SrvSysTenantServiceServer{
+		Server: server,
+	})
+	// 租户套餐->sys_tenant_package
+	tenant.RegisterSysTenantPackageServiceServer(server.Server, &tenant.SrvSysTenantPackageServiceServer{
 		Server: server,
 	})
 }

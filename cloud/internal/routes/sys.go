@@ -4,6 +4,7 @@ import (
 	"cloud/api/sys/dict"
 	"cloud/api/sys/menu"
 	"cloud/api/sys/post"
+	"cloud/api/sys/tenant"
 
 	"github.com/abulo/ratel/v3/server/xhertz"
 )
@@ -68,6 +69,36 @@ func SysInitRoute(handle *xhertz.Server) {
 		route.GET("/sys/dict/simple", dict.SysDictListSimple)
 		// sys_dict->字典->列表
 		route.GET("/dict", dict.DictList)
+
+		// sys_tenant->租户->创建
+		route.POST("/sys/tenant", tenant.SysTenantCreate)
+		// sys_tenant->租户->更新
+		route.PUT("/sys/tenant/:id/update", tenant.SysTenantUpdate)
+		// sys_tenant->租户->删除
+		route.DELETE("/sys/tenant/:id/delete", tenant.SysTenantDelete)
+		// sys_tenant->租户->单条数据信息查看
+		route.GET("/sys/tenant/:id/item", tenant.SysTenant)
+		// sys_tenant->租户->恢复
+		route.PUT("/sys/tenant/:id/recover", tenant.SysTenantRecover)
+		// sys_tenant->租户->清理
+		route.DELETE("/sys/tenant/:id/drop", tenant.SysTenantDrop)
+		// sys_tenant->租户->列表
+		route.GET("/sys/tenant", tenant.SysTenantList)
+		// sys_tenant->租户->列表(精简)
+		route.GET("/sys/tenant/simple", tenant.SysTenantListSimple)
+
+		// sys_tenant_package->租户套餐->创建
+		route.POST("/sys/tenant/package", tenant.SysTenantPackageCreate)
+		// sys_tenant_package->租户套餐->更新
+		route.PUT("/sys/tenant/package/:id/update", tenant.SysTenantPackageUpdate)
+		// sys_tenant_package->租户套餐->删除
+		route.DELETE("/sys/tenant/package/:id/delete", tenant.SysTenantPackageDelete)
+		// sys_tenant_package->租户套餐->单条数据信息查看
+		route.GET("/sys/tenant/package/:id/item", tenant.SysTenantPackage)
+		// sys_tenant_package->租户套餐->列表
+		route.GET("/sys/tenant/package", tenant.SysTenantPackageList)
+		// sys_tenant_package->租户套餐->列表(精简)
+		route.GET("/sys/tenant/package/simple", tenant.SysTenantPackageListSimple)
 
 	}
 }

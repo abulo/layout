@@ -10,42 +10,42 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-// tenant_package 租户套餐
-// TenantPackageCreate 创建数据
-func TenantPackageCreate(ctx context.Context, data dao.TenantPackage) (res int64, err error) {
+// sys_tenant_package 租户套餐
+// SysTenantPackageCreate 创建数据
+func SysTenantPackageCreate(ctx context.Context, data dao.SysTenantPackage) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	err = db.WithContext(ctx).Model(&dao.TenantPackage{}).Create(&data).Error
+	err = db.WithContext(ctx).Model(&dao.SysTenantPackage{}).Create(&data).Error
 	res = cast.ToInt64(data.Id)
 	return
 }
 
-// TenantPackageUpdate 更新数据
-func TenantPackageUpdate(ctx context.Context, id int64, data dao.TenantPackage) (res int64, err error) {
+// SysTenantPackageUpdate 更新数据
+func SysTenantPackageUpdate(ctx context.Context, id int64, data dao.SysTenantPackage) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
 	data.Id = proto.Int64(id)
-	result := db.WithContext(ctx).Model(&dao.TenantPackage{}).Where("id = ?", id).Updates(data)
+	result := db.WithContext(ctx).Model(&dao.SysTenantPackage{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
 }
 
-// TenantPackageDelete 删除数据
-func TenantPackageDelete(ctx context.Context, id int64) (res int64, err error) {
+// SysTenantPackageDelete 删除数据
+func SysTenantPackageDelete(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
-	var data dao.TenantPackage
+	var data dao.SysTenantPackage
 	result := db.WithContext(ctx).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
 }
 
-// TenantPackage 查询单条数据
-func TenantPackage(ctx context.Context, id int64) (res dao.TenantPackage, err error) {
+// SysTenantPackage 查询单条数据
+func SysTenantPackage(ctx context.Context, id int64) (res dao.SysTenantPackage, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Read()
-	err = db.WithContext(ctx).Model(&dao.TenantPackage{}).Where("id = ?", id).Find(&res).Error
+	err = db.WithContext(ctx).Model(&dao.SysTenantPackage{}).Where("id = ?", id).Find(&res).Error
 	return
 }
 
-// TenantPackageList 查询列表数据
-func TenantPackageList(ctx context.Context, condition map[string]any) (res []dao.TenantPackage, err error) {
+// SysTenantPackageList 查询列表数据
+func SysTenantPackageList(ctx context.Context, condition map[string]any) (res []dao.SysTenantPackage, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Read()
-	builder := db.WithContext(ctx).Model(&dao.TenantPackage{})
+	builder := db.WithContext(ctx).Model(&dao.SysTenantPackage{})
 	if val, ok := condition["status"]; ok {
 		builder.Where("status = ?", val)
 	}
@@ -67,10 +67,10 @@ func TenantPackageList(ctx context.Context, condition map[string]any) (res []dao
 	return
 }
 
-// TenantPackageListTotal 查询列表数据总量
-func TenantPackageListTotal(ctx context.Context, condition map[string]any) (res int64, err error) {
+// SysTenantPackageListTotal 查询列表数据总量
+func SysTenantPackageListTotal(ctx context.Context, condition map[string]any) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Read()
-	builder := db.WithContext(ctx).Model(&dao.TenantPackage{})
+	builder := db.WithContext(ctx).Model(&dao.SysTenantPackage{})
 	if val, ok := condition["status"]; ok {
 		builder.Where("status = ?", val)
 	}

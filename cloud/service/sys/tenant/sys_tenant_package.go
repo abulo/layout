@@ -8,11 +8,11 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-// tenant_package 租户套餐
+// sys_tenant_package 租户套餐
 
-// TenantPackageDao 数据转换
-func TenantPackageDao(item *TenantPackageObject) *dao.TenantPackage {
-	daoItem := &dao.TenantPackage{}
+// SysTenantPackageDao 数据转换
+func SysTenantPackageDao(item *SysTenantPackageObject) *dao.SysTenantPackage {
+	daoItem := &dao.SysTenantPackage{}
 
 	if item != nil && item.Id != nil {
 		daoItem.Id = item.Id // 编号
@@ -48,9 +48,9 @@ func TenantPackageDao(item *TenantPackageObject) *dao.TenantPackage {
 	return daoItem
 }
 
-// TenantPackageProto 数据绑定
-func TenantPackageProto(item dao.TenantPackage) *TenantPackageObject {
-	res := &TenantPackageObject{}
+// SysTenantPackageProto 数据绑定
+func SysTenantPackageProto(item dao.SysTenantPackage) *SysTenantPackageObject {
+	res := &SysTenantPackageObject{}
 	if item.Id != nil {
 		res.Id = item.Id
 	}

@@ -2,8 +2,8 @@ package dao
 
 import "github.com/abulo/ratel/v3/stores/null"
 
-// TenantPackage 租户套餐 tenant_package
-type TenantPackage struct {
+// SysTenantPackage 租户套餐 sys_tenant_package
+type SysTenantPackage struct {
 	Id         *int64        `gorm:"primaryKey;autoIncrement;column:id" json:"id"` //bigint 编号,PRI
 	Name       *string       `gorm:"column:name" json:"name"`                      //varchar 名称
 	ScopeMenu  null.JSON     `gorm:"column:scope_menu" json:"scopeMenu"`           //json 数据范围
@@ -16,6 +16,6 @@ type TenantPackage struct {
 	UpdateTime null.DateTime `gorm:"column:update_time" json:"updateTime"`         //datetime 更新时间
 }
 
-func (TenantPackage) TableName() string {
-	return "tenant_package"
+func (SysTenantPackage) TableName() string {
+	return "sys_tenant_package"
 }

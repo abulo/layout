@@ -2,8 +2,8 @@ package dao
 
 import "github.com/abulo/ratel/v3/stores/null"
 
-// Tenant 租户 tenant
-type Tenant struct {
+// SysTenant 租户 sys_tenant
+type SysTenant struct {
 	Id            *int64        `gorm:"primaryKey;autoIncrement;column:id" json:"id"` //bigint 编号,PRI
 	Name          *string       `gorm:"column:name" json:"name"`                      //varchar 名称
 	UserId        null.Int64    `gorm:"column:user_id" json:"userId"`                 //bigint 用户
@@ -18,8 +18,10 @@ type Tenant struct {
 	CreateTime    null.DateTime `gorm:"column:create_time" json:"createTime"`         //datetime 创建时间
 	Updater       null.String   `gorm:"column:updater" json:"updater"`                //varchar 更新人
 	UpdateTime    null.DateTime `gorm:"column:update_time" json:"updateTime"`         //datetime 更新时间
+	Username      *string       `db:"username,-" json:"username,omitempty"`           //varchar 用户名称
+	Password      *string       `db:"password,-" json:"password,omitempty"`           //varchar 用户密码
 }
 
-func (Tenant) TableName() string {
-	return "tenant"
+func (SysTenant) TableName() string {
+	return "sys_tenant"
 }

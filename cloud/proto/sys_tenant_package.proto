@@ -1,0 +1,116 @@
+syntax = "proto3";
+// sys_tenant_package 租户套餐
+package tenant;
+option go_package = "cloud/service/sys/tenant;tenant";
+import "google/protobuf/timestamp.proto";
+import "pagination.proto";
+
+// SysTenantPackageObject 数据对象
+message SysTenantPackageObject {
+	// @inject_tag: gorm:"primaryKey;autoIncrement;column:id" json:"id"
+	optional int64 id = 1; //编号
+	// @inject_tag: gorm:"column:name" json:"name"
+	optional string name = 2; //名称
+	// @inject_tag: gorm:"column:scope_menu" json:"scopeMenu"
+	optional bytes scope_menu = 3; //数据范围
+	// @inject_tag: gorm:"column:sort" json:"sort"
+	optional int32 sort = 4; //排序
+	// @inject_tag: gorm:"column:status" json:"status"
+	optional int32 status = 5; //状态:0正常/1停用
+	// @inject_tag: gorm:"column:remark" json:"remark"
+	optional string remark = 6; //备注
+	// @inject_tag: gorm:"column:creator" json:"creator"
+	optional string creator = 7; //创建人
+	// @inject_tag: gorm:"column:create_time" json:"createTime"
+	google.protobuf.Timestamp create_time = 8; //创建时间
+	// @inject_tag: gorm:"column:updater" json:"updater"
+	optional string updater = 9; //更新人
+	// @inject_tag: gorm:"column:update_time" json:"updateTime"
+	google.protobuf.Timestamp update_time = 10; //更新时间
+}
+// SysTenantPackageTotalResponse 列表数据总量
+message SysTenantPackageTotalResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysTenantPackageCreateRequest 创建数据请求
+message SysTenantPackageCreateRequest {
+	SysTenantPackageObject data = 1;
+}
+// SysTenantPackageCreateResponse 创建数据响应
+message SysTenantPackageCreateResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysTenantPackageUpdateRequest 更新数据请求
+message SysTenantPackageUpdateRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+	SysTenantPackageObject data = 2;
+}
+// SysTenantPackageUpdateResponse 更新数据响应
+message SysTenantPackageUpdateResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysTenantPackageDeleteRequest 删除数据请求
+message SysTenantPackageDeleteRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysTenantPackageDeleteResponse 删除数据响应
+message SysTenantPackageDeleteResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysTenantPackageRequest 查询单条数据请求
+message SysTenantPackageRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysTenantPackageResponse 查询单条数据响应
+message SysTenantPackageResponse {
+	int64 code = 1;
+	string msg = 2;
+	SysTenantPackageObject data = 3;
+}
+// SysTenantPackageListRequest 列表数据
+message SysTenantPackageListRequest {
+	
+	// @inject_tag: db:"status" json:"status"
+	optional int32 status = 1; // 状态:0正常/1停用
+	// @inject_tag: db:"name" json:"name"
+	optional string name = 2; // 名称
+
+	// @inject_tag: json:"pagination"
+	optional pagination.PaginationRequest pagination = 3; // 分页
+}
+
+// SysTenantPackageListResponse 数据响应
+message SysTenantPackageListResponse {
+	int64 code = 1;
+  	string msg = 2;
+	repeated SysTenantPackageObject data = 3;
+}
+// SysTenantPackageListTotalRequest 列表数据
+message SysTenantPackageListTotalRequest {
+	
+	// @inject_tag: db:"status" json:"status"
+	optional int32 status = 1; // 状态:0正常/1停用
+	// @inject_tag: db:"name" json:"name"
+	optional string name = 2; // 名称
+
+}
+
+
+// SysTenantPackageService 服务
+service SysTenantPackageService{
+	rpc SysTenantPackageCreate(SysTenantPackageCreateRequest) returns (SysTenantPackageCreateResponse);
+	rpc SysTenantPackageUpdate(SysTenantPackageUpdateRequest) returns (SysTenantPackageUpdateResponse);
+	rpc SysTenantPackageDelete(SysTenantPackageDeleteRequest) returns (SysTenantPackageDeleteResponse);
+	rpc SysTenantPackage(SysTenantPackageRequest) returns (SysTenantPackageResponse);
+	rpc SysTenantPackageList(SysTenantPackageListRequest) returns (SysTenantPackageListResponse);
+	rpc SysTenantPackageListTotal(SysTenantPackageListTotalRequest) returns (SysTenantPackageTotalResponse);
+}
