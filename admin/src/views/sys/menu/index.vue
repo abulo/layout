@@ -1,12 +1,14 @@
 <template>
   <div class="table-box">
     <ProTable
+      v-if="refreshTable"
       ref="proTable"
       title="菜单列表"
       row-key="id"
       :columns="columns"
       :toolbar-right="['search', 'refresh', 'export', 'layout']"
       :request-api="getTableList"
+      :default-expand-all="isExpandAll"
       :request-auto="true"
       :pagination="false"
       :search-col="12"
@@ -14,6 +16,7 @@
     >
       <template #toolbarLeft>
         <el-button v-auth="'menu.SysMenuCreate'" type="primary" :icon="CirclePlus" @click="handleAdd">新增</el-button>
+        <el-button type="primary" :icon="Sort" @click="handleExpandAll">展开/折叠</el-button>
       </template>
       <template #type="scope">
         <DictTag type="menu.type" :value="scope.row.type" />
@@ -175,7 +178,7 @@
 defineOptions({ name: 'SysMenu' })
 import type { ResSysMenu } from '@/api/interface/sysMenu'
 import type { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
-import { EditPen, CirclePlus, Delete, View, DArrowRight } from '@element-plus/icons-vue'
+import { EditPen, CirclePlus, Delete, View, DArrowRight, Sort } from '@element-plus/icons-vue'
 import {
   getSysMenuListApi,
   deleteSysMenuApi,
@@ -199,6 +202,10 @@ const title = ref('')
 const proTable = ref<ProTableInstance>()
 //显示弹出层
 const dialogVisible = ref(false)
+//是否展开，默认全部折叠
+const isExpandAll = ref(false)
+//重新渲染表格状态
+const refreshTable = ref(true)
 //菜单类别
 const menuTypeEnum = getIntDictOptions('menu.type')
 //菜单隐藏
@@ -374,6 +381,16 @@ const submitForm = (formEl: FormInstance | undefined) => {
     resetForm(formEl)
     loading.value = false
     proTable.value?.getTableList()
+  })
+}
+
+// 设置展开合并
+const handleExpandAll = () => {
+  refreshTable.value = false
+  isExpandAll.value = !isExpandAll.value
+  nextTick(() => {
+    refreshTable.value = true
+    menuOptions.value = []
   })
 }
 // 获取菜单选项

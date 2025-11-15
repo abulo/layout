@@ -24,6 +24,16 @@
         </template>
       </el-input>
     </el-form-item>
+    <el-form-item prop="verifyCode">
+      <el-input v-model="loginForm.captchaCode" placeholder="验证码">
+        <template #prefix>
+          <el-icon class="el-input__icon"><Key /></el-icon>
+        </template>
+        <template #append>
+          <el-image class="captchaImg" fit="fill" />
+        </template>
+      </el-input>
+    </el-form-item>
   </el-form>
   <div class="login-btn">
     <el-button :icon="CircleClose" round size="large" @click="resetForm(loginFormRef)"> 重置 </el-button>

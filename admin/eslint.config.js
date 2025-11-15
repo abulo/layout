@@ -103,6 +103,7 @@ export default [
       'vue/html-self-closing': 'off',
       'vue/html-indent': 'off',
       'vue/singleline-html-element-content-newline': 'off',
+      'vue/multiline-html-element-content-newline': 'off',
       'vue/component-name-in-template-casing': 'off',
       'vue/require-default-prop': 'off',
       'vue/html-closing-bracket-newline': [
