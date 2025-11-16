@@ -95,7 +95,6 @@
               :props="{
                 children: 'children',
                 label: 'name',
-                value: 'id',
               }"
               :list="sysTenantPackageForm.scopeMenu"
               empty-text="加载中，请稍候"
@@ -245,7 +244,6 @@ const reset = () => {
   menuSelect.value = false
   menuExpand.value = false
   menuRef.value?.setCheckedNodes([])
-  sysTenantPackageForm.value?.resetFields()
 }
 /**
  * 处理新增操作

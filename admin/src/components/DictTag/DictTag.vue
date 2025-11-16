@@ -65,14 +65,17 @@ export default defineComponent({
         >
           {dictOptions.map((dict: DictDataType) => {
             if (valueArr.value.includes(dict.value)) {
-              if (dict.colorType + '' === 'default') {
-                dict.colorType = ''
-              }
+              // if (dict.colorType + '' === 'default') {
+              //  dict.colorType = ''
+              //}
+              // 修改这里：使用 undefined 替代空字符串
+              const rawColorType = dict.colorType as string | undefined
+              const colorType = rawColorType === 'default' || !rawColorType ? undefined : rawColorType
               return (
                 // 添加标签的文字颜色为白色，解决自定义背景颜色时标签文字看不清的问题
                 <ElTag
                   style={dict?.cssClass ? 'color: #fff' : ''}
-                  type={dict?.colorType || null}
+                  type={colorType as any}
                   color={dict?.cssClass && isHexColor(dict?.cssClass) ? dict?.cssClass : ''}
                   disableTransitions={true}
                 >

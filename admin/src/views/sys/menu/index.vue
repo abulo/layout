@@ -15,7 +15,7 @@
       :indent="20"
     >
       <template #toolbarLeft>
-        <el-button v-auth="'menu.SysMenuCreate'" type="primary" :icon="CirclePlus" @click="handleAdd">新增</el-button>
+        <el-button v-auth="'menu.SysMenuCreate'" type="primary" :icon="CirclePlus" @click="handleAdd()">新增</el-button>
         <el-button type="primary" :icon="Sort" @click="handleExpandAll">展开/折叠</el-button>
       </template>
       <template #type="scope">
@@ -310,7 +310,7 @@ const reset = () => {
  * 处理新增操作
  * 该函数用于初始化对话框的状态
  */
-const handleAdd = async (row?: ResSysMenu) => {
+const handleAdd = (row?: ResSysMenu) => {
   title.value = '新增菜单'
   dialogVisible.value = true
   reset()
@@ -396,11 +396,33 @@ const handleExpandAll = () => {
 // 获取菜单选项
 const getMenuOptions = async () => {
   const data = await getSysMenuListSimpleApi()
-  menuOptions.value = {
-    id: 0,
-    name: '主类目',
-    children: handleTree(data),
-  }
+  menuOptions.value = [
+    {
+      id: 0,
+      name: '主类目',
+      code: undefined,
+      type: 0,
+      sort: 1,
+      parentId: 0,
+      path: undefined,
+      icon: undefined,
+      component: undefined,
+      componentName: undefined,
+      hide: 0,
+      link: undefined,
+      cache: 0,
+      remark: undefined,
+      active: undefined,
+      full: 0,
+      redirect: undefined,
+      status: 0,
+      creator: undefined,
+      createTime: undefined,
+      updater: undefined,
+      updateTime: undefined,
+      children: handleTree(data),
+    },
+  ] as unknown as ResSysMenu[]
 }
 
 // 定义列配置项

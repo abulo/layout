@@ -51,7 +51,7 @@ const logout = () => {
     await AuthApi.logout()
 
     // 2.清除 Token
-    userStore.clearUserState('')
+    userStore.clearUserState()
 
     // 3.重定向到登陆页
     router.replace(LOGIN_URL)

@@ -360,7 +360,7 @@ const deleteSearch = reactive<SearchProps>(
     ? {
         el: 'switch',
         span: 2,
-        props: {
+        attrs: {
           activeValue: 1,
           inactiveValue: 0,
         },
