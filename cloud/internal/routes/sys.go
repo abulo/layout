@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"cloud/api/sys/dept"
 	"cloud/api/sys/dict"
 	"cloud/api/sys/menu"
 	"cloud/api/sys/post"
@@ -99,6 +100,23 @@ func SysInitRoute(handle *xhertz.Server) {
 		route.GET("/sys/tenant/package", tenant.SysTenantPackageList)
 		// sys_tenant_package->租户套餐->列表(精简)
 		route.GET("/sys/tenant/package/simple", tenant.SysTenantPackageListSimple)
+
+		// sys_dept->部门->创建
+		route.POST("/sys/dept", dept.SysDeptCreate)
+		// sys_dept->部门->更新
+		route.PUT("/sys/dept/:id/update", dept.SysDeptUpdate)
+		// sys_dept->部门->删除
+		route.DELETE("/sys/dept/:id/delete", dept.SysDeptDelete)
+		// sys_dept->部门->单条数据信息查看
+		route.GET("/sys/dept/:id/item", dept.SysDept)
+		// sys_dept->部门->恢复
+		route.PUT("/sys/dept/:id/recover", dept.SysDeptRecover)
+		// sys_dept->部门->清理
+		route.DELETE("/sys/dept/:id/drop", dept.SysDeptDrop)
+		// sys_dept->部门->列表
+		route.GET("/sys/dept", dept.SysDeptList)
+		// sys_dept->部门->列表(精简)
+		route.GET("/sys/dept/simple", dept.SysDeptListSimple)
 
 	}
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/abulo/ratel/v3/stores/sql"
 	"github.com/spf13/cast"
 	"google.golang.org/protobuf/proto"
+	"gorm.io/gorm/clause"
 )
 
 // sys_dept 部门
@@ -91,7 +92,11 @@ func SysDeptList(ctx context.Context, condition map[string]any) (res []dao.SysDe
 			builder.Limit(cast.ToInt(val))
 		}
 	}
-	builder.Order("id")
+	builder.Order(clause.OrderBy{Columns: []clause.OrderByColumn{
+		{Column: clause.Column{Name: "sort"}, Desc: false},
+		{Column: clause.Column{Name: "parent_id"}, Desc: false},
+		{Column: clause.Column{Name: "id"}, Desc: true},
+	}})
 	err = builder.Find(&res).Error
 	return
 }
