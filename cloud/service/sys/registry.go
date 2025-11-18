@@ -51,6 +51,10 @@ func Registry(server *xgrpc.Server) {
 	user.RegisterSysUserTenantServiceServer(server.Server, &user.SrvSysUserTenantServiceServer{
 		Server: server,
 	})
+	// 用户角色->sys_user_role
+	user.RegisterSysUserRoleServiceServer(server.Server, &user.SrvSysUserRoleServiceServer{
+		Server: server,
+	})
 	// 登录日志->sys_logger_login
 	logger.RegisterSysLoggerLoginServiceServer(server.Server, &logger.SrvSysLoggerLoginServiceServer{
 		Server: server,

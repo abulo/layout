@@ -4,6 +4,7 @@ import (
 	"cloud/code"
 	"cloud/module/sys/user"
 	"context"
+	"encoding/json"
 
 	globalLogger "github.com/abulo/ratel/v3/core/logger"
 	"github.com/abulo/ratel/v3/server/xgrpc"
@@ -197,7 +198,17 @@ func (srv SrvSysUserServiceServer) SysUserList(ctx context.Context, request *Sys
 	if request.Name != nil {
 		condition["name"] = request.GetName()
 	}
-
+	if request.UserId != nil {
+		condition["userId"] = request.GetUserId()
+	}
+	if request.Scope != nil {
+		condition["scope"] = request.GetScope()
+	}
+	if request.ScopeDept != nil {
+		var deptIds []int64
+		json.Unmarshal(request.GetScopeDept(), &deptIds)
+		condition["scopeDept"] = deptIds
+	}
 	paginationRequest := request.GetPagination()
 	if paginationRequest != nil {
 		// 当前页面
@@ -261,6 +272,17 @@ func (srv SrvSysUserServiceServer) SysUserListTotal(ctx context.Context, request
 	if request.Name != nil {
 		condition["name"] = request.GetName()
 	}
+	if request.UserId != nil {
+		condition["userId"] = request.GetUserId()
+	}
+	if request.Scope != nil {
+		condition["scope"] = request.GetScope()
+	}
+	if request.ScopeDept != nil {
+		var deptIds []int64
+		json.Unmarshal(request.GetScopeDept(), &deptIds)
+		condition["scopeDept"] = deptIds
+	}
 
 	// 获取数据集合
 	total, err := user.SysUserListTotal(ctx, condition)
@@ -275,5 +297,54 @@ func (srv SrvSysUserServiceServer) SysUserListTotal(ctx context.Context, request
 		Code: code.Success,
 		Msg:  code.StatusText(code.Success),
 		Data: total,
+	}, nil
+}
+
+// SystemUserUpdate 更新数据
+func (srv SrvSysUserServiceServer) SysUserPassword(ctx context.Context, request *SysUserPasswordRequest) (*SysUserPasswordResponse, error) {
+	id := request.GetId()
+
+	if id < 1 {
+		return &SysUserPasswordResponse{}, status.Error(code.ConvertToGrpc(code.ParamInvalid), code.StatusText(code.ParamInvalid))
+	}
+	password := request.GetPassword()
+	if util.Empty(password) {
+		return &SysUserPasswordResponse{}, status.Error(code.ConvertToGrpc(code.ParamInvalid), code.StatusText(code.ParamInvalid))
+	}
+	_, err := user.SysUserPassword(ctx, id, password)
+	if sql.Acceptable(err) != nil {
+		globalLogger.Logger.WithFields(logrus.Fields{
+			"req": request,
+			"err": err,
+		}).Error("Sql:用户信息表:system_user:SysUserPassword")
+		return &SysUserPasswordResponse{}, status.Error(code.ConvertToGrpc(code.SqlError), err.Error())
+	}
+	return &SysUserPasswordResponse{
+		Code: code.Success,
+		Msg:  code.StatusText(code.Success),
+	}, nil
+}
+
+func (srv SrvSysUserServiceServer) SysUserScope(ctx context.Context, request *SysUserScopeRequest) (*SysUserScopeResponse, error) {
+	userId := request.GetUserId()
+	if userId < 1 {
+		return &SysUserScopeResponse{}, status.Error(code.ConvertToGrpc(code.ParamInvalid), code.StatusText(code.ParamInvalid))
+	}
+	tenantId := request.GetTenantId()
+	if tenantId < 1 {
+		return &SysUserScopeResponse{}, status.Error(code.ConvertToGrpc(code.ParamInvalid), code.StatusText(code.ParamInvalid))
+	}
+	res, err := user.SysUserScope(ctx, tenantId, userId)
+	if sql.Acceptable(err) != nil {
+		globalLogger.Logger.WithFields(logrus.Fields{
+			"req": request,
+			"err": err,
+		}).Error("Sql:系统用户:system_user:SysUserScope")
+		return &SysUserScopeResponse{}, status.Error(code.ConvertToGrpc(code.SqlError), err.Error())
+	}
+	return &SysUserScopeResponse{
+		Code: code.Success,
+		Msg:  code.StatusText(code.Success),
+		Data: SysUserScopeProto(res),
 	}, nil
 }

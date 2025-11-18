@@ -51,7 +51,13 @@ type SysUserObject struct {
 	// @inject_tag: gorm:"column:updater" json:"updater"
 	Updater *string `protobuf:"bytes,11,opt,name=updater,proto3,oneof" json:"updater" gorm:"column:updater"` //更新人
 	// @inject_tag: gorm:"column:update_time" json:"updateTime"
-	UpdateTime    *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=update_time,json=updateTime,proto3" json:"updateTime" gorm:"column:update_time"` //更新时间
+	UpdateTime *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=update_time,json=updateTime,proto3" json:"updateTime" gorm:"column:update_time"` //更新时间
+	// @inject_tag: db:"dept_ids" json:"deptIds"
+	DeptIds []byte `protobuf:"bytes,13,opt,name=dept_ids,json=deptIds,proto3,oneof" json:"deptIds" db:"dept_ids"` //部门ID
+	// @inject_tag: db:"post_ids" json:"postIds"
+	PostIds []byte `protobuf:"bytes,14,opt,name=post_ids,json=postIds,proto3,oneof" json:"postIds" db:"post_ids"` //职位 id
+	// @inject_tag: db:"role_ids" json:"roleIds"
+	RoleIds       []byte `protobuf:"bytes,15,opt,name=role_ids,json=roleIds,proto3,oneof" json:"roleIds" db:"role_ids"` //角色编号 id
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -166,6 +172,27 @@ func (x *SysUserObject) GetUpdater() string {
 func (x *SysUserObject) GetUpdateTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.UpdateTime
+	}
+	return nil
+}
+
+func (x *SysUserObject) GetDeptIds() []byte {
+	if x != nil {
+		return x.DeptIds
+	}
+	return nil
+}
+
+func (x *SysUserObject) GetPostIds() []byte {
+	if x != nil {
+		return x.PostIds
+	}
+	return nil
+}
+
+func (x *SysUserObject) GetRoleIds() []byte {
+	if x != nil {
+		return x.RoleIds
 	}
 	return nil
 }
@@ -970,8 +997,14 @@ type SysUserListRequest struct {
 	Mobile *string `protobuf:"bytes,5,opt,name=mobile,proto3,oneof" json:"mobile" db:"mobile"` // 手机号码
 	// @inject_tag: db:"name" json:"name"
 	Name *string `protobuf:"bytes,6,opt,name=name,proto3,oneof" json:"name" db:"name"` // 姓名
+	// @inject_tag: db:"user_id" json:"userId"
+	UserId *int64 `protobuf:"varint,7,opt,name=user_id,json=userId,proto3,oneof" json:"userId" db:"user_id"` // 当前登录的用户 ID
+	// @inject_tag: gorm:"column:scope" json:"scope"
+	Scope *int32 `protobuf:"varint,8,opt,name=scope,proto3,oneof" json:"scope" gorm:"column:scope"` //数据范围:1:全部数据权限/2:自定数据权限/3:本部门数据权限/4:本部门及以下数据权限
+	// @inject_tag: gorm:"column:scope_dept" json:"scopeDept"
+	ScopeDept []byte `protobuf:"bytes,9,opt,name=scope_dept,json=scopeDept,proto3,oneof" json:"scopeDept" gorm:"column:scope_dept"` //数据范围(指定部门数组)
 	// @inject_tag: json:"pagination"
-	Pagination    *pagination.PaginationRequest `protobuf:"bytes,7,opt,name=pagination,proto3,oneof" json:"pagination"` // 分页
+	Pagination    *pagination.PaginationRequest `protobuf:"bytes,10,opt,name=pagination,proto3,oneof" json:"pagination"` // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1046,6 +1079,27 @@ func (x *SysUserListRequest) GetName() string {
 		return *x.Name
 	}
 	return ""
+}
+
+func (x *SysUserListRequest) GetUserId() int64 {
+	if x != nil && x.UserId != nil {
+		return *x.UserId
+	}
+	return 0
+}
+
+func (x *SysUserListRequest) GetScope() int32 {
+	if x != nil && x.Scope != nil {
+		return *x.Scope
+	}
+	return 0
+}
+
+func (x *SysUserListRequest) GetScopeDept() []byte {
+	if x != nil {
+		return x.ScopeDept
+	}
+	return nil
 }
 
 func (x *SysUserListRequest) GetPagination() *pagination.PaginationRequest {
@@ -1130,7 +1184,13 @@ type SysUserListTotalRequest struct {
 	// @inject_tag: db:"mobile" json:"mobile"
 	Mobile *string `protobuf:"bytes,5,opt,name=mobile,proto3,oneof" json:"mobile" db:"mobile"` // 手机号码
 	// @inject_tag: db:"name" json:"name"
-	Name          *string `protobuf:"bytes,6,opt,name=name,proto3,oneof" json:"name" db:"name"` // 姓名
+	Name *string `protobuf:"bytes,6,opt,name=name,proto3,oneof" json:"name" db:"name"` // 姓名
+	// @inject_tag: db:"user_id" json:"userId"
+	UserId *int64 `protobuf:"varint,7,opt,name=user_id,json=userId,proto3,oneof" json:"userId" db:"user_id"` // 当前登录的用户 ID
+	// @inject_tag: gorm:"column:scope" json:"scope"
+	Scope *int32 `protobuf:"varint,8,opt,name=scope,proto3,oneof" json:"scope" gorm:"column:scope"` //数据范围:1:全部数据权限/2:自定数据权限/3:本部门数据权限/4:本部门及以下数据权限
+	// @inject_tag: gorm:"column:scope_dept" json:"scopeDept"
+	ScopeDept     []byte `protobuf:"bytes,9,opt,name=scope_dept,json=scopeDept,proto3,oneof" json:"scopeDept" gorm:"column:scope_dept"` //数据范围(指定部门数组)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1207,11 +1267,310 @@ func (x *SysUserListTotalRequest) GetName() string {
 	return ""
 }
 
+func (x *SysUserListTotalRequest) GetUserId() int64 {
+	if x != nil && x.UserId != nil {
+		return *x.UserId
+	}
+	return 0
+}
+
+func (x *SysUserListTotalRequest) GetScope() int32 {
+	if x != nil && x.Scope != nil {
+		return *x.Scope
+	}
+	return 0
+}
+
+func (x *SysUserListTotalRequest) GetScopeDept() []byte {
+	if x != nil {
+		return x.ScopeDept
+	}
+	return nil
+}
+
+type SysUserScopeObject struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: gorm:"column:scope" json:"scope"
+	Scope *int32 `protobuf:"varint,1,opt,name=scope,proto3,oneof" json:"scope" gorm:"column:scope"` //数据范围:1:全部数据权限/2:自定数据权限/3:本部门数据权限/4:本部门及以下数据权限
+	// @inject_tag: gorm:"column:scope_dept" json:"scopeDept"
+	ScopeDept     []byte `protobuf:"bytes,2,opt,name=scope_dept,json=scopeDept,proto3,oneof" json:"scopeDept" gorm:"column:scope_dept"` //数据范围(指定部门数组)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SysUserScopeObject) Reset() {
+	*x = SysUserScopeObject{}
+	mi := &file_sys_user_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysUserScopeObject) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysUserScopeObject) ProtoMessage() {}
+
+func (x *SysUserScopeObject) ProtoReflect() protoreflect.Message {
+	mi := &file_sys_user_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysUserScopeObject.ProtoReflect.Descriptor instead.
+func (*SysUserScopeObject) Descriptor() ([]byte, []int) {
+	return file_sys_user_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *SysUserScopeObject) GetScope() int32 {
+	if x != nil && x.Scope != nil {
+		return *x.Scope
+	}
+	return 0
+}
+
+func (x *SysUserScopeObject) GetScopeDept() []byte {
+	if x != nil {
+		return x.ScopeDept
+	}
+	return nil
+}
+
+// SysUserScopeRequest 创建数据请求
+type SysUserScopeRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	TenantId int64 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenantId" db:"tenant_id"` //租户ID
+	// @inject_tag: db:"user_id" json:"userId"
+	UserId        int64 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"userId" db:"user_id"` //用户ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SysUserScopeRequest) Reset() {
+	*x = SysUserScopeRequest{}
+	mi := &file_sys_user_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysUserScopeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysUserScopeRequest) ProtoMessage() {}
+
+func (x *SysUserScopeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_sys_user_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysUserScopeRequest.ProtoReflect.Descriptor instead.
+func (*SysUserScopeRequest) Descriptor() ([]byte, []int) {
+	return file_sys_user_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *SysUserScopeRequest) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *SysUserScopeRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+// SysUserScopeResponse 创建数据响应
+type SysUserScopeResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          int64                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	Data          *SysUserScopeObject    `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SysUserScopeResponse) Reset() {
+	*x = SysUserScopeResponse{}
+	mi := &file_sys_user_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysUserScopeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysUserScopeResponse) ProtoMessage() {}
+
+func (x *SysUserScopeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_sys_user_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysUserScopeResponse.ProtoReflect.Descriptor instead.
+func (*SysUserScopeResponse) Descriptor() ([]byte, []int) {
+	return file_sys_user_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *SysUserScopeResponse) GetCode() int64 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *SysUserScopeResponse) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
+}
+
+func (x *SysUserScopeResponse) GetData() *SysUserScopeObject {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// SysUserPasswordRequest  修改密码
+type SysUserPasswordRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: db:"id" json:"id"
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id" db:"id"` //用户ID
+	// @inject_tag: db:"password" json:"password"
+	Password      *string `protobuf:"bytes,2,opt,name=password,proto3,oneof" json:"password" db:"password"` //密码
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SysUserPasswordRequest) Reset() {
+	*x = SysUserPasswordRequest{}
+	mi := &file_sys_user_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysUserPasswordRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysUserPasswordRequest) ProtoMessage() {}
+
+func (x *SysUserPasswordRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_sys_user_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysUserPasswordRequest.ProtoReflect.Descriptor instead.
+func (*SysUserPasswordRequest) Descriptor() ([]byte, []int) {
+	return file_sys_user_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *SysUserPasswordRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *SysUserPasswordRequest) GetPassword() string {
+	if x != nil && x.Password != nil {
+		return *x.Password
+	}
+	return ""
+}
+
+// SysUserPasswordrResponse 修改密码响应
+type SysUserPasswordResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          int64                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SysUserPasswordResponse) Reset() {
+	*x = SysUserPasswordResponse{}
+	mi := &file_sys_user_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysUserPasswordResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysUserPasswordResponse) ProtoMessage() {}
+
+func (x *SysUserPasswordResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_sys_user_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysUserPasswordResponse.ProtoReflect.Descriptor instead.
+func (*SysUserPasswordResponse) Descriptor() ([]byte, []int) {
+	return file_sys_user_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *SysUserPasswordResponse) GetCode() int64 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *SysUserPasswordResponse) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
+}
+
 var File_sys_user_proto protoreflect.FileDescriptor
 
 const file_sys_user_proto_rawDesc = "" +
 	"\n" +
-	"\x0esys_user.proto\x12\x04user\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\xa4\x04\n" +
+	"\x0esys_user.proto\x12\x04user\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\xab\x05\n" +
 	"\rSysUserObject\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x01R\x04name\x88\x01\x01\x12\x1b\n" +
@@ -1227,7 +1586,11 @@ const file_sys_user_proto_rawDesc = "" +
 	"createTime\x12\x1d\n" +
 	"\aupdater\x18\v \x01(\tH\tR\aupdater\x88\x01\x01\x12;\n" +
 	"\vupdate_time\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"updateTimeB\x05\n" +
+	"updateTime\x12\x1e\n" +
+	"\bdept_ids\x18\r \x01(\fH\n" +
+	"R\adeptIds\x88\x01\x01\x12\x1e\n" +
+	"\bpost_ids\x18\x0e \x01(\fH\vR\apostIds\x88\x01\x01\x12\x1e\n" +
+	"\brole_ids\x18\x0f \x01(\fH\fR\aroleIds\x88\x01\x01B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\t\n" +
 	"\a_mobileB\v\n" +
@@ -1241,7 +1604,10 @@ const file_sys_user_proto_rawDesc = "" +
 	"\n" +
 	"\b_creatorB\n" +
 	"\n" +
-	"\b_updater\"P\n" +
+	"\b_updaterB\v\n" +
+	"\t_dept_idsB\v\n" +
+	"\t_post_idsB\v\n" +
+	"\t_role_ids\"P\n" +
 	"\x14SysUserTotalResponse\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x03R\x04code\x12\x10\n" +
 	"\x03msg\x18\x02 \x01(\tR\x03msg\x12\x12\n" +
@@ -1285,16 +1651,21 @@ const file_sys_user_proto_rawDesc = "" +
 	"\x14SysUserLoginResponse\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x03R\x04code\x12\x10\n" +
 	"\x03msg\x18\x02 \x01(\tR\x03msg\x12'\n" +
-	"\x04data\x18\x03 \x01(\v2\x13.user.SysUserObjectR\x04data\"\xe2\x02\n" +
+	"\x04data\x18\x03 \x01(\v2\x13.user.SysUserObjectR\x04data\"\xe4\x03\n" +
 	"\x12SysUserListRequest\x12\x1f\n" +
 	"\busername\x18\x01 \x01(\tH\x00R\busername\x88\x01\x01\x12 \n" +
 	"\ttenant_id\x18\x02 \x01(\x03H\x01R\btenantId\x88\x01\x01\x12\x1d\n" +
 	"\adeleted\x18\x03 \x01(\x05H\x02R\adeleted\x88\x01\x01\x12\x1b\n" +
 	"\x06status\x18\x04 \x01(\x05H\x03R\x06status\x88\x01\x01\x12\x1b\n" +
 	"\x06mobile\x18\x05 \x01(\tH\x04R\x06mobile\x88\x01\x01\x12\x17\n" +
-	"\x04name\x18\x06 \x01(\tH\x05R\x04name\x88\x01\x01\x12B\n" +
+	"\x04name\x18\x06 \x01(\tH\x05R\x04name\x88\x01\x01\x12\x1c\n" +
+	"\auser_id\x18\a \x01(\x03H\x06R\x06userId\x88\x01\x01\x12\x19\n" +
+	"\x05scope\x18\b \x01(\x05H\aR\x05scope\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"pagination\x18\a \x01(\v2\x1d.pagination.PaginationRequestH\x06R\n" +
+	"scope_dept\x18\t \x01(\fH\bR\tscopeDept\x88\x01\x01\x12B\n" +
+	"\n" +
+	"pagination\x18\n" +
+	" \x01(\v2\x1d.pagination.PaginationRequestH\tR\n" +
 	"pagination\x88\x01\x01B\v\n" +
 	"\t_usernameB\f\n" +
 	"\n" +
@@ -1303,19 +1674,27 @@ const file_sys_user_proto_rawDesc = "" +
 	"\b_deletedB\t\n" +
 	"\a_statusB\t\n" +
 	"\a_mobileB\a\n" +
-	"\x05_nameB\r\n" +
+	"\x05_nameB\n" +
+	"\n" +
+	"\b_user_idB\b\n" +
+	"\x06_scopeB\r\n" +
+	"\v_scope_deptB\r\n" +
 	"\v_pagination\"d\n" +
 	"\x13SysUserListResponse\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x03R\x04code\x12\x10\n" +
 	"\x03msg\x18\x02 \x01(\tR\x03msg\x12'\n" +
-	"\x04data\x18\x03 \x03(\v2\x13.user.SysUserObjectR\x04data\"\x94\x02\n" +
+	"\x04data\x18\x03 \x03(\v2\x13.user.SysUserObjectR\x04data\"\x96\x03\n" +
 	"\x17SysUserListTotalRequest\x12\x1f\n" +
 	"\busername\x18\x01 \x01(\tH\x00R\busername\x88\x01\x01\x12 \n" +
 	"\ttenant_id\x18\x02 \x01(\x03H\x01R\btenantId\x88\x01\x01\x12\x1d\n" +
 	"\adeleted\x18\x03 \x01(\x05H\x02R\adeleted\x88\x01\x01\x12\x1b\n" +
 	"\x06status\x18\x04 \x01(\x05H\x03R\x06status\x88\x01\x01\x12\x1b\n" +
 	"\x06mobile\x18\x05 \x01(\tH\x04R\x06mobile\x88\x01\x01\x12\x17\n" +
-	"\x04name\x18\x06 \x01(\tH\x05R\x04name\x88\x01\x01B\v\n" +
+	"\x04name\x18\x06 \x01(\tH\x05R\x04name\x88\x01\x01\x12\x1c\n" +
+	"\auser_id\x18\a \x01(\x03H\x06R\x06userId\x88\x01\x01\x12\x19\n" +
+	"\x05scope\x18\b \x01(\x05H\aR\x05scope\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"scope_dept\x18\t \x01(\fH\bR\tscopeDept\x88\x01\x01B\v\n" +
 	"\t_usernameB\f\n" +
 	"\n" +
 	"_tenant_idB\n" +
@@ -1323,7 +1702,31 @@ const file_sys_user_proto_rawDesc = "" +
 	"\b_deletedB\t\n" +
 	"\a_statusB\t\n" +
 	"\a_mobileB\a\n" +
-	"\x05_name2\x91\x05\n" +
+	"\x05_nameB\n" +
+	"\n" +
+	"\b_user_idB\b\n" +
+	"\x06_scopeB\r\n" +
+	"\v_scope_dept\"l\n" +
+	"\x12SysUserScopeObject\x12\x19\n" +
+	"\x05scope\x18\x01 \x01(\x05H\x00R\x05scope\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"scope_dept\x18\x02 \x01(\fH\x01R\tscopeDept\x88\x01\x01B\b\n" +
+	"\x06_scopeB\r\n" +
+	"\v_scope_dept\"K\n" +
+	"\x13SysUserScopeRequest\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\"j\n" +
+	"\x14SysUserScopeResponse\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x03R\x04code\x12\x10\n" +
+	"\x03msg\x18\x02 \x01(\tR\x03msg\x12,\n" +
+	"\x04data\x18\x03 \x01(\v2\x18.user.SysUserScopeObjectR\x04data\"V\n" +
+	"\x16SysUserPasswordRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
+	"\bpassword\x18\x02 \x01(\tH\x00R\bpassword\x88\x01\x01B\v\n" +
+	"\t_password\"?\n" +
+	"\x17SysUserPasswordResponse\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x03R\x04code\x12\x10\n" +
+	"\x03msg\x18\x02 \x01(\tR\x03msg2\xa8\x06\n" +
 	"\x0eSysUserService\x12H\n" +
 	"\rSysUserCreate\x12\x1a.user.SysUserCreateRequest\x1a\x1b.user.SysUserCreateResponse\x12H\n" +
 	"\rSysUserUpdate\x12\x1a.user.SysUserUpdateRequest\x1a\x1b.user.SysUserUpdateResponse\x12H\n" +
@@ -1333,7 +1736,9 @@ const file_sys_user_proto_rawDesc = "" +
 	"\vSysUserDrop\x12\x18.user.SysUserDropRequest\x1a\x19.user.SysUserDropResponse\x12E\n" +
 	"\fSysUserLogin\x12\x19.user.SysUserLoginRequest\x1a\x1a.user.SysUserLoginResponse\x12B\n" +
 	"\vSysUserList\x12\x18.user.SysUserListRequest\x1a\x19.user.SysUserListResponse\x12M\n" +
-	"\x10SysUserListTotal\x12\x1d.user.SysUserListTotalRequest\x1a\x1a.user.SysUserTotalResponseB\x1dZ\x1bcloud/service/sys/user;userb\x06proto3"
+	"\x10SysUserListTotal\x12\x1d.user.SysUserListTotalRequest\x1a\x1a.user.SysUserTotalResponse\x12E\n" +
+	"\fSysUserScope\x12\x19.user.SysUserScopeRequest\x1a\x1a.user.SysUserScopeResponse\x12N\n" +
+	"\x0fSysUserPassword\x12\x1c.user.SysUserPasswordRequest\x1a\x1d.user.SysUserPasswordResponseB\x1dZ\x1bcloud/service/sys/user;userb\x06proto3"
 
 var (
 	file_sys_user_proto_rawDescOnce sync.Once
@@ -1347,7 +1752,7 @@ func file_sys_user_proto_rawDescGZIP() []byte {
 	return file_sys_user_proto_rawDescData
 }
 
-var file_sys_user_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_sys_user_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
 var file_sys_user_proto_goTypes = []any{
 	(*SysUserObject)(nil),                // 0: user.SysUserObject
 	(*SysUserTotalResponse)(nil),         // 1: user.SysUserTotalResponse
@@ -1368,41 +1773,51 @@ var file_sys_user_proto_goTypes = []any{
 	(*SysUserListRequest)(nil),           // 16: user.SysUserListRequest
 	(*SysUserListResponse)(nil),          // 17: user.SysUserListResponse
 	(*SysUserListTotalRequest)(nil),      // 18: user.SysUserListTotalRequest
-	(*timestamppb.Timestamp)(nil),        // 19: google.protobuf.Timestamp
-	(*pagination.PaginationRequest)(nil), // 20: pagination.PaginationRequest
+	(*SysUserScopeObject)(nil),           // 19: user.SysUserScopeObject
+	(*SysUserScopeRequest)(nil),          // 20: user.SysUserScopeRequest
+	(*SysUserScopeResponse)(nil),         // 21: user.SysUserScopeResponse
+	(*SysUserPasswordRequest)(nil),       // 22: user.SysUserPasswordRequest
+	(*SysUserPasswordResponse)(nil),      // 23: user.SysUserPasswordResponse
+	(*timestamppb.Timestamp)(nil),        // 24: google.protobuf.Timestamp
+	(*pagination.PaginationRequest)(nil), // 25: pagination.PaginationRequest
 }
 var file_sys_user_proto_depIdxs = []int32{
-	19, // 0: user.SysUserObject.create_time:type_name -> google.protobuf.Timestamp
-	19, // 1: user.SysUserObject.update_time:type_name -> google.protobuf.Timestamp
+	24, // 0: user.SysUserObject.create_time:type_name -> google.protobuf.Timestamp
+	24, // 1: user.SysUserObject.update_time:type_name -> google.protobuf.Timestamp
 	0,  // 2: user.SysUserCreateRequest.data:type_name -> user.SysUserObject
 	0,  // 3: user.SysUserUpdateRequest.data:type_name -> user.SysUserObject
 	0,  // 4: user.SysUserResponse.data:type_name -> user.SysUserObject
 	0,  // 5: user.SysUserLoginResponse.data:type_name -> user.SysUserObject
-	20, // 6: user.SysUserListRequest.pagination:type_name -> pagination.PaginationRequest
+	25, // 6: user.SysUserListRequest.pagination:type_name -> pagination.PaginationRequest
 	0,  // 7: user.SysUserListResponse.data:type_name -> user.SysUserObject
-	2,  // 8: user.SysUserService.SysUserCreate:input_type -> user.SysUserCreateRequest
-	4,  // 9: user.SysUserService.SysUserUpdate:input_type -> user.SysUserUpdateRequest
-	6,  // 10: user.SysUserService.SysUserDelete:input_type -> user.SysUserDeleteRequest
-	8,  // 11: user.SysUserService.SysUser:input_type -> user.SysUserRequest
-	10, // 12: user.SysUserService.SysUserRecover:input_type -> user.SysUserRecoverRequest
-	12, // 13: user.SysUserService.SysUserDrop:input_type -> user.SysUserDropRequest
-	14, // 14: user.SysUserService.SysUserLogin:input_type -> user.SysUserLoginRequest
-	16, // 15: user.SysUserService.SysUserList:input_type -> user.SysUserListRequest
-	18, // 16: user.SysUserService.SysUserListTotal:input_type -> user.SysUserListTotalRequest
-	3,  // 17: user.SysUserService.SysUserCreate:output_type -> user.SysUserCreateResponse
-	5,  // 18: user.SysUserService.SysUserUpdate:output_type -> user.SysUserUpdateResponse
-	7,  // 19: user.SysUserService.SysUserDelete:output_type -> user.SysUserDeleteResponse
-	9,  // 20: user.SysUserService.SysUser:output_type -> user.SysUserResponse
-	11, // 21: user.SysUserService.SysUserRecover:output_type -> user.SysUserRecoverResponse
-	13, // 22: user.SysUserService.SysUserDrop:output_type -> user.SysUserDropResponse
-	15, // 23: user.SysUserService.SysUserLogin:output_type -> user.SysUserLoginResponse
-	17, // 24: user.SysUserService.SysUserList:output_type -> user.SysUserListResponse
-	1,  // 25: user.SysUserService.SysUserListTotal:output_type -> user.SysUserTotalResponse
-	17, // [17:26] is the sub-list for method output_type
-	8,  // [8:17] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	19, // 8: user.SysUserScopeResponse.data:type_name -> user.SysUserScopeObject
+	2,  // 9: user.SysUserService.SysUserCreate:input_type -> user.SysUserCreateRequest
+	4,  // 10: user.SysUserService.SysUserUpdate:input_type -> user.SysUserUpdateRequest
+	6,  // 11: user.SysUserService.SysUserDelete:input_type -> user.SysUserDeleteRequest
+	8,  // 12: user.SysUserService.SysUser:input_type -> user.SysUserRequest
+	10, // 13: user.SysUserService.SysUserRecover:input_type -> user.SysUserRecoverRequest
+	12, // 14: user.SysUserService.SysUserDrop:input_type -> user.SysUserDropRequest
+	14, // 15: user.SysUserService.SysUserLogin:input_type -> user.SysUserLoginRequest
+	16, // 16: user.SysUserService.SysUserList:input_type -> user.SysUserListRequest
+	18, // 17: user.SysUserService.SysUserListTotal:input_type -> user.SysUserListTotalRequest
+	20, // 18: user.SysUserService.SysUserScope:input_type -> user.SysUserScopeRequest
+	22, // 19: user.SysUserService.SysUserPassword:input_type -> user.SysUserPasswordRequest
+	3,  // 20: user.SysUserService.SysUserCreate:output_type -> user.SysUserCreateResponse
+	5,  // 21: user.SysUserService.SysUserUpdate:output_type -> user.SysUserUpdateResponse
+	7,  // 22: user.SysUserService.SysUserDelete:output_type -> user.SysUserDeleteResponse
+	9,  // 23: user.SysUserService.SysUser:output_type -> user.SysUserResponse
+	11, // 24: user.SysUserService.SysUserRecover:output_type -> user.SysUserRecoverResponse
+	13, // 25: user.SysUserService.SysUserDrop:output_type -> user.SysUserDropResponse
+	15, // 26: user.SysUserService.SysUserLogin:output_type -> user.SysUserLoginResponse
+	17, // 27: user.SysUserService.SysUserList:output_type -> user.SysUserListResponse
+	1,  // 28: user.SysUserService.SysUserListTotal:output_type -> user.SysUserTotalResponse
+	21, // 29: user.SysUserService.SysUserScope:output_type -> user.SysUserScopeResponse
+	23, // 30: user.SysUserService.SysUserPassword:output_type -> user.SysUserPasswordResponse
+	20, // [20:31] is the sub-list for method output_type
+	9,  // [9:20] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_sys_user_proto_init() }
@@ -1414,13 +1829,15 @@ func file_sys_user_proto_init() {
 	file_sys_user_proto_msgTypes[14].OneofWrappers = []any{}
 	file_sys_user_proto_msgTypes[16].OneofWrappers = []any{}
 	file_sys_user_proto_msgTypes[18].OneofWrappers = []any{}
+	file_sys_user_proto_msgTypes[19].OneofWrappers = []any{}
+	file_sys_user_proto_msgTypes[22].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_sys_user_proto_rawDesc), len(file_sys_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   19,
+			NumMessages:   24,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

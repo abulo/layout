@@ -2,6 +2,7 @@ package user
 
 import (
 	"cloud/dao"
+	"encoding/json"
 
 	"github.com/abulo/ratel/v3/stores/null"
 	"github.com/abulo/ratel/v3/util"
@@ -50,6 +51,15 @@ func SysUserDao(item *SysUserObject) *dao.SysUser {
 	if item != nil && item.UpdateTime != nil {
 		daoItem.UpdateTime = null.DateTimeFrom(util.GrpcTime(item.UpdateTime)) // 更新时间
 	}
+	if item != nil && item.PostIds != nil {
+		daoItem.PostIds = null.JSONFrom(item.GetPostIds())
+	}
+	if item != nil && item.DeptIds != nil {
+		daoItem.DeptIds = null.JSONFrom(item.GetDeptIds())
+	}
+	if item != nil && item.RoleIds != nil {
+		daoItem.RoleIds = null.JSONFrom(item.GetRoleIds())
+	}
 
 	return daoItem
 }
@@ -93,6 +103,41 @@ func SysUserProto(item dao.SysUser) *SysUserObject {
 	if item.UpdateTime.IsValid() {
 		res.UpdateTime = timestamppb.New(*item.UpdateTime.Ptr())
 	}
+	if item.DeptIds.IsValid() {
+		res.DeptIds = *item.DeptIds.Ptr()
+	}
+	if item.PostIds.IsValid() {
+		res.PostIds = *item.PostIds.Ptr()
+	}
+	if item.RoleIds.IsValid() {
+		res.RoleIds = *item.RoleIds.Ptr()
+	}
 
 	return res
+}
+
+func SysUserScopeProto(item dao.SysUserScope) *SysUserScopeObject {
+	res := &SysUserScopeObject{}
+	if item.Scope != nil {
+		res.Scope = item.Scope
+	}
+	if item.ScopeDept != nil {
+		jsString, _ := json.Marshal(item.ScopeDept)
+		res.ScopeDept = jsString
+	}
+	return res
+}
+
+func SysUserScopeDao(item *SysUserScopeObject) *dao.SysUserScope {
+	daoItem := &dao.SysUserScope{}
+	if item != nil && item.Scope != nil {
+		daoItem.Scope = item.Scope
+	}
+	if item != nil && item.ScopeDept != nil {
+		var dataScope []int64
+		if err := json.Unmarshal(item.GetScopeDept(), &dataScope); err == nil {
+			daoItem.ScopeDept = dataScope
+		}
+	}
+	return daoItem
 }

@@ -112,10 +112,12 @@ import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
 import { HasAuth } from '@/utils/auth'
 import { useRouter } from 'vue-router'
 import { getIntDictOptions } from '@/utils/dict'
+import { useLoadingStore } from '@/stores/modules/loading'
+import { storeToRefs } from 'pinia'
+// 获取loading状态
+const { loading } = storeToRefs(useLoadingStore())
 // 路由
 const router = useRouter()
-//加载
-const loading = ref(false)
 //禁用
 const disabled = ref(true)
 //弹出层标题
@@ -183,7 +185,6 @@ const resetSysDictType = () => {
  * @returns {void}
  */
 const reset = () => {
-  loading.value = false
   resetSysDictType()
   disabled.value = true
 }
@@ -245,7 +246,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.validate(async valid => {
     if (!valid) return
-    loading.value = true
     const data = sysDictTypeForm.value as unknown as ResSysDictType
     if (data.id !== 0) {
       await useHandleSet(updateSysDictTypeApi, data.id, data, '修改字典类型')
@@ -253,7 +253,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
       await useHandleData(addSysDictTypeApi, data, '添加字典类型')
     }
     resetForm(formEl)
-    loading.value = false
     proTable.value?.getTableList()
   })
 }

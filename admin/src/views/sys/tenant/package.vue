@@ -157,8 +157,10 @@ import { getSysMenuListSimpleApi } from '@/api/modules/sysMenu'
 import { handleTree } from '@pureadmin/utils'
 import type Node from 'element-plus/es/components/tree/src/model/node'
 import { useTimeoutFn } from '@vueuse/core'
-//加载
-const loading = ref(false)
+import { useLoadingStore } from '@/stores/modules/loading'
+import { storeToRefs } from 'pinia'
+// 获取loading状态
+const { loading } = storeToRefs(useLoadingStore())
 //禁用
 const disabled = ref(true)
 //弹出层标题
@@ -238,7 +240,6 @@ const resetSysTenantPackage = () => {
  * @returns {void}
  */
 const reset = () => {
-  loading.value = false
   resetSysTenantPackage()
   disabled.value = true
   menuSelect.value = false
@@ -316,7 +317,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.validate(async valid => {
     if (!valid) return
-    loading.value = true
     const data = sysTenantPackageForm.value as unknown as ResSysTenantPackage
     data.scopeMenu = [
       ...(menuRef.value!.getCheckedKeys(false) as unknown as Array<number>), // 获得当前选中节点
@@ -328,7 +328,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
       await useHandleData(addSysTenantPackageApi, data, '添加租户套餐')
     }
     resetForm(formEl)
-    loading.value = false
     proTable.value?.getTableList()
   })
 }

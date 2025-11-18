@@ -164,8 +164,10 @@ import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
 import { HasAuth } from '@/utils/auth'
 import type { ResSysTenantPackage } from '@/api/interface/sysTenantPackage'
 import { getSysTenantPackageListSimpleApi } from '@/api/modules/sysTenantPackage'
-//加载
-const loading = ref(false)
+import { useLoadingStore } from '@/stores/modules/loading'
+import { storeToRefs } from 'pinia'
+// 获取loading状态
+const { loading } = storeToRefs(useLoadingStore())
 //禁用
 const disabled = ref(true)
 //弹出层标题
@@ -253,7 +255,6 @@ const resetSysTenant = () => {
  * @returns {void}
  */
 const reset = () => {
-  loading.value = false
   resetSysTenant()
   disabled.value = true
 }
@@ -340,7 +341,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.validate(async valid => {
     if (!valid) return
-    loading.value = true
     const data = sysTenantForm.value as unknown as ResSysTenant
     if (data.id !== 0) {
       await useHandleSet(updateSysTenantApi, data.id, data, '修改租户')
@@ -348,7 +348,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
       await useHandleData(addSysTenantApi, data, '添加租户')
     }
     resetForm(formEl)
-    loading.value = false
     proTable.value?.getTableList()
   })
 }

@@ -1,0 +1,125 @@
+syntax = "proto3";
+// sys_user_role 用户角色
+package user;
+option go_package = "cloud/service/sys/user;user";
+import "pagination.proto";
+
+// SysUserRoleObject 数据对象
+message SysUserRoleObject {
+	// @inject_tag: gorm:"primaryKey;autoIncrement;column:id" json:"id"
+	optional int64 id = 1; //编号
+	// @inject_tag: gorm:"column:user_id" json:"userId"
+	optional int64 user_id = 2; //用户
+	// @inject_tag: gorm:"column:role_id" json:"roleId"
+	optional int64 role_id = 3; //角色
+	// @inject_tag: gorm:"column:tenant_id" json:"tenantId"
+	optional int64 tenant_id = 4; //租户
+}
+// SysUserRoleTotalResponse 列表数据总量
+message SysUserRoleTotalResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysUserRoleCreateRequest 创建数据请求
+message SysUserRoleCreateRequest {
+	SysUserRoleObject data = 1;
+}
+// SysUserRoleCreateResponse 创建数据响应
+message SysUserRoleCreateResponse {
+	int64 code = 1;
+	string msg = 2;
+	int64 data = 3;
+}
+// SysUserRoleUpdateRequest 更新数据请求
+message SysUserRoleUpdateRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+	SysUserRoleObject data = 2;
+}
+// SysUserRoleUpdateResponse 更新数据响应
+message SysUserRoleUpdateResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysUserRoleDeleteRequest 删除数据请求
+message SysUserRoleDeleteRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysUserRoleDeleteResponse 删除数据响应
+message SysUserRoleDeleteResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+// SysUserRoleRequest 查询单条数据请求
+message SysUserRoleRequest {
+	// @inject_tag: gorm:"column:id" json:"id"
+	int64 id = 1; //编号
+}
+// SysUserRoleResponse 查询单条数据响应
+message SysUserRoleResponse {
+	int64 code = 1;
+	string msg = 2;
+	SysUserRoleObject data = 3;
+}
+// SysUserRoleItemRequest 查询单条数据请求
+message SysUserRoleItemRequest {
+
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	optional int64 tenant_id = 1; // 租户
+	// @inject_tag: db:"user_id" json:"userId"
+	optional int64 user_id = 2; // 用户
+	// @inject_tag: db:"role_id" json:"roleId"
+	optional int64 role_id = 3; // 角色
+
+}
+// SysUserRoleItemResponse 查询单条数据响应
+message SysUserRoleItemResponse {
+	int64 code = 1;
+	string msg = 2;
+	SysUserRoleObject data = 3;
+}
+// SysUserRoleListRequest 列表数据
+message SysUserRoleListRequest {
+
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	optional int64 tenant_id = 1; // 租户
+	// @inject_tag: db:"user_id" json:"userId"
+	optional int64 user_id = 2; // 用户
+	// @inject_tag: db:"role_id" json:"roleId"
+	optional int64 role_id = 3; // 角色
+
+	// @inject_tag: json:"pagination"
+	optional pagination.PaginationRequest pagination = 4; // 分页
+}
+
+// SysUserRoleListResponse 数据响应
+message SysUserRoleListResponse {
+	int64 code = 1;
+  	string msg = 2;
+	repeated SysUserRoleObject data = 3;
+}
+// SysUserRoleListTotalRequest 列表数据
+message SysUserRoleListTotalRequest {
+
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	optional int64 tenant_id = 1; // 租户
+	// @inject_tag: db:"user_id" json:"userId"
+	optional int64 user_id = 2; // 用户
+	// @inject_tag: db:"role_id" json:"roleId"
+	optional int64 role_id = 3; // 角色
+
+}
+
+
+// SysUserRoleService 服务
+service SysUserRoleService{
+	rpc SysUserRoleCreate(SysUserRoleCreateRequest) returns (SysUserRoleCreateResponse);
+	rpc SysUserRoleUpdate(SysUserRoleUpdateRequest) returns (SysUserRoleUpdateResponse);
+	rpc SysUserRoleDelete(SysUserRoleDeleteRequest) returns (SysUserRoleDeleteResponse);
+	rpc SysUserRole(SysUserRoleRequest) returns (SysUserRoleResponse);
+	rpc SysUserRoleItem(SysUserRoleItemRequest) returns (SysUserRoleItemResponse);
+	rpc SysUserRoleList(SysUserRoleListRequest) returns (SysUserRoleListResponse);
+	rpc SysUserRoleListTotal(SysUserRoleListTotalRequest) returns (SysUserRoleTotalResponse);
+}

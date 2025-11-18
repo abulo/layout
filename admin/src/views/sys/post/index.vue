@@ -119,8 +119,10 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { getIntDictOptions } from '@/utils/dict'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
 import { HasAuth } from '@/utils/auth'
-//加载
-const loading = ref(false)
+import { useLoadingStore } from '@/stores/modules/loading'
+import { storeToRefs } from 'pinia'
+// 获取loading状态
+const { loading } = storeToRefs(useLoadingStore())
 //禁用
 const disabled = ref(true)
 //弹出层标题
@@ -190,7 +192,6 @@ const resetSysPost = () => {
  * @returns {void}
  */
 const reset = () => {
-  loading.value = false
   resetSysPost()
   disabled.value = true
 }
@@ -268,7 +269,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.validate(async valid => {
     if (!valid) return
-    loading.value = true
     const data = sysPostForm.value as unknown as ResSysPost
     if (data.id !== 0) {
       await useHandleSet(updateSysPostApi, data.id, data, '修改职位')
@@ -276,7 +276,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
       await useHandleData(addSysPostApi, data, '添加职位')
     }
     resetForm(formEl)
-    loading.value = false
     proTable.value?.getTableList()
   })
 }

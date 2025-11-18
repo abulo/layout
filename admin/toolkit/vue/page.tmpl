@@ -179,8 +179,10 @@ import { DictTag } from "@/components/DictTag";
 {{- end}}
 import { useHandleData, useHandleSet } from "@/hooks/useHandleData";
 import { HasAuth } from "@/utils/auth";
-//加载
-const loading = ref(false)
+import { useLoadingStore } from '@/stores/modules/loading'
+import { storeToRefs } from 'pinia'
+// 获取loading状态
+const { loading } = storeToRefs(useLoadingStore())
 //禁用
 const disabled = ref(true)
 //弹出层标题
@@ -230,7 +232,7 @@ const reset{{CamelStr .Table.TableName}} = () => {
  * @returns {void}
  */
 const reset = () => {
-  loading.value = false
+  // loading.value = false
   reset{{CamelStr .Table.TableName}}()
   disabled.value = true
 }
@@ -327,7 +329,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.validate(async valid => {
     if (!valid) return
-    loading.value = true
+    // loading.value = true
     const data = {{Helper .Table.TableName}}Form.value as unknown as Res{{CamelStr .Table.TableName}}
     if (data.id !== 0) {
       await useHandleSet(update{{CamelStr .Table.TableName}}Api, data.id, data, '修改{{.Table.TableComment}}')
@@ -335,7 +337,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
       await useHandleData(add{{CamelStr .Table.TableName}}Api, data, '添加{{.Table.TableComment}}')
     }
     resetForm(formEl)
-    loading.value = false
+    // loading.value = false
     proTable.value?.getTableList()
   })
 }

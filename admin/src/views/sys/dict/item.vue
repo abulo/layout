@@ -123,6 +123,10 @@ import { useKeepAliveStore } from '@/stores/modules/keepAlive'
 import { getSysDictTypeListSimpleApi } from '@/api/modules/sysDictType'
 import { getIntDictOptions } from '@/utils/dict'
 import type { ResSysDictType } from '@/api/interface/sysDictType'
+import { useLoadingStore } from '@/stores/modules/loading'
+import { storeToRefs } from 'pinia'
+// 获取loading状态
+const { loading } = storeToRefs(useLoadingStore())
 // 获取当前路由信息
 const route = useRoute()
 // 获取标签页信息
@@ -131,8 +135,6 @@ const tabStore = useTabsStore()
 const keepAliveStore = useKeepAliveStore()
 // 字典类型id
 const dictTypeId = ref(Number(route.params.dictTypeId))
-//加载
-const loading = ref(false)
 //禁用
 const disabled = ref(true)
 //弹出层标题
@@ -215,7 +217,6 @@ const resetSysDict = () => {
  * @returns {void}
  */
 const reset = () => {
-  loading.value = false
   resetSysDict()
   disabled.value = true
 }
@@ -277,7 +278,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.validate(async valid => {
     if (!valid) return
-    loading.value = true
     const data = sysDictForm.value as unknown as ResSysDict
     if (data.id !== 0) {
       await useHandleSet(updateSysDictApi, data.id, data, '修改字典')
@@ -285,7 +285,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
       await useHandleData(addSysDictApi, data, '添加字典')
     }
     resetForm(formEl)
-    loading.value = false
     proTable.value?.getTableList()
   })
 }

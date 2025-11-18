@@ -31,6 +31,12 @@ message SysUserObject {
 	optional string updater = 11; //更新人
 	// @inject_tag: gorm:"column:update_time" json:"updateTime"
 	google.protobuf.Timestamp update_time = 12; //更新时间
+	// @inject_tag: db:"dept_ids" json:"deptIds"
+	optional bytes dept_ids = 13; //部门ID
+	// @inject_tag: db:"post_ids" json:"postIds"
+	optional bytes post_ids = 14; //职位 id
+	// @inject_tag: db:"role_ids" json:"roleIds"
+	optional bytes role_ids = 15; //角色编号 id
 }
 // SysUserTotalResponse 列表数据总量
 message SysUserTotalResponse {
@@ -102,7 +108,7 @@ message SysUserDropResponse {
 }
 // SysUserLoginRequest 查询单条数据请求
 message SysUserLoginRequest {
-	
+
 	// @inject_tag: db:"username" json:"username"
 	optional string username = 1; // 用户名
 
@@ -115,7 +121,7 @@ message SysUserLoginResponse {
 }
 // SysUserListRequest 列表数据
 message SysUserListRequest {
-	
+
 	// @inject_tag: db:"username" json:"username"
 	optional string username = 1; // 用户名
 	// @inject_tag: db:"tenant_id" json:"tenantId"
@@ -128,9 +134,15 @@ message SysUserListRequest {
 	optional string mobile = 5; // 手机号码
 	// @inject_tag: db:"name" json:"name"
 	optional string name = 6; // 姓名
+	// @inject_tag: db:"user_id" json:"userId"
+	optional int64 user_id = 7; // 当前登录的用户 ID
+	// @inject_tag: gorm:"column:scope" json:"scope"
+	optional int32 scope = 8; //数据范围:1:全部数据权限/2:自定数据权限/3:本部门数据权限/4:本部门及以下数据权限
+	// @inject_tag: gorm:"column:scope_dept" json:"scopeDept"
+	optional bytes scope_dept = 9; //数据范围(指定部门数组)
 
 	// @inject_tag: json:"pagination"
-	optional pagination.PaginationRequest pagination = 7; // 分页
+	optional pagination.PaginationRequest pagination = 10; // 分页
 }
 
 // SysUserListResponse 数据响应
@@ -141,7 +153,7 @@ message SysUserListResponse {
 }
 // SysUserListTotalRequest 列表数据
 message SysUserListTotalRequest {
-	
+
 	// @inject_tag: db:"username" json:"username"
 	optional string username = 1; // 用户名
 	// @inject_tag: db:"tenant_id" json:"tenantId"
@@ -154,8 +166,53 @@ message SysUserListTotalRequest {
 	optional string mobile = 5; // 手机号码
 	// @inject_tag: db:"name" json:"name"
 	optional string name = 6; // 姓名
+	// @inject_tag: db:"user_id" json:"userId"
+	optional int64 user_id = 7; // 当前登录的用户 ID
+	// @inject_tag: gorm:"column:scope" json:"scope"
+	optional int32 scope = 8; //数据范围:1:全部数据权限/2:自定数据权限/3:本部门数据权限/4:本部门及以下数据权限
+	// @inject_tag: gorm:"column:scope_dept" json:"scopeDept"
+	optional bytes scope_dept = 9; //数据范围(指定部门数组)
 
 }
+
+message SysUserScopeObject 	{
+	// @inject_tag: gorm:"column:scope" json:"scope"
+	optional int32 scope = 1; //数据范围:1:全部数据权限/2:自定数据权限/3:本部门数据权限/4:本部门及以下数据权限
+	// @inject_tag: gorm:"column:scope_dept" json:"scopeDept"
+	optional bytes scope_dept = 2; //数据范围(指定部门数组)
+}
+
+// SysUserScopeRequest 创建数据请求
+message SysUserScopeRequest {
+	// @inject_tag: db:"tenant_id" json:"tenantId"
+	int64 tenant_id = 1; //租户ID
+	// @inject_tag: db:"user_id" json:"userId"
+	int64 user_id = 2; //用户ID
+}
+
+// SysUserScopeResponse 创建数据响应
+message SysUserScopeResponse {
+	int64 code = 1;
+	string msg = 2;
+	SysUserScopeObject data = 3;
+}
+
+
+// SysUserPasswordRequest  修改密码
+message SysUserPasswordRequest {
+	// @inject_tag: db:"id" json:"id"
+	int64 id = 1; //用户ID
+	// @inject_tag: db:"password" json:"password"
+	optional string password = 2; //密码
+}
+
+// SysUserPasswordrResponse 修改密码响应
+message SysUserPasswordResponse {
+	int64 code = 1;
+	string msg = 2;
+}
+
+
 
 
 // SysUserService 服务
@@ -169,4 +226,6 @@ service SysUserService{
 	rpc SysUserLogin(SysUserLoginRequest) returns (SysUserLoginResponse);
 	rpc SysUserList(SysUserListRequest) returns (SysUserListResponse);
 	rpc SysUserListTotal(SysUserListTotalRequest) returns (SysUserTotalResponse);
+	rpc SysUserScope(SysUserScopeRequest) returns (SysUserScopeResponse);
+	rpc SysUserPassword(SysUserPasswordRequest) returns (SysUserPasswordResponse);
 }

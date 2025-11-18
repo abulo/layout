@@ -30,6 +30,8 @@ const (
 	SysUserService_SysUserLogin_FullMethodName     = "/user.SysUserService/SysUserLogin"
 	SysUserService_SysUserList_FullMethodName      = "/user.SysUserService/SysUserList"
 	SysUserService_SysUserListTotal_FullMethodName = "/user.SysUserService/SysUserListTotal"
+	SysUserService_SysUserScope_FullMethodName     = "/user.SysUserService/SysUserScope"
+	SysUserService_SysUserPassword_FullMethodName  = "/user.SysUserService/SysUserPassword"
 )
 
 // SysUserServiceClient is the client API for SysUserService service.
@@ -47,6 +49,8 @@ type SysUserServiceClient interface {
 	SysUserLogin(ctx context.Context, in *SysUserLoginRequest, opts ...grpc.CallOption) (*SysUserLoginResponse, error)
 	SysUserList(ctx context.Context, in *SysUserListRequest, opts ...grpc.CallOption) (*SysUserListResponse, error)
 	SysUserListTotal(ctx context.Context, in *SysUserListTotalRequest, opts ...grpc.CallOption) (*SysUserTotalResponse, error)
+	SysUserScope(ctx context.Context, in *SysUserScopeRequest, opts ...grpc.CallOption) (*SysUserScopeResponse, error)
+	SysUserPassword(ctx context.Context, in *SysUserPasswordRequest, opts ...grpc.CallOption) (*SysUserPasswordResponse, error)
 }
 
 type sysUserServiceClient struct {
@@ -147,6 +151,26 @@ func (c *sysUserServiceClient) SysUserListTotal(ctx context.Context, in *SysUser
 	return out, nil
 }
 
+func (c *sysUserServiceClient) SysUserScope(ctx context.Context, in *SysUserScopeRequest, opts ...grpc.CallOption) (*SysUserScopeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysUserScopeResponse)
+	err := c.cc.Invoke(ctx, SysUserService_SysUserScope_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sysUserServiceClient) SysUserPassword(ctx context.Context, in *SysUserPasswordRequest, opts ...grpc.CallOption) (*SysUserPasswordResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysUserPasswordResponse)
+	err := c.cc.Invoke(ctx, SysUserService_SysUserPassword_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SysUserServiceServer is the server API for SysUserService service.
 // All implementations must embed UnimplementedSysUserServiceServer
 // for forward compatibility.
@@ -162,6 +186,8 @@ type SysUserServiceServer interface {
 	SysUserLogin(context.Context, *SysUserLoginRequest) (*SysUserLoginResponse, error)
 	SysUserList(context.Context, *SysUserListRequest) (*SysUserListResponse, error)
 	SysUserListTotal(context.Context, *SysUserListTotalRequest) (*SysUserTotalResponse, error)
+	SysUserScope(context.Context, *SysUserScopeRequest) (*SysUserScopeResponse, error)
+	SysUserPassword(context.Context, *SysUserPasswordRequest) (*SysUserPasswordResponse, error)
 	mustEmbedUnimplementedSysUserServiceServer()
 }
 
@@ -198,6 +224,12 @@ func (UnimplementedSysUserServiceServer) SysUserList(context.Context, *SysUserLi
 }
 func (UnimplementedSysUserServiceServer) SysUserListTotal(context.Context, *SysUserListTotalRequest) (*SysUserTotalResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysUserListTotal not implemented")
+}
+func (UnimplementedSysUserServiceServer) SysUserScope(context.Context, *SysUserScopeRequest) (*SysUserScopeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysUserScope not implemented")
+}
+func (UnimplementedSysUserServiceServer) SysUserPassword(context.Context, *SysUserPasswordRequest) (*SysUserPasswordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysUserPassword not implemented")
 }
 func (UnimplementedSysUserServiceServer) mustEmbedUnimplementedSysUserServiceServer() {}
 func (UnimplementedSysUserServiceServer) testEmbeddedByValue()                        {}
@@ -382,6 +414,42 @@ func _SysUserService_SysUserListTotal_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SysUserService_SysUserScope_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysUserScopeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SysUserServiceServer).SysUserScope(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SysUserService_SysUserScope_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SysUserServiceServer).SysUserScope(ctx, req.(*SysUserScopeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SysUserService_SysUserPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysUserPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SysUserServiceServer).SysUserPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SysUserService_SysUserPassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SysUserServiceServer).SysUserPassword(ctx, req.(*SysUserPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SysUserService_ServiceDesc is the grpc.ServiceDesc for SysUserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -424,6 +492,14 @@ var SysUserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SysUserListTotal",
 			Handler:    _SysUserService_SysUserListTotal_Handler,
+		},
+		{
+			MethodName: "SysUserScope",
+			Handler:    _SysUserService_SysUserScope_Handler,
+		},
+		{
+			MethodName: "SysUserPassword",
+			Handler:    _SysUserService_SysUserPassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -192,8 +192,10 @@ import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
 import { HasAuth } from '@/utils/auth'
 import { handleTree } from '@pureadmin/utils'
 import { getIntDictOptions } from '@/utils/dict'
-//加载
-const loading = ref(false)
+import { useLoadingStore } from '@/stores/modules/loading'
+import { storeToRefs } from 'pinia'
+// 获取loading状态
+const { loading } = storeToRefs(useLoadingStore())
 //禁用
 const disabled = ref(true)
 //弹出层标题
@@ -302,7 +304,6 @@ const resetSysMenu = () => {
  * @returns {void}
  */
 const reset = () => {
-  loading.value = false
   resetSysMenu()
   disabled.value = true
 }
@@ -370,7 +371,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.validate(async valid => {
     if (!valid) return
-    loading.value = true
     const data = sysMenuForm.value as unknown as ResSysMenu
     delete data.children
     if (data.id !== 0) {
@@ -379,7 +379,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
       await useHandleData(addSysMenuApi, data, '添加菜单')
     }
     resetForm(formEl)
-    loading.value = false
     proTable.value?.getTableList()
   })
 }
