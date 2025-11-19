@@ -196,10 +196,9 @@ const sysTenantPackageForm = ref<ResSysTenantPackage>({
 const refSysTenantPackageForm = ref<FormInstance>()
 //校验
 const rulesSysTenantPackageForm = reactive<FormRules>({
-  id: [{ required: true, message: '编号不能为空', trigger: 'blur' }],
   name: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
   sort: [{ required: true, message: '排序不能为空', trigger: 'blur' }],
-  status: [{ required: true, message: '状态:0正常/1停用不能为空', trigger: 'blur' }],
+  status: [{ required: true, message: '状态', trigger: 'blur' }],
   remark: [{ required: true, message: '备注不能为空', trigger: 'blur' }],
 })
 

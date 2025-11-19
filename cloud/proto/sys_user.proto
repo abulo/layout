@@ -140,9 +140,11 @@ message SysUserListRequest {
 	optional int32 scope = 8; //数据范围:1:全部数据权限/2:自定数据权限/3:本部门数据权限/4:本部门及以下数据权限
 	// @inject_tag: gorm:"column:scope_dept" json:"scopeDept"
 	optional bytes scope_dept = 9; //数据范围(指定部门数组)
+	// @inject_tag: db:"dept_id" json:"deptId"
+	optional int64 dept_id = 10; // 租户ID
 
 	// @inject_tag: json:"pagination"
-	optional pagination.PaginationRequest pagination = 10; // 分页
+	optional pagination.PaginationRequest pagination = 11; // 分页
 }
 
 // SysUserListResponse 数据响应
@@ -172,6 +174,8 @@ message SysUserListTotalRequest {
 	optional int32 scope = 8; //数据范围:1:全部数据权限/2:自定数据权限/3:本部门数据权限/4:本部门及以下数据权限
 	// @inject_tag: gorm:"column:scope_dept" json:"scopeDept"
 	optional bytes scope_dept = 9; //数据范围(指定部门数组)
+	// @inject_tag: db:"dept_id" json:"deptId"
+	optional int64 dept_id = 10; // 租户ID
 
 }
 

@@ -1,20 +1,22 @@
 <template>
   <div class="table-box">
     <ProTable
+      v-if="refreshTable"
       ref="proTable"
-      title="租户列表"
+      title="部门列表"
       row-key="id"
       :columns="columns"
       :toolbar-right="['search', 'refresh', 'export', 'layout']"
       :request-api="getTableList"
+      :default-expand-all="isExpandAll"
       :request-auto="true"
-      :pagination="true"
+      :pagination="false"
       :search-col="12"
+      :indent="20"
     >
       <template #toolbarLeft>
-        <el-button v-auth="'tenant.SysTenantCreate'" type="primary" :icon="CirclePlus" @click="handleAdd">
-          新增
-        </el-button>
+        <el-button v-auth="'dept.SysDeptCreate'" type="primary" :icon="CirclePlus" @click="handleAdd()">新增</el-button>
+        <el-button type="primary" :icon="Sort" @click="handleExpandAll">展开/折叠</el-button>
       </template>
       <!-- 删除状态 -->
       <template #deleted="scope">
@@ -25,16 +27,17 @@
       </template>
       <!-- 菜单操作 -->
       <template #operation="scope">
-        <el-button v-auth="'tenant.SysTenant'" type="primary" link :icon="View" @click="handleItem(scope.row)">
+        <el-button v-auth="'dept.SysDept'" type="primary" link :icon="View" @click="handleItem(scope.row)">
           查看
         </el-button>
         <el-dropdown trigger="click">
           <el-button
             v-auth="[
-              'tenant.SysTenantUpdate',
-              'tenant.SysTenantDelete',
-              'tenant.SysTenantRecover',
-              'tenant.SysTenantDrop',
+              'dept.SysDeptCreate',
+              'dept.SysDeptUpdate',
+              'dept.SysDeptDelete',
+              'dept.SysDeptRecover',
+              'dept.SysDeptDrop',
             ]"
             type="primary"
             link
@@ -44,20 +47,23 @@
           </el-button>
           <template #dropdown>
             <el-dropdown-menu>
-              <div v-auth="'tenant.SysTenantUpdate'">
+              <div v-auth="'dept.SysDeptCreate'">
+                <el-dropdown-item :icon="CirclePlus" @click="handleAdd(scope.row)"> 新增 </el-dropdown-item>
+              </div>
+              <div v-auth="'dept.SysDeptUpdate'">
                 <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>
               </div>
-              <div v-auth="'tenant.SysTenantDelete'">
+              <div v-auth="'dept.SysDeptDelete'">
                 <el-dropdown-item v-if="scope.row.deleted === 0" :icon="Delete" @click="handleDelete(scope.row)">
                   删除
                 </el-dropdown-item>
               </div>
-              <div v-auth="'tenant.SysTenantRecover'">
+              <div v-auth="'dept.SysDeptRecover'">
                 <el-dropdown-item v-if="scope.row.deleted === 1" :icon="Refresh" @click="handleRecover(scope.row)">
                   恢复
                 </el-dropdown-item>
               </div>
-              <div v-auth="'tenant.SysTenantDrop'">
+              <div v-auth="'dept.SysDeptDrop'">
                 <el-dropdown-item v-if="scope.row.deleted === 1" :icon="DeleteFilled" @click="handleDrop(scope.row)">
                   清理
                 </el-dropdown-item>
@@ -78,23 +84,29 @@
       draggable
       :lock-scroll="false"
       class="dialog-settings"
-      @click="handleDialogClick"
     >
-      <el-form ref="refSysTenantForm" :model="sysTenantForm" :rules="rulesSysTenantForm" label-width="100px">
+      <el-form ref="refSysDeptForm" :model="sysDeptForm" :rules="rulesSysDeptForm" label-width="100px">
+        <el-form-item label="上级菜单" prop="parentId">
+          <el-tree-select
+            v-model="sysDeptForm.parentId"
+            :data="deptOptions"
+            :props="{ value: 'id', label: 'name' }"
+            value-key="id"
+            node-key="id"
+            placeholder="请选择"
+            check-strictly
+            :disabled="disabled"
+            :render-after-expand="false"
+            @click="handleDialogClick"
+          />
+        </el-form-item>
         <el-form-item label="名称" prop="name">
-          <el-input v-model="sysTenantForm.name" :disabled="disabled" />
+          <el-input v-model="sysDeptForm.name" :disabled="disabled" />
         </el-form-item>
-        <el-form-item v-if="sysTenantForm.userId === undefined" label="用户名称" prop="username">
-          <el-input v-model="sysTenantForm.username" placeholder="请输入用户名称" />
+        <el-form-item label="排序" prop="sort">
+          <el-input v-model="sysDeptForm.sort" :disabled="disabled" />
         </el-form-item>
-        <el-form-item v-if="sysTenantForm.userId === undefined" label="用户密码" prop="password">
-          <el-input v-model="sysTenantForm.password" placeholder="请输入用户密码" show-password type="password" />
-        </el-form-item>
-        <el-form-item
-          v-if="sysTenantForm.userId !== 0 && sysTenantForm.userId === undefined"
-          label="负责人"
-          prop="userId"
-        >
+        <el-form-item label="负责人" prop="userId">
           <el-popover placement="bottom-start" :width="600" :show-arrow="false" trigger="click" :visible="isUserOpen">
             <template #reference>
               <el-button class="mr-4" @click.stop="userOpen">{{ userItem }}</el-button>
@@ -104,7 +116,7 @@
                 title="用户列表"
                 row-key="id"
                 :columns="userColumns"
-                :request-api="getCustomSysTenantUserListApi"
+                :request-api="getCustomSysUserListApi"
                 :request-auto="true"
                 :tool-button="false"
                 :pagination-layout="'prev, pager, next'"
@@ -118,39 +130,14 @@
             </div>
           </el-popover>
         </el-form-item>
-        <el-form-item label="联系人" prop="contactName">
-          <el-input v-model="sysTenantForm.contactName" :disabled="disabled" />
+        <el-form-item label="联系电话" prop="phone">
+          <el-input v-model="sysDeptForm.phone" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="联系电话" prop="contactMobile">
-          <el-input v-model="sysTenantForm.contactMobile" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="过期时间" prop="expireDate">
-          <el-date-picker
-            v-model="sysTenantForm.expireDate"
-            clearable
-            placeholder="请选择过期时间"
-            type="date"
-            :disabled="disabled"
-            format="YYYY-MM-DD"
-            value-format="YYYY-MM-DD"
-          />
-        </el-form-item>
-        <el-form-item label="账号数量" prop="accountTotal">
-          <el-input v-model="sysTenantForm.accountTotal" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="套餐编号" prop="packageId">
-          <el-select v-model="sysTenantForm.packageId" clearable placeholder="请选择租户套餐">
-            <el-option
-              v-for="item in sysTenantPackageOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-              :disabled="disabled"
-            />
-          </el-select>
+        <el-form-item label="邮件" prop="email">
+          <el-input v-model="sysDeptForm.email" :disabled="disabled" />
         </el-form-item>
         <el-form-item label="状态" prop="status">
-          <el-radio-group v-model="sysTenantForm.status">
+          <el-radio-group v-model="sysDeptForm.status">
             <el-radio-button
               v-for="dict in statusEnum"
               :key="Number(dict.value)"
@@ -164,40 +151,38 @@
       </el-form>
       <template v-if="!disabled" #footer>
         <span class="dialog-footer">
-          <el-button @click="resetForm(refSysTenantForm)">取消</el-button>
-          <el-button type="primary" :loading="loading" @click="submitForm(refSysTenantForm)">确定</el-button>
+          <el-button @click="resetForm(refSysDeptForm)">取消</el-button>
+          <el-button type="primary" :loading="loading" @click="submitForm(refSysDeptForm)">确定</el-button>
         </span>
       </template>
     </el-dialog>
   </div>
 </template>
 <script setup lang="tsx">
-defineOptions({ name: 'SysTenant' })
-import type { ResSysTenant } from '@/api/interface/sysTenant'
+defineOptions({ name: 'SysDept' })
+import type { ResSysDept } from '@/api/interface/sysDept'
 import type { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
-import { EditPen, CirclePlus, Delete, Refresh, DeleteFilled, View, DArrowRight } from '@element-plus/icons-vue'
+import { EditPen, CirclePlus, Delete, Refresh, DeleteFilled, View, DArrowRight, Sort } from '@element-plus/icons-vue'
 import {
-  getSysTenantListApi,
-  deleteSysTenantApi,
-  dropSysTenantApi,
-  recoverSysTenantApi,
-  getSysTenantApi,
-  addSysTenantApi,
-  updateSysTenantApi,
-  getSysTenantUserListApi,
-} from '@/api/modules/sysTenant'
+  getSysDeptListApi,
+  deleteSysDeptApi,
+  dropSysDeptApi,
+  recoverSysDeptApi,
+  getSysDeptApi,
+  addSysDeptApi,
+  updateSysDeptApi,
+  getSysDeptListSimpleApi,
+} from '@/api/modules/sysDept'
 import type { FormInstance, FormRules } from 'element-plus'
-import { ElDatePicker } from 'element-plus'
 import { getIntDictOptions } from '@/utils/dict'
 import { DictTag } from '@/components/DictTag'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
 import { HasAuth } from '@/utils/auth'
-import type { ResSysTenantPackage } from '@/api/interface/sysTenantPackage'
-import { getSysTenantPackageListSimpleApi } from '@/api/modules/sysTenantPackage'
 import { useLoadingStore } from '@/stores/modules/loading'
 import { storeToRefs } from 'pinia'
+import { handleTree } from '@pureadmin/utils'
 import type { ResSysUser } from '@/api/interface/sysUser'
-import { getSysUserApi } from '@/api/modules/sysUser'
+import { getSysUserApi, getSysUserListSimpleApi } from '@/api/modules/sysUser'
 // 获取loading状态
 const { loading } = storeToRefs(useLoadingStore())
 //禁用
@@ -208,6 +193,10 @@ const title = ref('')
 const proTable = ref<ProTableInstance>()
 //显示弹出层
 const dialogVisible = ref(false)
+//是否展开，默认全部折叠
+const isExpandAll = ref(false)
+//重新渲染表格状态
+const refreshTable = ref(true)
 // 定义负责人
 const userItem = ref('点击选择')
 // 显示负责人
@@ -216,35 +205,32 @@ const isUserOpen = ref(false)
 const initUserParam = reactive({ pageSize: 5 })
 // 状态枚举
 const statusEnum = getIntDictOptions('status')
-// 服务包
-const sysTenantPackageOptions = ref<ResSysTenantPackage[]>([])
 //数据接口
-const sysTenantForm = ref<ResSysTenant>({
+const sysDeptForm = ref<ResSysDept>({
   id: 0, // 编号
   name: '', // 名称
-  userId: undefined, // 用户
-  contactName: undefined, // 联系人
-  contactMobile: undefined, // 联系电话
-  expireDate: '', // 过期时间
-  accountTotal: 0, // 账号数量
-  packageId: 0, // 套餐编号
+  parentId: 0, // 上级
+  sort: 0, // 排序
+  userId: undefined, // 负责人
+  phone: undefined, // 联系电话
+  email: undefined, // 邮件
   status: 0, // 状态:0正常/1停用
   deleted: 0, // 删除:0否/1是
+  tenantId: 0, // 租户
   creator: undefined, // 创建人
   createTime: undefined, // 创建时间
   updater: undefined, // 更新人
   updateTime: undefined, // 更新时间
-  username: '',
-  password: '',
 })
+//下拉菜单选项
+const deptOptions = ref<ResSysDept[]>([])
 //表单
-const refSysTenantForm = ref<FormInstance>()
+const refSysDeptForm = ref<FormInstance>()
 //校验
-const rulesSysTenantForm = reactive<FormRules>({
+const rulesSysDeptForm = reactive<FormRules>({
   name: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
-  expireDate: [{ required: true, message: '过期时间不能为空', trigger: 'blur' }],
-  accountTotal: [{ required: true, message: '账号数量不能为空', trigger: 'blur' }],
-  packageId: [{ required: true, message: '套餐编号不能为空', trigger: 'blur' }],
+  parentId: [{ required: true, message: '上级不能为空', trigger: 'blur' }],
+  sort: [{ required: true, message: '排序不能为空', trigger: 'blur' }],
   status: [{ required: true, message: '状态', trigger: 'blur' }],
 })
 
@@ -256,7 +242,7 @@ const rulesSysTenantForm = reactive<FormRules>({
 const getTableList = (params: any) => {
   // 深拷贝参数对象，避免修改原始参数
   let newParams = JSON.parse(JSON.stringify(params))
-  return getSysTenantListApi(newParams)
+  return getSysDeptListApi(newParams)
 }
 
 /**
@@ -264,25 +250,23 @@ const getTableList = (params: any) => {
  * 该函数用于清空或初始化
  * @returns {void} 无返回值
  */
-const resetSysTenant = () => {
-  // 设置sysTenantForm为默认值
-  Object.assign(sysTenantForm.value, {
+const resetSysDept = () => {
+  // 设置sysDeptForm为默认值
+  Object.assign(sysDeptForm.value, {
     id: 0, // 编号
     name: '', // 名称
-    userId: undefined, // 用户
-    contactName: undefined, // 联系人
-    contactMobile: undefined, // 联系电话
-    expireDate: '', // 过期时间
-    accountTotal: 0, // 账号数量
-    packageId: 0, // 套餐编号
+    parentId: 0, // 上级
+    sort: 0, // 排序
+    userId: undefined, // 负责人
+    phone: undefined, // 联系电话
+    email: undefined, // 邮件
     status: 0, // 状态:0正常/1停用
     deleted: 0, // 删除:0否/1是
+    tenantId: 0, // 租户
     creator: undefined, // 创建人
     createTime: undefined, // 创建时间
     updater: undefined, // 更新人
     updateTime: undefined, // 更新时间
-    username: '',
-    password: '',
   })
 }
 
@@ -291,51 +275,52 @@ const resetSysTenant = () => {
  * @returns {void}
  */
 const reset = () => {
-  resetSysTenant()
+  // loading.value = false
+  resetSysDept()
   disabled.value = true
-  userItem.value = '点击选择'
-  isUserOpen.value = false
 }
 /**
  * 处理新增操作
  * 该函数用于初始化对话框的状态
  */
-const handleAdd = async () => {
-  title.value = '新增租户'
+const handleAdd = (row?: ResSysDept) => {
+  title.value = '新增部门'
   dialogVisible.value = true
   reset()
-  getSysTenantPackageOptions()
+  getDeptOptions()
   disabled.value = false
+  if (row != null && row.id) {
+    sysDeptForm.value.parentId = row.id
+  }
 }
 /**
  * 处理更新操作
  * @param row - 要更新数据对象
  */
-const handleUpdate = async (row: ResSysTenant) => {
-  title.value = '编辑租户'
+const handleUpdate = async (row: ResSysDept) => {
+  title.value = '编辑部门'
   dialogVisible.value = true
   reset()
-  getSysTenantPackageOptions()
-  const data = await getSysTenantApi(Number(row.id))
-  sysTenantForm.value = data
+  getDeptOptions()
+  const data = await getSysDeptApi(Number(row.id))
+  sysDeptForm.value = data
   if (Number(data.userId) !== 0) {
     const user = await getSysUserApi(Number(data.userId))
     userItem.value = user.name
   }
-
   disabled.value = false
 }
 /**
  * 处理查看操作
  * @param row - 要查看数据对象
  */
-const handleItem = async (row: ResSysTenant) => {
-  title.value = '查看租户'
+const handleItem = async (row: ResSysDept) => {
+  title.value = '查看部门'
   dialogVisible.value = true
   reset()
-  getSysTenantPackageOptions()
-  const data = await getSysTenantApi(Number(row.id))
-  sysTenantForm.value = data
+  getDeptOptions()
+  const data = await getSysDeptApi(Number(row.id))
+  sysDeptForm.value = data
   if (Number(data.userId) !== 0) {
     const user = await getSysUserApi(Number(data.userId))
     userItem.value = user.name
@@ -346,31 +331,25 @@ const handleItem = async (row: ResSysTenant) => {
  * 处理清理操作
  * @param row - 要清理数据对象
  */
-const handleDrop = async (row: ResSysTenant) => {
-  await useHandleData(dropSysTenantApi, Number(row.id), '清理租户')
+const handleDrop = async (row: ResSysDept) => {
+  await useHandleData(dropSysDeptApi, Number(row.id), '清理部门')
   proTable.value?.getTableList()
 }
 /**
  * 处理删除操作
  * @param row - 要删除数据对象
  */
-const handleDelete = async (row: ResSysTenant) => {
-  await useHandleData(deleteSysTenantApi, Number(row.id), '删除租户')
+const handleDelete = async (row: ResSysDept) => {
+  await useHandleData(deleteSysDeptApi, Number(row.id), '删除部门')
   proTable.value?.getTableList()
 }
 /**
  * 处理恢复操作
  * @param row - 要恢复数据对象
  */
-const handleRecover = async (row: ResSysTenant) => {
-  await useHandleData(recoverSysTenantApi, Number(row.id), '恢复租户')
+const handleRecover = async (row: ResSysDept) => {
+  await useHandleData(recoverSysDeptApi, Number(row.id), '恢复部门')
   proTable.value?.getTableList()
-}
-
-// 获取服务包
-const getSysTenantPackageOptions = async () => {
-  const data = await getSysTenantPackageListSimpleApi()
-  sysTenantPackageOptions.value = data
 }
 
 /**
@@ -388,20 +367,51 @@ const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.validate(async valid => {
     if (!valid) return
-    const data = sysTenantForm.value as unknown as ResSysTenant
+    // loading.value = true
+    const data = sysDeptForm.value as unknown as ResSysDept
     if (data.id !== 0) {
-      await useHandleSet(updateSysTenantApi, data.id, data, '修改租户')
+      await useHandleSet(updateSysDeptApi, data.id, data, '修改部门')
     } else {
-      await useHandleData(addSysTenantApi, data, '添加租户')
+      await useHandleData(addSysDeptApi, data, '添加部门')
     }
     resetForm(formEl)
+    // loading.value = false
     proTable.value?.getTableList()
   })
 }
 
-const userOpen = () => {
-  if (disabled.value) return
-  isUserOpen.value = true
+// 设置展开合并
+const handleExpandAll = () => {
+  refreshTable.value = false
+  isExpandAll.value = !isExpandAll.value
+  nextTick(() => {
+    refreshTable.value = true
+    deptOptions.value = []
+  })
+}
+
+// 获取部门列表
+const getDeptOptions = async () => {
+  const data = await getSysDeptListSimpleApi()
+  deptOptions.value = [
+    {
+      id: 0, // 编号
+      name: '主类目', // 名称
+      parentId: 0, // 上级
+      sort: 0, // 排序
+      userId: undefined, // 负责人
+      phone: undefined, // 联系电话
+      email: undefined, // 邮件
+      status: 0, // 状态:0正常/1停用
+      deleted: 0, // 删除:0否/1是
+      tenantId: 0, // 租户
+      creator: undefined, // 创建人
+      createTime: undefined, // 创建时间
+      updater: undefined, // 更新人
+      updateTime: undefined, // 更新时间
+      children: handleTree(data),
+    },
+  ] as unknown as ResSysDept[]
 }
 
 // 在 el-dialog 上添加点击事件监听器
@@ -409,17 +419,20 @@ const handleDialogClick = () => {
   isUserOpen.value = false
 }
 
-// 当用户被选择
-const handleUser = (row: ResSysUser) => {
-  userItem.value = row.name
-  sysTenantForm.value.userId = Number(row.id)
-  isUserOpen.value = false
+const userOpen = () => {
+  if (disabled.value) return
+  isUserOpen.value = true
 }
 
-// 用户列表数据接口
-const getCustomSysTenantUserListApi = (params: any) => {
+const getCustomSysUserListApi = (params: any) => {
   const newParams = Object.assign(params, JSON.parse(JSON.stringify(initUserParam)))
-  return getSysTenantUserListApi(Number(sysTenantForm.value.id), newParams)
+  return getSysUserListSimpleApi(newParams)
+}
+
+const handleUser = (row: ResSysUser) => {
+  userItem.value = row.name
+  sysDeptForm.value.userId = Number(row.id)
+  isUserOpen.value = false
 }
 
 const userColumns: ColumnProps<ResSysUser>[] = [
@@ -438,7 +451,7 @@ const userColumns: ColumnProps<ResSysUser>[] = [
 const deletedEnum = getIntDictOptions('deleted')
 // 表格配置项
 const deleteSearch = reactive<SearchProps>(
-  HasAuth('tenant.SysTenantDelete')
+  HasAuth('dept.SysDeptDelete')
     ? {
         el: 'switch',
         span: 2,
@@ -450,50 +463,14 @@ const deleteSearch = reactive<SearchProps>(
     : {}
 )
 
-const columns: ColumnProps<ResSysTenant>[] = [
+const columns: ColumnProps<ResSysDept>[] = [
   { prop: 'id', label: '编号' },
   { prop: 'name', label: '名称', search: { el: 'input', span: 2 } },
-  { prop: 'userId', label: '用户' },
-  { prop: 'contactName', label: '联系人' },
-  { prop: 'contactMobile', label: '联系电话' },
-  {
-    prop: 'expireDate',
-    label: '过期时间',
-    search: {
-      render: ({ searchParam }) => {
-        return (
-          <div class="flex items-center justify-center">
-            <ElDatePicker
-              modelValue={searchParam.beginExpireDate}
-              clearable
-              placeholder="开始时间"
-              type="date"
-              format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD"
-            />
-            <span class="mr-2.5 ml-2.5">-</span>
-            <ElDatePicker
-              modelValue={searchParam.finishExpireDate}
-              clearable
-              placeholder="结束时间"
-              type="date"
-              format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD"
-            />
-          </div>
-        )
-      },
-      span: 4,
-    },
-  },
-  { prop: 'accountTotal', label: '账号数量' },
-  {
-    prop: 'packageId',
-    label: '套餐编号',
-    enum: sysTenantPackageOptions,
-    fieldNames: { label: 'name', value: 'id' },
-    search: { el: 'select', span: 2 },
-  },
+  { prop: 'parentId', label: '上级' },
+  { prop: 'sort', label: '排序' },
+  { prop: 'userId', label: '负责人' },
+  { prop: 'phone', label: '联系电话' },
+  { prop: 'email', label: '邮件' },
   { prop: 'status', label: '状态', tag: true, enum: statusEnum, search: { el: 'select', span: 2 } },
   { prop: 'deleted', label: '删除', tag: true, enum: deletedEnum, search: deleteSearch },
   { prop: 'creator', label: '创建人' },
@@ -507,11 +484,12 @@ const columns: ColumnProps<ResSysTenant>[] = [
     width: 150,
     fixed: 'right',
     isShow: HasAuth(
-      'tenant.SysTenantUpdate',
-      'tenant.SysTenantDelete',
-      'tenant.SysTenantDrop',
-      'tenant.SysTenantRecover',
-      'tenant.SysTenant'
+      'dept.SysDeptCreate',
+      'dept.SysDeptUpdate',
+      'dept.SysDeptDelete',
+      'dept.SysDeptDrop',
+      'dept.SysDeptRecover',
+      'dept.SysDept'
     ),
   },
 ]

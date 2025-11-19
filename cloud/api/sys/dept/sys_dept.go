@@ -75,6 +75,7 @@ func SysDeptCreate(ctx context.Context, newCtx *app.RequestContext) {
 		return
 	}
 	reqInfo.Id = nil
+	reqInfo.TenantId = proto.Int64(newCtx.GetInt64("tenantId"))
 	reqInfo.Creator = null.StringFrom(newCtx.GetString("userName"))
 	reqInfo.CreateTime = null.DateTimeFrom(util.Now())
 	request.Data = dept.SysDeptProto(reqInfo)
@@ -135,6 +136,7 @@ func SysDeptUpdate(ctx context.Context, newCtx *app.RequestContext) {
 		return
 	}
 	reqInfo.Id = nil
+	reqInfo.TenantId = proto.Int64(newCtx.GetInt64("tenantId"))
 	reqInfo.Updater = null.StringFrom(newCtx.GetString("userName"))
 	reqInfo.UpdateTime = null.DateTimeFrom(util.Now())
 	reqInfo.Creator = null.StringFromPtr(nil)
@@ -335,12 +337,12 @@ func SysDeptList(ctx context.Context, newCtx *app.RequestContext) {
 	client := dept.NewSysDeptServiceClient(grpcClient)
 	// 构造查询条件
 	request := &dept.SysDeptListRequest{}
-
-	if val, ok := newCtx.GetQuery("tenantId"); ok {
-		request.TenantId = proto.Int64(cast.ToInt64(val)) // 租户
-	}
+	request.TenantId = proto.Int64(newCtx.GetInt64("tenantId")) // 租户ID
+	request.Deleted = proto.Int32(0)                            // 删除状态
 	if val, ok := newCtx.GetQuery("deleted"); ok {
-		request.Deleted = proto.Int32(cast.ToInt32(val)) // 删除:0否/1是
+		if cast.ToBool(val) {
+			request.Deleted = nil
+		}
 	}
 	if val, ok := newCtx.GetQuery("status"); ok {
 		request.Status = proto.Int32(cast.ToInt32(val)) // 状态:0正常/1停用
@@ -395,11 +397,12 @@ func SysDeptListSimple(ctx context.Context, newCtx *app.RequestContext) {
 	// 构造查询条件
 	request := &dept.SysDeptListRequest{}
 
-	if val, ok := newCtx.GetQuery("tenantId"); ok {
-		request.TenantId = proto.Int64(cast.ToInt64(val)) // 租户
-	}
+	request.TenantId = proto.Int64(newCtx.GetInt64("tenantId")) // 租户ID
+	request.Deleted = proto.Int32(0)                            // 删除状态
 	if val, ok := newCtx.GetQuery("deleted"); ok {
-		request.Deleted = proto.Int32(cast.ToInt32(val)) // 删除:0否/1是
+		if cast.ToBool(val) {
+			request.Deleted = nil
+		}
 	}
 	if val, ok := newCtx.GetQuery("status"); ok {
 		request.Status = proto.Int32(cast.ToInt32(val)) // 状态:0正常/1停用

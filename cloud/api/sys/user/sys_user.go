@@ -1,85 +1,75 @@
-package {{.Pkg}}
+package user
 
 import (
 	"context"
 
-	"{{.ModName}}/code"
-	"{{.ModName}}/dao"
-	"{{.ModName}}/initial"
-	"{{.ModName}}/service/{{.PkgPath}}"
-	"{{.ModName}}/internal/response"
-	{{- if .Page}}
-	"{{.ModName}}/service/pagination"
-	{{- end}}
+	"cloud/code"
+	"cloud/dao"
+	"cloud/initial"
+	"cloud/internal/response"
+	"cloud/service/pagination"
+	"cloud/service/sys/user"
 
 	globalLogger "github.com/abulo/ratel/v3/core/logger"
 	"github.com/abulo/ratel/v3/stores/null"
 	"github.com/abulo/ratel/v3/util"
-	"github.com/spf13/cast"
-	"github.com/sirupsen/logrus"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"google.golang.org/protobuf/proto"
 )
 
-// {{.Table.TableName}} {{.Table.TableComment}}
-
-{{- range .Method}}
-{{- if eq .Type "Show"}}
-// {{.Name}}Item 查询单条数据
-func {{.Name}}Item(ctx context.Context,newCtx *app.RequestContext, id int64) (*{{.Pkg}}.{{CamelStr .Table.TableName}}Response, error)  {
+// sys_user 用户
+// SysUserItem 查询单条数据
+func SysUserItem(ctx context.Context, newCtx *app.RequestContext, id int64) (*user.SysUserResponse, error) {
 	//判断这个服务能不能链接
 	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"err": err,
-		}).Error("Grpc:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}Item")
+		}).Error("Grpc:用户:sys_user:SysUserItem")
 		return nil, status.Error(code.ConvertToGrpc(code.RPCError), code.StatusText(code.RPCError))
 	}
 	//链接服务
-	client := {{.Pkg}}.New{{CamelStr .Table.TableName}}ServiceClient(grpcClient)
-	request := &{{.Pkg}}.{{.Name}}Request{}
-	request.{{CamelStr .Primary.AlisaColumnName }} = {{Helper .Primary.AlisaColumnName }}
+	client := user.NewSysUserServiceClient(grpcClient)
+	request := &user.SysUserRequest{}
+	request.Id = id
 	// 执行服务
-	res, err := client.{{.Name}}(ctx, request)
+	res, err := client.SysUser(ctx, request)
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}Item")
+		}).Error("GrpcCall:用户:sys_user:SysUserItem")
 		return nil, err
 	}
 	return res, nil
 }
-{{- end}}
-{{- end}}
 
-{{- range .Method}}
-{{- if eq .Type "Create"}}
-// {{.Name}} 创建数据
-func {{.Name}}(ctx context.Context,newCtx *app.RequestContext) {
+// SysUserCreate 创建数据
+func SysUserCreate(ctx context.Context, newCtx *app.RequestContext) {
 	//判断这个服务能不能链接
 	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"err": err,
-		}).Error("Grpc:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}")
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		}).Error("Grpc:用户:sys_user:SysUserCreate")
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.RPCError,
 			"msg":  code.StatusText(code.RPCError),
 		})
 		return
 	}
 	//链接服务
-	client := {{.Pkg}}.New{{CamelStr .Table.TableName}}ServiceClient(grpcClient)
-	request := &{{.Pkg}}.{{.Name}}Request{}
+	client := user.NewSysUserServiceClient(grpcClient)
+	request := &user.SysUserCreateRequest{}
 	// 数据绑定
-	var reqInfo dao.{{CamelStr .Table.TableName}}
+	var reqInfo dao.SysUser
 	if err := newCtx.BindAndValidate(&reqInfo); err != nil {
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ParamInvalid,
 			"msg":  code.StatusText(code.ParamInvalid),
 		})
@@ -89,31 +79,31 @@ func {{.Name}}(ctx context.Context,newCtx *app.RequestContext) {
 	reqInfo.TenantId = proto.Int64(newCtx.GetInt64("tenantId"))
 	reqInfo.Creator = null.StringFrom(newCtx.GetString("userName"))
 	reqInfo.CreateTime = null.DateTimeFrom(util.Now())
-	request.Data = {{.Pkg}}.{{CamelStr .Table.TableName}}Proto(reqInfo)
+	request.Data = user.SysUserProto(reqInfo)
 	// 执行服务
-	res, err := client.{{.Name}}(ctx, request)
+	res, err := client.SysUserCreate(ctx, request)
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}")
+		}).Error("GrpcCall:用户:sys_user:SysUserCreate")
 		fromError := status.Convert(err)
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
 			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
 		})
 		return
 	}
-	response.JSON(newCtx,consts.StatusOK, utils.H{
+	response.JSON(newCtx, consts.StatusOK, utils.H{
 		"code": res.GetCode(),
 		"msg":  res.GetMsg(),
 	})
 }
-{{- else if eq .Type "Update"}}
-// {{.Name}} 更新数据
-func {{.Name}}(ctx context.Context,newCtx *app.RequestContext) {
-	{{Helper .Primary.AlisaColumnName }} := cast.ToInt64(newCtx.Param("{{Helper .Primary.AlisaColumnName }}"))
-	if _, err := {{CamelStr .Table.TableName}}Item(ctx, newCtx, id); err != nil {
+
+// SysUserUpdate 更新数据
+func SysUserUpdate(ctx context.Context, newCtx *app.RequestContext) {
+	id := cast.ToInt64(newCtx.Param("id"))
+	if _, err := SysUserItem(ctx, newCtx, id); err != nil {
 		fromError := status.Convert(err)
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
@@ -126,21 +116,21 @@ func {{.Name}}(ctx context.Context,newCtx *app.RequestContext) {
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"err": err,
-		}).Error("Grpc:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}")
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		}).Error("Grpc:用户:sys_user:SysUserUpdate")
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.RPCError,
 			"msg":  code.StatusText(code.RPCError),
 		})
 		return
 	}
 	//链接服务
-	client := {{.Pkg}}.New{{CamelStr .Table.TableName}}ServiceClient(grpcClient)
-	request := &{{.Pkg}}.{{.Name}}Request{}
-	request.{{CamelStr .Primary.AlisaColumnName }} = {{Helper .Primary.AlisaColumnName }}
+	client := user.NewSysUserServiceClient(grpcClient)
+	request := &user.SysUserUpdateRequest{}
+	request.Id = id
 	// 数据绑定
-	var reqInfo dao.{{CamelStr .Table.TableName}}
+	var reqInfo dao.SysUser
 	if err := newCtx.BindAndValidate(&reqInfo); err != nil {
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ParamInvalid,
 			"msg":  code.StatusText(code.ParamInvalid),
 		})
@@ -152,51 +142,31 @@ func {{.Name}}(ctx context.Context,newCtx *app.RequestContext) {
 	reqInfo.UpdateTime = null.DateTimeFrom(util.Now())
 	reqInfo.Creator = null.StringFromPtr(nil)
 	reqInfo.CreateTime = null.DateTimeFromPtr(nil)
-	request.Data = {{.Pkg}}.{{CamelStr .Table.TableName}}Proto(reqInfo)
+	request.Data = user.SysUserProto(reqInfo)
 	// 执行服务
-	res, err := client.{{.Name}}(ctx, request)
+	res, err := client.SysUserUpdate(ctx, request)
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}")
+		}).Error("GrpcCall:用户:sys_user:SysUserUpdate")
 		fromError := status.Convert(err)
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
 			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
 		})
 		return
 	}
-	response.JSON(newCtx,consts.StatusOK, utils.H{
+	response.JSON(newCtx, consts.StatusOK, utils.H{
 		"code": res.GetCode(),
 		"msg":  res.GetMsg(),
 	})
 }
-{{- else if eq .Type "Show"}}
-// {{.Name}} 查询单条数据
-func {{.Name}}(ctx context.Context,newCtx *app.RequestContext){
-	{{Helper .Primary.AlisaColumnName }} := cast.ToInt64(newCtx.Param("{{Helper .Primary.AlisaColumnName }}"))
-	// 执行服务
-	res, err := {{CamelStr .Table.TableName}}Item(ctx, newCtx, id)
-	if err != nil {
-		fromError := status.Convert(err)
-		response.JSON(newCtx,consts.StatusOK, utils.H{
-			"code": code.ConvertToHttp(fromError.Code()),
-			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
-		})
-		return
-	}
-	response.JSON(newCtx,consts.StatusOK, utils.H{
-		"code": res.GetCode(),
-		"msg":  res.GetMsg(),
-		"data": {{.Pkg}}.{{CamelStr .Table.TableName}}Dao(res.GetData()),
-	})
-}
-{{- else if eq .Type "Drop"}}
-// {{.Name}} 清理数据
-func {{.Name}}(ctx context.Context,newCtx *app.RequestContext){
-	{{Helper .Primary.AlisaColumnName }} := cast.ToInt64(newCtx.Param("{{Helper .Primary.AlisaColumnName }}"))
-	if _, err := {{CamelStr .Table.TableName}}Item(ctx, newCtx, id); err != nil {
+
+// SysUserDelete 删除数据
+func SysUserDelete(ctx context.Context, newCtx *app.RequestContext) {
+	id := cast.ToInt64(newCtx.Param("id"))
+	if _, err := SysUserItem(ctx, newCtx, id); err != nil {
 		fromError := status.Convert(err)
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
@@ -208,41 +178,61 @@ func {{.Name}}(ctx context.Context,newCtx *app.RequestContext){
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"err": err,
-		}).Error("Grpc:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}")
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		}).Error("Grpc:用户:sys_user:SysUserDelete")
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.RPCError,
 			"msg":  code.StatusText(code.RPCError),
 		})
 		return
 	}
 	//链接服务
-	client := {{.Pkg}}.New{{CamelStr .Table.TableName}}ServiceClient(grpcClient)
-	request := &{{.Pkg}}.{{.Name}}Request{}
-	request.{{CamelStr .Primary.AlisaColumnName }} = {{Helper .Primary.AlisaColumnName }}
+	client := user.NewSysUserServiceClient(grpcClient)
+	request := &user.SysUserDeleteRequest{}
+	request.Id = id
 	// 执行服务
-	res, err := client.{{.Name}}(ctx, request)
+	res, err := client.SysUserDelete(ctx, request)
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}")
+		}).Error("GrpcCall:用户:sys_user:SysUserDelete")
 		fromError := status.Convert(err)
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
 			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
 		})
 		return
 	}
-	response.JSON(newCtx,consts.StatusOK, utils.H{
+	response.JSON(newCtx, consts.StatusOK, utils.H{
 		"code": res.GetCode(),
 		"msg":  res.GetMsg(),
 	})
 }
-{{- else if eq .Type "Delete"}}
-// {{.Name}} 删除数据
-func {{.Name}}(ctx context.Context,newCtx *app.RequestContext){
-	{{Helper .Primary.AlisaColumnName }} := cast.ToInt64(newCtx.Param("{{Helper .Primary.AlisaColumnName }}"))
-	if _, err := {{CamelStr .Table.TableName}}Item(ctx, newCtx, id); err != nil {
+
+// SysUser 查询单条数据
+func SysUser(ctx context.Context, newCtx *app.RequestContext) {
+	id := cast.ToInt64(newCtx.Param("id"))
+	// 执行服务
+	res, err := SysUserItem(ctx, newCtx, id)
+	if err != nil {
+		fromError := status.Convert(err)
+		response.JSON(newCtx, consts.StatusOK, utils.H{
+			"code": code.ConvertToHttp(fromError.Code()),
+			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
+		})
+		return
+	}
+	response.JSON(newCtx, consts.StatusOK, utils.H{
+		"code": res.GetCode(),
+		"msg":  res.GetMsg(),
+		"data": user.SysUserDao(res.GetData()),
+	})
+}
+
+// SysUserRecover 恢复数据
+func SysUserRecover(ctx context.Context, newCtx *app.RequestContext) {
+	id := cast.ToInt64(newCtx.Param("id"))
+	if _, err := SysUserItem(ctx, newCtx, id); err != nil {
 		fromError := status.Convert(err)
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
@@ -254,41 +244,41 @@ func {{.Name}}(ctx context.Context,newCtx *app.RequestContext){
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"err": err,
-		}).Error("Grpc:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}")
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		}).Error("Grpc:用户:sys_user:SysUserRecover")
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.RPCError,
 			"msg":  code.StatusText(code.RPCError),
 		})
 		return
 	}
 	//链接服务
-	client := {{.Pkg}}.New{{CamelStr .Table.TableName}}ServiceClient(grpcClient)
-	request := &{{.Pkg}}.{{.Name}}Request{}
-	request.{{CamelStr .Primary.AlisaColumnName }} = {{Helper .Primary.AlisaColumnName }}
+	client := user.NewSysUserServiceClient(grpcClient)
+	request := &user.SysUserRecoverRequest{}
+	request.Id = id
 	// 执行服务
-	res, err := client.{{.Name}}(ctx, request)
+	res, err := client.SysUserRecover(ctx, request)
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}")
+		}).Error("GrpcCall:用户:sys_user:SysUserRecover")
 		fromError := status.Convert(err)
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
 			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
 		})
 		return
 	}
-	response.JSON(newCtx,consts.StatusOK, utils.H{
+	response.JSON(newCtx, consts.StatusOK, utils.H{
 		"code": res.GetCode(),
 		"msg":  res.GetMsg(),
 	})
 }
-{{- else if eq .Type "Recover"}}
-// {{.Name}} 恢复数据
-func {{.Name}}(ctx context.Context,newCtx *app.RequestContext){
-	{{Helper .Primary.AlisaColumnName }} := cast.ToInt64(newCtx.Param("{{Helper .Primary.AlisaColumnName }}"))
-	if _, err := {{CamelStr .Table.TableName}}Item(ctx, newCtx, id); err != nil {
+
+// SysUserDrop 清理数据
+func SysUserDrop(ctx context.Context, newCtx *app.RequestContext) {
+	id := cast.ToInt64(newCtx.Param("id"))
+	if _, err := SysUserItem(ctx, newCtx, id); err != nil {
 		fromError := status.Convert(err)
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
@@ -300,101 +290,99 @@ func {{.Name}}(ctx context.Context,newCtx *app.RequestContext){
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"err": err,
-		}).Error("Grpc:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}")
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		}).Error("Grpc:用户:sys_user:SysUserDrop")
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.RPCError,
 			"msg":  code.StatusText(code.RPCError),
 		})
 		return
 	}
 	//链接服务
-	client := {{.Pkg}}.New{{CamelStr .Table.TableName}}ServiceClient(grpcClient)
-	request := &{{.Pkg}}.{{.Name}}Request{}
-	request.{{CamelStr .Primary.AlisaColumnName }} = {{Helper .Primary.AlisaColumnName }}
+	client := user.NewSysUserServiceClient(grpcClient)
+	request := &user.SysUserDropRequest{}
+	request.Id = id
 	// 执行服务
-	res, err := client.{{.Name}}(ctx, request)
+	res, err := client.SysUserDrop(ctx, request)
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}")
+		}).Error("GrpcCall:用户:sys_user:SysUserDrop")
 		fromError := status.Convert(err)
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
 			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
 		})
 		return
 	}
-	response.JSON(newCtx,consts.StatusOK, utils.H{
+	response.JSON(newCtx, consts.StatusOK, utils.H{
 		"code": res.GetCode(),
 		"msg":  res.GetMsg(),
 	})
 }
-{{- else if eq .Type "Item"}}
-// {{.Name}} 查询单条数据
-func {{.Name}}(ctx context.Context, newCtx *app.RequestContext) {
+
+// SysUserLogin 查询单条数据
+func SysUserLogin(ctx context.Context, newCtx *app.RequestContext) {
 	//判断这个服务能不能链接
 	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"err": err,
-		}).Error("Grpc:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}")
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		}).Error("Grpc:用户:sys_user:SysUserLogin")
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.RPCError,
 			"msg":  code.StatusText(code.RPCError),
 		})
 		return
 	}
 	//链接服务
-	client := {{.Pkg}}.New{{CamelStr .Table.TableName}}ServiceClient(grpcClient)
-	request := &{{.Pkg}}.{{.Name}}Request{}
+	client := user.NewSysUserServiceClient(grpcClient)
+	request := &user.SysUserLoginRequest{}
 	// 构造查询条件
-	{{ApiToProto .Condition "request" "newCtx.GetQuery" false}}
+
+	if val, ok := newCtx.GetQuery("username"); ok {
+		request.Username = proto.String(val) // 用户名
+	}
+
 	// 执行服务
-	res, err := client.{{.Name}}(ctx, request)
+	res, err := client.SysUserLogin(ctx, request)
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}")
+		}).Error("GrpcCall:用户:sys_user:SysUserLogin")
 		fromError := status.Convert(err)
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
 			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
 		})
 		return
 	}
-	response.JSON(newCtx,consts.StatusOK, utils.H{
+	response.JSON(newCtx, consts.StatusOK, utils.H{
 		"code": res.GetCode(),
 		"msg":  res.GetMsg(),
-		"data": {{.Pkg}}.{{CamelStr .Table.TableName}}Dao(res.GetData()),
+		"data": user.SysUserDao(res.GetData()),
 	})
 }
-{{- else if eq .Type "List"}}
-// {{.Name}} 列表数据
-func {{.Name}}(ctx context.Context,newCtx *app.RequestContext){
+
+// SysUserList 列表数据
+func SysUserList(ctx context.Context, newCtx *app.RequestContext) {
 	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"err": err,
-		}).Error("Grpc:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}")
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		}).Error("Grpc:用户:sys_user:SysUserList")
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.RPCError,
 			"msg":  code.StatusText(code.RPCError),
 		})
 		return
 	}
 	//链接服务
-	client := {{.Pkg}}.New{{CamelStr .Table.TableName}}ServiceClient(grpcClient)
+	client := user.NewSysUserServiceClient(grpcClient)
 	// 构造查询条件
-	request := &{{.Pkg}}.{{.Name}}Request{}
-	{{- if .Page}}
-	requestTotal := &{{.Pkg}}.{{.Name}}TotalRequest{}
-	{{ApiToProto .Condition "request" "newCtx.GetQuery" true}}
-	{{- else}}
-	{{ApiToProto .Condition "request" "newCtx.GetQuery" false}}
-	{{- end}}
-
+	request := &user.SysUserListRequest{}
+	requestTotal := &user.SysUserListTotalRequest{}
 	request.TenantId = proto.Int64(newCtx.GetInt64("tenantId"))      // 租户ID
 	requestTotal.TenantId = proto.Int64(newCtx.GetInt64("tenantId")) // 租户ID
 	request.Deleted = proto.Int32(0)                                 // 删除状态
@@ -405,17 +393,32 @@ func {{.Name}}(ctx context.Context,newCtx *app.RequestContext){
 			requestTotal.Deleted = nil
 		}
 	}
+	if val, ok := newCtx.GetQuery("username"); ok {
+		request.Username = proto.String(val)      // 用户名
+		requestTotal.Username = proto.String(val) // 用户名
+	}
+	if val, ok := newCtx.GetQuery("status"); ok {
+		request.Status = proto.Int32(cast.ToInt32(val))      // 状态:0正常/1停用
+		requestTotal.Status = proto.Int32(cast.ToInt32(val)) // 状态:0正常/1停用
+	}
+	if val, ok := newCtx.GetQuery("mobile"); ok {
+		request.Mobile = proto.String(val)      // 手机号码
+		requestTotal.Mobile = proto.String(val) // 手机号码
+	}
+	if val, ok := newCtx.GetQuery("name"); ok {
+		request.Name = proto.String(val)      // 姓名
+		requestTotal.Name = proto.String(val) // 姓名
+	}
 
-	{{- if .Page}}
 	// 执行服务,获取数据量
-	resTotal, err := client.{{.Name}}Total(ctx, requestTotal)
+	resTotal, err := client.SysUserListTotal(ctx, requestTotal)
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}")
+		}).Error("GrpcCall:用户:sys_user:SysUserList")
 		fromError := status.Convert(err)
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
 			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
 		})
@@ -429,70 +432,57 @@ func {{.Name}}(ctx context.Context,newCtx *app.RequestContext){
 	if resTotal.GetCode() == code.Success {
 		total = resTotal.GetData()
 	}
-	{{- end}}
 	// 执行服务
-	res, err := client.{{.Name}}(ctx, request)
+	res, err := client.SysUserList(ctx, request)
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}")
+		}).Error("GrpcCall:用户:sys_user:SysUserList")
 		fromError := status.Convert(err)
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
 			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
 		})
 		return
 	}
-	var list []*dao.{{CamelStr .Table.TableName}}
+	var list []*dao.SysUser
 	if res.GetCode() == code.Success {
 		rpcList := res.GetData()
 		for _, item := range rpcList {
-			list = append(list, {{.Pkg}}.{{CamelStr .Table.TableName}}Dao(item))
+			list = append(list, user.SysUserDao(item))
 		}
 	}
-	response.JSON(newCtx,consts.StatusOK, utils.H{
+	response.JSON(newCtx, consts.StatusOK, utils.H{
 		"code": res.GetCode(),
 		"msg":  res.GetMsg(),
-		{{- if .Page}}
 		"data": utils.H{
-			"total": total,
-			"list":  list,
-			"pageNum": paginationRequest.PageNum,
+			"total":    total,
+			"list":     list,
+			"pageNum":  paginationRequest.PageNum,
 			"pageSize": paginationRequest.PageSize,
 		},
-		{{- else}}
-		"data": list,
-		{{- end}}
 	})
 }
 
-
-
-
-// {{.Name}}Simple 列表精简数据
-func {{.Name}}Simple(ctx context.Context,newCtx *app.RequestContext){
+// SysUserListSimple 列表精简数据
+func SysUserListSimple(ctx context.Context, newCtx *app.RequestContext) {
 	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"err": err,
-		}).Error("Grpc:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}Simple")
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		}).Error("Grpc:用户:sys_user:SysUserListSimple")
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.RPCError,
 			"msg":  code.StatusText(code.RPCError),
 		})
 		return
 	}
 	//链接服务
-	client := {{.Pkg}}.New{{CamelStr .Table.TableName}}ServiceClient(grpcClient)
+	client := user.NewSysUserServiceClient(grpcClient)
 	// 构造查询条件
-	request := &{{.Pkg}}.{{.Name}}Request{}
-	{{- if .Page}}
-	requestTotal := &{{.Pkg}}.{{.Name}}TotalRequest{}
-	{{ApiToProto .Condition "request" "newCtx.GetQuery" true}}
-	{{- else}}
-	{{ApiToProto .Condition "request" "newCtx.GetQuery" false}}
-	{{- end}}
+	request := &user.SysUserListRequest{}
+	requestTotal := &user.SysUserListTotalRequest{}
 
 	request.TenantId = proto.Int64(newCtx.GetInt64("tenantId"))      // 租户ID
 	requestTotal.TenantId = proto.Int64(newCtx.GetInt64("tenantId")) // 租户ID
@@ -504,17 +494,32 @@ func {{.Name}}Simple(ctx context.Context,newCtx *app.RequestContext){
 			requestTotal.Deleted = nil
 		}
 	}
+	if val, ok := newCtx.GetQuery("username"); ok {
+		request.Username = proto.String(val)      // 用户名
+		requestTotal.Username = proto.String(val) // 用户名
+	}
+	if val, ok := newCtx.GetQuery("status"); ok {
+		request.Status = proto.Int32(cast.ToInt32(val))      // 状态:0正常/1停用
+		requestTotal.Status = proto.Int32(cast.ToInt32(val)) // 状态:0正常/1停用
+	}
+	if val, ok := newCtx.GetQuery("mobile"); ok {
+		request.Mobile = proto.String(val)      // 手机号码
+		requestTotal.Mobile = proto.String(val) // 手机号码
+	}
+	if val, ok := newCtx.GetQuery("name"); ok {
+		request.Name = proto.String(val)      // 姓名
+		requestTotal.Name = proto.String(val) // 姓名
+	}
 
-	{{- if .Page}}
 	// 执行服务,获取数据量
-	resTotal, err := client.{{.Name}}Total(ctx, requestTotal)
+	resTotal, err := client.SysUserListTotal(ctx, requestTotal)
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}Simple")
+		}).Error("GrpcCall:用户:sys_user:SysUserListSimple")
 		fromError := status.Convert(err)
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
 			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
 		})
@@ -528,43 +533,35 @@ func {{.Name}}Simple(ctx context.Context,newCtx *app.RequestContext){
 	if resTotal.GetCode() == code.Success {
 		total = resTotal.GetData()
 	}
-	{{- end}}
 	// 执行服务
-	res, err := client.{{.Name}}(ctx, request)
+	res, err := client.SysUserList(ctx, request)
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": request,
 			"err": err,
-		}).Error("GrpcCall:{{.Table.TableComment}}:{{.Table.TableName}}:{{.Name}}Simple")
+		}).Error("GrpcCall:用户:sys_user:SysUserListSimple")
 		fromError := status.Convert(err)
-		response.JSON(newCtx,consts.StatusOK, utils.H{
+		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
 			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
 		})
 		return
 	}
-	var list []*dao.{{CamelStr .Table.TableName}}
+	var list []*dao.SysUser
 	if res.GetCode() == code.Success {
 		rpcList := res.GetData()
 		for _, item := range rpcList {
-			list = append(list, {{.Pkg}}.{{CamelStr .Table.TableName}}Dao(item))
+			list = append(list, user.SysUserDao(item))
 		}
 	}
-	response.JSON(newCtx,consts.StatusOK, utils.H{
+	response.JSON(newCtx, consts.StatusOK, utils.H{
 		"code": res.GetCode(),
 		"msg":  res.GetMsg(),
-		{{- if .Page}}
 		"data": utils.H{
-			"total": total,
-			"list":  list,
-			"pageNum": paginationRequest.PageNum,
+			"total":    total,
+			"list":     list,
+			"pageNum":  paginationRequest.PageNum,
 			"pageSize": paginationRequest.PageSize,
 		},
-		{{- else}}
-		"data": list,
-		{{- end}}
 	})
 }
-
-{{- end}}
-{{- end}}

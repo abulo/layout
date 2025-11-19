@@ -76,6 +76,7 @@ func SysPostCreate(ctx context.Context, newCtx *app.RequestContext) {
 		return
 	}
 	reqInfo.Id = nil
+	reqInfo.TenantId = proto.Int64(newCtx.GetInt64("tenantId"))
 	reqInfo.Creator = null.StringFrom(newCtx.GetString("userName"))
 	reqInfo.CreateTime = null.DateTimeFrom(util.Now())
 	request.Data = post.SysPostProto(reqInfo)
@@ -136,6 +137,7 @@ func SysPostUpdate(ctx context.Context, newCtx *app.RequestContext) {
 		return
 	}
 	reqInfo.Id = nil
+	reqInfo.TenantId = proto.Int64(newCtx.GetInt64("tenantId"))
 	reqInfo.Updater = null.StringFrom(newCtx.GetString("userName"))
 	reqInfo.UpdateTime = null.DateTimeFrom(util.Now())
 	reqInfo.Creator = null.StringFromPtr(nil)
@@ -338,13 +340,15 @@ func SysPostList(ctx context.Context, newCtx *app.RequestContext) {
 	request := &post.SysPostListRequest{}
 	requestTotal := &post.SysPostListTotalRequest{}
 
-	if val, ok := newCtx.GetQuery("tenantId"); ok {
-		request.TenantId = proto.Int64(cast.ToInt64(val))      // 租户
-		requestTotal.TenantId = proto.Int64(cast.ToInt64(val)) // 租户
-	}
+	request.TenantId = proto.Int64(newCtx.GetInt64("tenantId"))      // 租户ID
+	requestTotal.TenantId = proto.Int64(newCtx.GetInt64("tenantId")) // 租户ID
+	request.Deleted = proto.Int32(0)                                 // 删除状态
+	requestTotal.Deleted = proto.Int32(0)                            // 删除状态
 	if val, ok := newCtx.GetQuery("deleted"); ok {
-		request.Deleted = proto.Int32(cast.ToInt32(val))      // 删除:0否/1是
-		requestTotal.Deleted = proto.Int32(cast.ToInt32(val)) // 删除:0否/1是
+		if cast.ToBool(val) {
+			request.Deleted = nil
+			requestTotal.Deleted = nil
+		}
 	}
 	if val, ok := newCtx.GetQuery("status"); ok {
 		request.Status = proto.Int32(cast.ToInt32(val))      // 状态:0正常/1停用
@@ -427,46 +431,19 @@ func SysPostListSimple(ctx context.Context, newCtx *app.RequestContext) {
 	client := post.NewSysPostServiceClient(grpcClient)
 	// 构造查询条件
 	request := &post.SysPostListRequest{}
-	requestTotal := &post.SysPostListTotalRequest{}
 
-	if val, ok := newCtx.GetQuery("tenantId"); ok {
-		request.TenantId = proto.Int64(cast.ToInt64(val))      // 租户
-		requestTotal.TenantId = proto.Int64(cast.ToInt64(val)) // 租户
-	}
+	request.TenantId = proto.Int64(newCtx.GetInt64("tenantId")) // 租户ID
+	request.Deleted = proto.Int32(0)                            // 删除状态
 	if val, ok := newCtx.GetQuery("deleted"); ok {
-		request.Deleted = proto.Int32(cast.ToInt32(val))      // 删除:0否/1是
-		requestTotal.Deleted = proto.Int32(cast.ToInt32(val)) // 删除:0否/1是
+		if cast.ToBool(val) {
+			request.Deleted = nil
+		}
 	}
 	if val, ok := newCtx.GetQuery("status"); ok {
-		request.Status = proto.Int32(cast.ToInt32(val))      // 状态:0正常/1停用
-		requestTotal.Status = proto.Int32(cast.ToInt32(val)) // 状态:0正常/1停用
+		request.Status = proto.Int32(cast.ToInt32(val)) // 状态:0正常/1停用
 	}
 	if val, ok := newCtx.GetQuery("name"); ok {
-		request.Name = proto.String(val)      // 名称
-		requestTotal.Name = proto.String(val) // 名称
-	}
-
-	// 执行服务,获取数据量
-	resTotal, err := client.SysPostListTotal(ctx, requestTotal)
-	if err != nil {
-		globalLogger.Logger.WithFields(logrus.Fields{
-			"req": request,
-			"err": err,
-		}).Error("GrpcCall:职位:sys_post:SysPostListSimple")
-		fromError := status.Convert(err)
-		response.JSON(newCtx, consts.StatusOK, utils.H{
-			"code": code.ConvertToHttp(fromError.Code()),
-			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
-		})
-		return
-	}
-	var total int64
-	paginationRequest := &pagination.PaginationRequest{}
-	paginationRequest.PageNum = proto.Int64(cast.ToInt64(newCtx.Query("pageNum")))
-	paginationRequest.PageSize = proto.Int64(cast.ToInt64(newCtx.Query("pageSize")))
-	request.Pagination = paginationRequest
-	if resTotal.GetCode() == code.Success {
-		total = resTotal.GetData()
+		request.Name = proto.String(val) // 名称
 	}
 	// 执行服务
 	res, err := client.SysPostList(ctx, request)
@@ -492,11 +469,6 @@ func SysPostListSimple(ctx context.Context, newCtx *app.RequestContext) {
 	response.JSON(newCtx, consts.StatusOK, utils.H{
 		"code": res.GetCode(),
 		"msg":  res.GetMsg(),
-		"data": utils.H{
-			"total":    total,
-			"list":     list,
-			"pageNum":  paginationRequest.PageNum,
-			"pageSize": paginationRequest.PageSize,
-		},
+		"data": list,
 	})
 }

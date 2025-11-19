@@ -1,6 +1,9 @@
 package dao
 
-import "github.com/abulo/ratel/v3/stores/null"
+import (
+	"github.com/abulo/ratel/v3/stores/null"
+	"github.com/golang-jwt/jwt/v5"
+)
 
 // SysUser 用户 sys_user
 type SysUser struct {
@@ -24,6 +27,26 @@ type SysUser struct {
 type SysUserScope struct {
 	Scope     *int32  `gorm:"column:scope" json:"scope"`          //tinyint 数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限）
 	ScopeDept []int64 `gorm:"column:scope_dept" json:"scopeDept"` //json 数据范围(指定部门数组)
+}
+
+type SysUserLogin struct {
+	Username    string `json:"username,required"`    // 用户名
+	Password    string `json:"password,required"`    // 密码
+	CaptchaCode string `json:"captchaCode,required"` // 验证码
+	CaptchaId   string `json:"captchaId,required"`   // 验证码ID
+}
+
+// SysUserToken 用户令牌
+type SysUserToken struct {
+	UserId   int64  `json:"userId"`   // 用户ID
+	UserName string `json:"userName"` // 用户名
+	TenantId int64  `json:"tenantId"` // 租户ID
+	jwt.RegisteredClaims
+}
+
+// 用户密码
+type SysUserPassword struct {
+	Password string `json:"password,required"` // 密码
 }
 
 func (SysUser) TableName() string {

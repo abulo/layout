@@ -18,7 +18,10 @@
 	    {{- if .SoftDelete}}
 	    <!-- 删除状态 -->
       <template #deleted="scope">
-        <DictTag type="delete" :value="scope.row.deleted" />
+        <DictTag type="deleted" :value="scope.row.deleted" />
+      </template>
+      <template #status="scope">
+        <DictTag type="status" :value="scope.row.status" />
       </template>
 	    {{- end}}
 	  <!-- 菜单操作 -->

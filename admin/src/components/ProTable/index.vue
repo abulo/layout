@@ -52,11 +52,11 @@
             @click="handleToolbarClick(item.name)"
           />
         </template>
-        <template v-if="toolbarRightArr.length === 0">
+        <!-- <template v-if="toolbarRightArr.length === 0">
           <slot name="toolbarRight">
             <el-button v-if="columns.length" :icon="Operation" circle @click="openColSetting" />
           </slot>
-        </template>
+        </template> -->
       </div>
     </div>
     <!-- 表格主体 -->
@@ -123,6 +123,7 @@
       <pagination
         v-if="pagination"
         :pageable="pageable"
+        :layout="paginationLayout"
         :handle-size-change="handleSizeChange"
         :handle-current-change="handleCurrentChange"
       />
@@ -149,7 +150,7 @@ import ColSetting from './components/ColSetting.vue'
 import TableColumn from './components/TableColumn'
 import Sortable from 'sortablejs'
 import { toolbarButtonsConfig } from '@/utils/proTable'
-import { Operation } from '@element-plus/icons-vue'
+// import { Operation } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
 import { useLoadingStore } from '@/stores/modules/loading'
 
@@ -158,6 +159,7 @@ const props = withDefaults(defineProps<ProTableProps>(), {
   columns: () => [],
   requestAuto: true,
   pagination: true,
+  paginationLayout: 'total, sizes, prev, pager, next, jumper',
   initParam: () => ({}),
   border: true,
   rowKey: 'id',
@@ -215,7 +217,8 @@ const toolbarLeftArr = computed(() => {
 const toolbarRightArr = computed(() => {
   // default toolbarRight is [layout]
   if (!props.toolbarRight) {
-    return [toolbarButtonsConfig.layout]
+    // return [toolbarButtonsConfig.layout]
+    return []
   }
   return props.toolbarRight.map(item => {
     if (typeof item === 'string') {

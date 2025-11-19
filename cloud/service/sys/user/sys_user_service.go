@@ -209,6 +209,9 @@ func (srv SrvSysUserServiceServer) SysUserList(ctx context.Context, request *Sys
 		json.Unmarshal(request.GetScopeDept(), &deptIds)
 		condition["scopeDept"] = deptIds
 	}
+	if request.DeptId != nil {
+		condition["deptId"] = request.GetDeptId()
+	}
 	paginationRequest := request.GetPagination()
 	if paginationRequest != nil {
 		// 当前页面
@@ -282,6 +285,9 @@ func (srv SrvSysUserServiceServer) SysUserListTotal(ctx context.Context, request
 		var deptIds []int64
 		json.Unmarshal(request.GetScopeDept(), &deptIds)
 		condition["scopeDept"] = deptIds
+	}
+	if request.DeptId != nil {
+		condition["deptId"] = request.GetDeptId()
 	}
 
 	// 获取数据集合

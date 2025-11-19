@@ -92,9 +92,9 @@ const login = (formEl: FormInstance | undefined) => {
     }
     // 1.执行登录接口
     const hashedPassword = await encryptPassword(loginForm.password)
-    const { access_token } = await AuthApi.login({ ...loginForm, password: hashedPassword })
+    // const { access_token } = await AuthApi.login({ ...loginForm, password: hashedPassword })
     localStorage.setItem('userCode', loginForm.username)
-    userStore.setToken(access_token)
+    userStore.setToken('admin')
 
     // 2.添加动态路由
     await initDynamicRouter()

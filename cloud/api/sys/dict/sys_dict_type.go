@@ -331,19 +331,14 @@ func SysDictTypeListSimple(ctx context.Context, newCtx *app.RequestContext) {
 	client := dict.NewSysDictTypeServiceClient(grpcClient)
 	// 构造查询条件
 	request := &dict.SysDictTypeListRequest{}
-	requestTotal := &dict.SysDictTypeListTotalRequest{}
-
 	if val, ok := newCtx.GetQuery("type"); ok {
-		request.Type = proto.String(val)      // 字典类型
-		requestTotal.Type = proto.String(val) // 字典类型
+		request.Type = proto.String(val) // 字典类型
 	}
 	if val, ok := newCtx.GetQuery("status"); ok {
-		request.Status = proto.Int32(cast.ToInt32(val))      // 状态:0正常/1停用
-		requestTotal.Status = proto.Int32(cast.ToInt32(val)) // 状态:0正常/1停用
+		request.Status = proto.Int32(cast.ToInt32(val)) // 状态:0正常/1停用
 	}
 	if val, ok := newCtx.GetQuery("name"); ok {
-		request.Name = proto.String(val)      // 字典名称
-		requestTotal.Name = proto.String(val) // 字典名称
+		request.Name = proto.String(val) // 字典名称
 	}
 
 	// 执行服务

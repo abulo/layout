@@ -340,9 +340,13 @@ func SysTenantList(ctx context.Context, newCtx *app.RequestContext) {
 	request := &tenant.SysTenantListRequest{}
 	requestTotal := &tenant.SysTenantListTotalRequest{}
 
+	request.Deleted = proto.Int32(0)      // 删除状态
+	requestTotal.Deleted = proto.Int32(0) // 删除状态
 	if val, ok := newCtx.GetQuery("deleted"); ok {
-		request.Deleted = proto.Int32(cast.ToInt32(val))      // 删除:0否/1是
-		requestTotal.Deleted = proto.Int32(cast.ToInt32(val)) // 删除:0否/1是
+		if cast.ToBool(val) {
+			request.Deleted = nil
+			requestTotal.Deleted = nil
+		}
 	}
 	if val, ok := newCtx.GetQuery("status"); ok {
 		request.Status = proto.Int32(cast.ToInt32(val))      // 状态:0正常/1停用
@@ -439,9 +443,13 @@ func SysTenantListSimple(ctx context.Context, newCtx *app.RequestContext) {
 	request := &tenant.SysTenantListRequest{}
 	requestTotal := &tenant.SysTenantListTotalRequest{}
 
+	request.Deleted = proto.Int32(0)      // 删除状态
+	requestTotal.Deleted = proto.Int32(0) // 删除状态
 	if val, ok := newCtx.GetQuery("deleted"); ok {
-		request.Deleted = proto.Int32(cast.ToInt32(val))      // 删除:0否/1是
-		requestTotal.Deleted = proto.Int32(cast.ToInt32(val)) // 删除:0否/1是
+		if cast.ToBool(val) {
+			request.Deleted = nil
+			requestTotal.Deleted = nil
+		}
 	}
 	if val, ok := newCtx.GetQuery("status"); ok {
 		request.Status = proto.Int32(cast.ToInt32(val))      // 状态:0正常/1停用
