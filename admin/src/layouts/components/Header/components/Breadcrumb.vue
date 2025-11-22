@@ -22,12 +22,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { HOME_URL } from '@/config'
 import { useRoute, useRouter } from 'vue-router'
 import { ArrowRight } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/modules/auth'
 import { useGlobalStore } from '@/stores/modules/global'
-// import type { MenuOptions } from '@/api/system/menu'
 
 const route = useRoute()
 const router = useRouter()
@@ -36,10 +34,14 @@ const globalStore = useGlobalStore()
 
 const breadcrumbList = computed(() => {
   let breadcrumbData = authStore.breadcrumbListGet[route.matched[route.matched.length - 1].path] ?? []
+  // const menuItem = authStore.showHomeMenu
   // 🙅‍♀️不需要首页面包屑可删除以下判断
-  if (breadcrumbData[0].path !== HOME_URL) {
-    breadcrumbData = [{ path: HOME_URL, meta: { icon: 'HomeFilled', title: '首页' } }, ...breadcrumbData]
-  }
+  // if (breadcrumbData[0].path !== menuItem.path) {
+  //   breadcrumbData = [
+  //     { path: menuItem.path, meta: { icon: menuItem.meta.icon, title: menuItem.meta.title } },
+  //     ...breadcrumbData,
+  //   ]
+  // }
   return breadcrumbData
 })
 

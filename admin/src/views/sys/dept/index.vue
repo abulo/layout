@@ -84,6 +84,7 @@
       draggable
       :lock-scroll="false"
       class="dialog-settings"
+      @click="handleDialogClick"
     >
       <el-form ref="refSysDeptForm" :model="sysDeptForm" :rules="rulesSysDeptForm" label-width="100px">
         <el-form-item label="上级菜单" prop="parentId">
@@ -97,14 +98,13 @@
             check-strictly
             :disabled="disabled"
             :render-after-expand="false"
-            @click="handleDialogClick"
           />
         </el-form-item>
         <el-form-item label="名称" prop="name">
           <el-input v-model="sysDeptForm.name" :disabled="disabled" />
         </el-form-item>
         <el-form-item label="排序" prop="sort">
-          <el-input v-model="sysDeptForm.sort" :disabled="disabled" />
+          <el-input-number v-model="sysDeptForm.sort" controls-position="right" :min="0" :disabled="disabled" />
         </el-form-item>
         <el-form-item label="负责人" prop="userId">
           <el-popover placement="bottom-start" :width="600" :show-arrow="false" trigger="click" :visible="isUserOpen">
@@ -302,10 +302,10 @@ const handleUpdate = async (row: ResSysDept) => {
   dialogVisible.value = true
   reset()
   getDeptOptions()
-  const data = await getSysDeptApi(Number(row.id))
+  const { data } = await getSysDeptApi(Number(row.id))
   sysDeptForm.value = data
   if (Number(data.userId) !== 0) {
-    const user = await getSysUserApi(Number(data.userId))
+    const { data: user } = await getSysUserApi(Number(data.userId))
     userItem.value = user.name
   }
   disabled.value = false
@@ -319,10 +319,10 @@ const handleItem = async (row: ResSysDept) => {
   dialogVisible.value = true
   reset()
   getDeptOptions()
-  const data = await getSysDeptApi(Number(row.id))
+  const { data } = await getSysDeptApi(Number(row.id))
   sysDeptForm.value = data
   if (Number(data.userId) !== 0) {
-    const user = await getSysUserApi(Number(data.userId))
+    const { data: user } = await getSysUserApi(Number(data.userId))
     userItem.value = user.name
   }
   disabled.value = true
@@ -368,7 +368,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
   formEl.validate(async valid => {
     if (!valid) return
     // loading.value = true
-    const data = sysDeptForm.value as unknown as ResSysDept
+    const { data } = sysDeptForm.value as unknown as ResSysDept
     if (data.id !== 0) {
       await useHandleSet(updateSysDeptApi, data.id, data, '修改部门')
     } else {
@@ -392,7 +392,7 @@ const handleExpandAll = () => {
 
 // 获取部门列表
 const getDeptOptions = async () => {
-  const data = await getSysDeptListSimpleApi()
+  const { data } = await getSysDeptListSimpleApi()
   deptOptions.value = [
     {
       id: 0, // 编号
@@ -437,9 +437,9 @@ const handleUser = (row: ResSysUser) => {
 
 const userColumns: ColumnProps<ResSysUser>[] = [
   { prop: 'id', label: '编码', fixed: 'left' },
-  { prop: 'name', label: '姓名', search: { el: 'input', span: 2 } },
-  { prop: 'mobile', label: '手机号码', search: { el: 'input', span: 2 } },
-  { prop: 'username', label: '用户名', search: { el: 'input', span: 2 } },
+  { prop: 'name', label: '姓名', search: { el: 'input', span: 1 } },
+  { prop: 'mobile', label: '手机号码', search: { el: 'input', span: 1 } },
+  { prop: 'username', label: '用户名', search: { el: 'input', span: 1 } },
   {
     prop: 'operation',
     label: '操作',
@@ -464,20 +464,12 @@ const deleteSearch = reactive<SearchProps>(
 )
 
 const columns: ColumnProps<ResSysDept>[] = [
-  { prop: 'id', label: '编号' },
-  { prop: 'name', label: '名称', search: { el: 'input', span: 2 } },
-  { prop: 'parentId', label: '上级' },
+  { prop: 'name', label: '名称', fixed: 'left', align: 'left' },
   { prop: 'sort', label: '排序' },
-  { prop: 'userId', label: '负责人' },
   { prop: 'phone', label: '联系电话' },
   { prop: 'email', label: '邮件' },
   { prop: 'status', label: '状态', tag: true, enum: statusEnum, search: { el: 'select', span: 2 } },
   { prop: 'deleted', label: '删除', tag: true, enum: deletedEnum, search: deleteSearch },
-  { prop: 'creator', label: '创建人' },
-  { prop: 'createTime', label: '创建时间' },
-  { prop: 'updater', label: '更新人' },
-  { prop: 'updateTime', label: '更新时间' },
-
   {
     prop: 'operation',
     label: '操作',

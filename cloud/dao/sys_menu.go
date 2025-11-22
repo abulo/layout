@@ -28,6 +28,32 @@ type SysMenu struct {
 	UpdateTime    null.DateTime `gorm:"column:update_time" json:"updateTime"`         //datetime 更新时间
 }
 
+// SysMenuTreeMetaRes 菜单元信息
+type SysMenuTreeMeta struct {
+	Icon        string `json:"icon"`                 // 菜单图标
+	Title       string `json:"title"`                // 菜单标题
+	IsLink      string `json:"isLink,omitempty"`     // 是否外链
+	IsHide      bool   `json:"isHide"`               // 是否隐藏
+	IsFull      bool   `json:"isFull"`               // 是否全屏
+	IsAffix     bool   `json:"isAffix"`              // 是否固定
+	IsKeepAlive bool   `json:"isKeepAlive"`          // 是否缓存
+	ActiveMenu  string `json:"activeMenu,omitempty"` // 激活菜单
+}
+
+// SysMenuTreeRes 菜单数据
+type SysMenuTree struct {
+	Id        int64            `json:"-"`                   // 菜单ID
+	ParentId  int64            `json:"-"`                   // 父菜单ID
+	Type      int32            `json:"-"`                   // 菜单类型
+	Code      string           `json:"-"`                   // 菜单编码
+	Path      string           `json:"path"`                // 路由地址
+	Name      string           `json:"name"`                // 路由名称
+	Component string           `json:"component,omitempty"` // 组件路径
+	Redirect  string           `json:"redirect,omitempty"`  // 重定向地址
+	Meta      *SysMenuTreeMeta `json:"meta"`                // 菜单元信息
+	Children  []*SysMenuTree   `json:"children,omitempty"`  // 子菜单
+}
+
 func (SysMenu) TableName() string {
 	return "sys_menu"
 }

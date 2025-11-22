@@ -213,7 +213,7 @@ const handleUpdate = async (row: ResSysPost) => {
   title.value = '编辑职位'
   dialogVisible.value = true
   reset()
-  const data = await getSysPostApi(Number(row.id))
+  const { data } = await getSysPostApi(Number(row.id))
   sysPostForm.value = data
   disabled.value = false
 }
@@ -225,7 +225,7 @@ const handleItem = async (row: ResSysPost) => {
   title.value = '查看职位'
   dialogVisible.value = true
   reset()
-  const data = await getSysPostApi(Number(row.id))
+  const { data } = await getSysPostApi(Number(row.id))
   sysPostForm.value = data
   disabled.value = true
 }

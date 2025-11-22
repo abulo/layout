@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
 import type { AuthState } from '@/stores/interface'
-import { AccountAPI } from '@/api/account'
 import { getFlatMenuList, getShowMenuList, getAllBreadcrumbList } from '@/utils'
 import { useRoute } from 'vue-router'
 import { computed, reactive, toRefs } from 'vue'
+import { getSysUserMenuApi, getSysUserBtnApi } from '@/api/modules/sysUser'
 
 export const useAuthStore = defineStore('admin-auth', () => {
   const route = useRoute()
@@ -20,19 +20,23 @@ export const useAuthStore = defineStore('admin-auth', () => {
     return state.allAuthButtonList[route.name as string] || []
   })
 
-  //TODO 需要给菜单一个首页
   const showMenuListGet = computed(() => getShowMenuList(state.authMenuList))
   const flatMenuListGet = computed(() => getFlatMenuList(state.authMenuList))
   const breadcrumbListGet = computed(() => getAllBreadcrumbList(state.authMenuList))
   const authMenuListGet = computed(() => state.authMenuList)
   const authButtonListGet = computed(() => state.allAuthButtonList)
+  const showHomeMenu = computed(() => {
+    const menuList = getFlatMenuList(state.authMenuList)
+    return menuList.find(item => item.meta.isAffix && !item.meta.isHide && !item.meta.isFull)
+  })
 
   const actions = {
     async getAuthButtonList() {
-      state.allAuthButtonList = await AccountAPI.getUserButtons()
+      const { data } = await getSysUserBtnApi()
+      state.allAuthButtonList = data
     },
     async getAuthMenuList() {
-      const { data } = AccountAPI.getUserMenu()
+      const { data } = await getSysUserMenuApi()
       this.authMenuList = data
     },
     async setRouteName(name: string) {
@@ -48,6 +52,7 @@ export const useAuthStore = defineStore('admin-auth', () => {
     flatMenuListGet,
     breadcrumbListGet,
     authMenuListGet,
+    showHomeMenu,
     ...actions,
   }
 })

@@ -262,7 +262,7 @@ const handleUpdate = async (row: Res{{CamelStr .Table.TableName}}) => {
   title.value = '编辑{{.Table.TableComment}}'
   dialogVisible.value = true
   reset()
-  const data = await get{{CamelStr .Table.TableName}}Api(Number(row.id))
+  const { data } = await get{{CamelStr .Table.TableName}}Api(Number(row.id))
   {{Helper .Table.TableName}}Form.value = data
   disabled.value = false
 }
@@ -277,7 +277,7 @@ const handleItem = async (row: Res{{CamelStr .Table.TableName}}) => {
   title.value = '查看{{.Table.TableComment}}'
   dialogVisible.value = true
   reset()
-  const data = await get{{CamelStr .Table.TableName}}Api(Number(row.id))
+  const { data } await get{{CamelStr .Table.TableName}}Api(Number(row.id))
   {{Helper .Table.TableName}}Form.value = data
   disabled.value = true
 }

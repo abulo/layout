@@ -34,13 +34,17 @@ const size = computed(() => props.size) // 图标大小
 
 // 需要判断一下这里面有没有 ":" ,没有则默认 ep
 const iconType = computed(() => {
-  if (props.icon.includes(':')) {
+  if (props.icon && props.icon.includes(':')) {
     return props.icon.substring(0, props.icon.indexOf(':'))
   }
   return 'ep'
 }) // 图标类别
 // const iconType = computed(() => props.icon.substring(0, props.icon.indexOf(':'))) // 图标类别
-const iconName = computed(() => toPascalCase(props.icon.substring(props.icon.indexOf(':') + 1))) // 图标名称
+// const iconName = computed(() => toPascalCase(props.icon.substring(props.icon.indexOf(':') + 1))) // 图标名称
+const iconName = computed(() => {
+  if (!props.icon) return ''
+  return toPascalCase(props.icon.substring(props.icon.indexOf(':') + 1))
+})
 const customKey = computed(() => (props.customKey ? props.customKey : props.icon)) // 图标 key
 const className = computed(() => props.class) // 图标样式
 </script>

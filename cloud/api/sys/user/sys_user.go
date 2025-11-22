@@ -321,50 +321,6 @@ func SysUserDrop(ctx context.Context, newCtx *app.RequestContext) {
 	})
 }
 
-// SysUserLogin 查询单条数据
-func SysUserLogin(ctx context.Context, newCtx *app.RequestContext) {
-	//判断这个服务能不能链接
-	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()
-	if err != nil {
-		globalLogger.Logger.WithFields(logrus.Fields{
-			"err": err,
-		}).Error("Grpc:用户:sys_user:SysUserLogin")
-		response.JSON(newCtx, consts.StatusOK, utils.H{
-			"code": code.RPCError,
-			"msg":  code.StatusText(code.RPCError),
-		})
-		return
-	}
-	//链接服务
-	client := user.NewSysUserServiceClient(grpcClient)
-	request := &user.SysUserLoginRequest{}
-	// 构造查询条件
-
-	if val, ok := newCtx.GetQuery("username"); ok {
-		request.Username = proto.String(val) // 用户名
-	}
-
-	// 执行服务
-	res, err := client.SysUserLogin(ctx, request)
-	if err != nil {
-		globalLogger.Logger.WithFields(logrus.Fields{
-			"req": request,
-			"err": err,
-		}).Error("GrpcCall:用户:sys_user:SysUserLogin")
-		fromError := status.Convert(err)
-		response.JSON(newCtx, consts.StatusOK, utils.H{
-			"code": code.ConvertToHttp(fromError.Code()),
-			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
-		})
-		return
-	}
-	response.JSON(newCtx, consts.StatusOK, utils.H{
-		"code": res.GetCode(),
-		"msg":  res.GetMsg(),
-		"data": user.SysUserDao(res.GetData()),
-	})
-}
-
 // SysUserList 列表数据
 func SysUserList(ctx context.Context, newCtx *app.RequestContext) {
 	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()

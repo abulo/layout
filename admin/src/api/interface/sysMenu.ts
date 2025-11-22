@@ -29,3 +29,7 @@ export interface ResSysMenu {
   updateTime: string | undefined // 更新时间
   children?: ResSysMenu[]
 }
+
+export interface ResSysMenuButtons {
+  [key: string]: string[]
+}

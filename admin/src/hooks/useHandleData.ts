@@ -23,10 +23,8 @@ export const useHandleData = (
       draggable: true,
     })
       .then(async () => {
-        const res = await api(params)
-        if (!res) {
-          return reject(false)
-        }
+        const { code } = await api(params)
+        if (code != 200) return reject(false)
         ElMessage({
           type: 'success',
           message: `${message}成功!`,
@@ -63,8 +61,8 @@ export const useHandleSet = (
       draggable: true,
     })
       .then(async () => {
-        const res = await api(id, params)
-        if (!res) return reject(false)
+        const { code } = await api(id, params)
+        if (code != 200) return reject(false)
         ElMessage({
           type: 'success',
           message: `${message}成功!`,
@@ -81,16 +79,16 @@ export const useHandleSet = (
  * @description 操作单条数据信息
  * @param {Function} api 操作数据接口的api方法 (必传)
  * @param {Object} id 携带的操作数据参数(必传)
- * @param {Object} code 携带的操作数据参数(必传)
+ * @param {Object} codes 携带的操作数据参数(必传)
  * @param {Object} params 携带的操作数据参数 {id,params} (必传)
  * @param {String} message 提示信息 (必传)
  * @param {String} confirmType icon类型 (不必传,默认为 warning)
  * @returns {Promise}
  */
 export const useMultiHandleSet = (
-  api: (_id: any, _code: any, _params: any) => Promise<any>,
+  api: (_id: any, _codes: any, _params: any) => Promise<any>,
   id: any,
-  code: any,
+  codes: any,
   params: any = {},
   message: string,
   confirmType: MessageType = 'warning'
@@ -103,8 +101,8 @@ export const useMultiHandleSet = (
       draggable: true,
     })
       .then(async () => {
-        const res = await api(id, code, params)
-        if (!res) return reject(false)
+        const { code } = await api(id, codes, params)
+        if (code != 200) return reject(false)
         ElMessage({
           type: 'success',
           message: `${message}成功!`,

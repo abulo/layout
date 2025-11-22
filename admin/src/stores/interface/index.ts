@@ -1,5 +1,6 @@
 // import type { MenuOptions } from '@/api/system/menu'
 
+import type { Dict } from '@/api/interface/sysDict'
 export type LayoutType = 'vertical' | 'classic' | 'transverse' | 'columns' | 'mixed'
 
 export type AssemblySizeType = 'large' | 'default' | 'small'
@@ -30,9 +31,10 @@ export interface GlobalState {
 
 /* UserState */
 export interface UserState {
-  token: string
-  refreshToken: string
-  userName: string
+  accessToken: string // 令牌
+  refreshToken: string // 刷新令牌
+  userName: string // 用户名
+  expires: string // 过期时间
 }
 
 /* tabsMenuProps */
@@ -62,4 +64,8 @@ export interface AuthState {
 /* KeepAliveState */
 export interface KeepAliveState {
   keepAliveName: string[]
+}
+
+export interface DictState {
+  dict: Dict
 }

@@ -55,6 +55,13 @@
       }
       .el-form-item {
         margin-bottom: 40px;
+        .captchaImg {
+          width: 120px;
+          height: 40px;
+          cursor: pointer;
+          border-radius: 0 var(--el-input-border-radius, var(--el-border-radius-base))
+            var(--el-input-border-radius, var(--el-border-radius-base)) 0;
+        }
       }
       .login-btn {
         display: flex;
@@ -70,13 +77,13 @@
   }
 }
 
-@media screen and (width <= 1250px) {
+@media screen and (width <=1250px) {
   .login-left {
     display: none;
   }
 }
 
-@media screen and (width <= 600px) {
+@media screen and (width <=600px) {
   .login-form {
     width: 97% !important;
   }

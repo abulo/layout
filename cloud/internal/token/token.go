@@ -14,7 +14,7 @@ import (
 const signKey = "hezhian"
 
 // GenerateToken 生成token
-func GenerateToken(claim dao.SystemUserToken, Audience string, second int64) (string, error) {
+func GenerateToken(claim dao.UserVerify, Audience string, second int64) (string, error) {
 	claim.RegisteredClaims = jwt.RegisteredClaims{
 		Issuer:    "AuthServer",                                                            // 签发者
 		Subject:   "Auth",                                                                  // 签发对象
@@ -29,8 +29,8 @@ func GenerateToken(claim dao.SystemUserToken, Audience string, second int64) (st
 }
 
 // ParseToken 解析token
-func ParseToken(tokenString string) (*dao.SystemUserToken, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &dao.SystemUserToken{}, func(token *jwt.Token) (interface{}, error) {
+func ParseToken(tokenString string) (*dao.UserVerify, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &dao.UserVerify{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(signKey), nil //返回签名密钥
 	})
 	if err != nil {
@@ -39,7 +39,7 @@ func ParseToken(tokenString string) (*dao.SystemUserToken, error) {
 	if !token.Valid {
 		return nil, errors.New("claim invalid")
 	}
-	claims, ok := token.Claims.(*dao.SystemUserToken)
+	claims, ok := token.Claims.(*dao.UserVerify)
 	if !ok {
 		return nil, errors.New("invalid claim type")
 	}

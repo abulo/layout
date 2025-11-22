@@ -33,8 +33,8 @@
 
 <script setup lang="ts">
 import { inject, nextTick } from 'vue'
-import { HOME_URL } from '@/config'
 import { useTabsStore } from '@/stores/modules/tabs'
+import { useAuthStore } from '@/stores/modules/auth'
 import { useGlobalStore } from '@/stores/modules/global'
 import { useKeepAliveStore } from '@/stores/modules/keepAlive'
 import { useRoute, useRouter } from 'vue-router'
@@ -45,6 +45,7 @@ const router = useRouter()
 const tabStore = useTabsStore()
 const globalStore = useGlobalStore()
 const keepAliveStore = useKeepAliveStore()
+const authStore = useAuthStore()
 
 // refresh current page
 const refreshCurrentPage = inject('refresh') as (_val: boolean) => void
@@ -75,7 +76,9 @@ const closeCurrentTab = () => {
 // Close All
 const closeAllTab = () => {
   tabStore.closeMultipleTab()
-  router.push(HOME_URL)
+  const menuItem = authStore.showHomeMenu as MenuOptions
+  // 4.跳转到首页
+  router.push(menuItem.path)
 }
 </script>
 

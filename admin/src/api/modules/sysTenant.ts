@@ -38,5 +38,5 @@ export const getSysTenantListSimpleApi = (params?: ReqSysTenantParams) => {
 
 // 租户用户列表数据
 export const getSysTenantUserListApi = (id: number, params?: ReqSysUserParams) => {
-  return http.get<ResultPage<ResSysUser>>(PORT + `/sys/tenant/${id}/user`, params)
+  return http.get<ResultPage<ResSysUser>>(`/v1/sys/tenant/${id}/user`, params)
 }

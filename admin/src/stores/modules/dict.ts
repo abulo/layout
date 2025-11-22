@@ -1,26 +1,28 @@
 import { defineStore } from 'pinia'
-import type { Dict } from '@/api/interface/sysDict'
+import { type DictState } from '@/stores/interface'
 import { getSysDictDataApi } from '@/api/modules/sysDict'
+import piniaPersistConfig from '@/stores/helper/persist'
 
-export const useDictStore = defineStore('admin-dict', () => {
-  const state = ref<Dict>({})
-
-  const actions = {
+export const useDictStore = defineStore('admin-dict', {
+  state: (): DictState => ({
+    dict: {},
+  }),
+  actions: {
     async getDictList() {
-      const data = await getSysDictDataApi()
-      state.value = data
+      const { data } = await getSysDictDataApi()
+      this.dict = data
     },
-  }
-  const getters = {
-    getDict: (code: string) => {
-      return state.value[code]
+    clearDict() {
+      this.dict = {}
     },
-    getAllDict: () => {
-      return state.value
+  },
+  getters: {
+    getDict: state => {
+      return (code: string) => state.dict[code]
     },
-    clearDict: () => {
-      state.value = {}
+    getAllDict: state => {
+      return state.dict
     },
-  }
-  return { ...actions, ...getters }
+  },
+  persist: piniaPersistConfig('admin-dict'),
 })

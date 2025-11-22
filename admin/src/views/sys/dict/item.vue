@@ -33,9 +33,7 @@
                 <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>
               </div>
               <div v-auth="'dict.SysDictDelete'">
-                <el-dropdown-item v-if="scope.row.deleted === 0" :icon="Delete" @click="handleDelete(scope.row)">
-                  删除
-                </el-dropdown-item>
+                <el-dropdown-item :icon="Delete" @click="handleDelete(scope.row)"> 删除 </el-dropdown-item>
               </div>
             </el-dropdown-menu>
           </template>
@@ -238,7 +236,7 @@ const handleUpdate = async (row: ResSysDict) => {
   title.value = '编辑字典'
   dialogVisible.value = true
   reset()
-  const data = await getSysDictApi(Number(row.id))
+  const { data } = await getSysDictApi(Number(row.id))
   sysDictForm.value = data
   disabled.value = false
 }
@@ -250,7 +248,7 @@ const handleItem = async (row: ResSysDict) => {
   title.value = '查看字典'
   dialogVisible.value = true
   reset()
-  const data = await getSysDictApi(Number(row.id))
+  const { data } = await getSysDictApi(Number(row.id))
   sysDictForm.value = data
   disabled.value = true
 }
@@ -326,7 +324,7 @@ const colorTypeOptions = ref([
 
 // 获取字典类型列表
 onMounted(async () => {
-  const data = await getSysDictTypeListSimpleApi()
+  const { data } = await getSysDictTypeListSimpleApi()
   sysDictTypeList.value = data
 })
 
@@ -339,6 +337,7 @@ const columns: ColumnProps<ResSysDict>[] = [
     prop: 'dictTypeId',
     label: '字典类型',
     enum: sysDictTypeList,
+    tag: true,
     fieldNames: { label: 'name', value: 'id' },
     search: { el: 'select', span: 2, defaultValue: dictTypeId.value },
   },

@@ -93,7 +93,7 @@ export class RequestHttp {
         config.loading ??= true
         config.loading && showFullScreenLoading()
         if (config.headers && typeof config.headers.set === 'function') {
-          config.headers.set('x-access-token', userStore.token)
+          config.headers.set('x-access-token', userStore.accessToken)
         }
         return config
       },
@@ -117,7 +117,7 @@ export class RequestHttp {
         config.loading && tryHideFullScreenLoading()
         // 登录失效
         if (data.code == ResultEnum.OVERDUE) {
-          userStore.setToken('')
+          userStore.clearUserState()
           ElMessage.error(data.msg || data.message)
           return Promise.reject(router.replace(LOGIN_URL))
         }
@@ -127,7 +127,7 @@ export class RequestHttp {
           return Promise.reject(data)
         }
         // 成功请求（在页面上除非特殊情况，否则不用处理失败逻辑）
-        return data.data
+        return data
       },
       async (error: AxiosError) => {
         const loadingStore = useLoadingStore()
@@ -158,16 +158,16 @@ export class RequestHttp {
   /**
    * @description 常用请求方法封装
    */
-  get<T>(url: string, params?: object, _object = {}): Promise<T> {
+  get<T>(url: string, params?: object, _object = {}): Promise<ResultData<T>> {
     return this.service.get(url, { params, ..._object })
   }
-  post<T>(url: string, params?: object | string, _object = {}): Promise<T> {
+  post<T>(url: string, params?: object | string, _object = {}): Promise<ResultData<T>> {
     return this.service.post(url, params, _object)
   }
-  put<T>(url: string, params?: object, _object = {}): Promise<T> {
+  put<T>(url: string, params?: object, _object = {}): Promise<ResultData<T>> {
     return this.service.put(url, params, _object)
   }
-  delete<T>(url: string, params?: any, _object = {}): Promise<T> {
+  delete<T>(url: string, params?: any, _object = {}): Promise<ResultData<T>> {
     return this.service.delete(url, { params, ..._object })
   }
   download(url: string, params?: object, _object = {}): Promise<BlobPart> {

@@ -8,6 +8,20 @@ export interface ReqSysUserParams extends RequestPage {
   deptId?: number // 部门
 }
 
+export interface ReqSysUserLogin {
+  username: string // 用户名
+  password: string // 密码
+  verifyCode: string // 验证码
+  verifyCodeId: string // 验证码id
+}
+
+export interface ResSysUserToken {
+  accessToken: string // 令牌
+  refreshToken: string // 刷新令牌
+  userName: string // 用户名
+  expires: string // 过期时间
+}
+
 export interface ResSysUser {
   id: number // 编号
   name: string | undefined // 姓名

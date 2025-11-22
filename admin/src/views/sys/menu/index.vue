@@ -8,6 +8,7 @@
       :columns="columns"
       :toolbar-right="['search', 'refresh', 'export', 'layout']"
       :request-api="getTableList"
+      :data-callback="menuHandleTree"
       :default-expand-all="isExpandAll"
       :request-auto="true"
       :pagination="false"
@@ -59,9 +60,7 @@
                 <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>
               </div>
               <div v-auth="'menu.SysMenuDelete'">
-                <el-dropdown-item v-if="scope.row.deleted === 0" :icon="Delete" @click="handleDelete(scope.row)">
-                  删除
-                </el-dropdown-item>
+                <el-dropdown-item :icon="Delete" @click="handleDelete(scope.row)"> 删除 </el-dropdown-item>
               </div>
             </el-dropdown-menu>
           </template>
@@ -71,7 +70,7 @@
     <el-dialog
       v-model="dialogVisible"
       :title="title"
-      width="40%"
+      width="60%"
       destroy-on-close
       align-center
       center
@@ -81,77 +80,138 @@
       class="dialog-settings"
     >
       <el-form ref="refSysMenuForm" :model="sysMenuForm" :rules="rulesSysMenuForm" label-width="100px">
-        <el-form-item label="上级菜单" prop="parentId">
-          <el-tree-select
-            v-model="sysMenuForm.parentId"
-            :data="menuOptions"
-            :props="{ value: 'id', label: 'name' }"
-            value-key="id"
-            node-key="id"
-            placeholder="请选择"
-            check-strictly
-            :disabled="disabled"
-            :render-after-expand="false"
-          />
-        </el-form-item>
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="sysMenuForm.name" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item v-if="sysMenuForm.type !== 0" label="编码" prop="code">
-          <el-input v-model="sysMenuForm.code" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="类型" prop="type">
-          <el-radio-group v-model="sysMenuForm.type">
-            <el-radio-button v-for="dict in menuTypeEnum" :key="dict.value" :value="dict.value" :disabled="disabled">
-              {{ dict.label }}
-            </el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="排序" prop="sort">
-          <el-input-number v-model="sysMenuForm.sort" controls-position="right" :min="0" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item v-if="sysMenuForm.type !== 2" label="地址" prop="path">
-          <el-input v-model="sysMenuForm.path" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item v-if="sysMenuForm.type !== 2" label="图标" prop="icon">
-          <SelectIcon v-model="sysMenuForm.icon" title="请选择图标" placeholder="搜索图标" :show-icon-name="true" />
-        </el-form-item>
-        <el-form-item v-if="sysMenuForm.type === 1" label="组件路径" prop="component">
-          <el-input v-model="sysMenuForm.component" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item v-if="sysMenuForm.type === 1" label="组件名称" prop="componentName">
-          <el-input v-model="sysMenuForm.componentName" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item v-if="sysMenuForm.type !== 2" label="隐藏" prop="hide">
-          <el-radio-group v-model="sysMenuForm.hide">
-            <el-radio-button v-for="dict in menuHideEnum" :key="dict.value" :value="dict.value" :disabled="disabled">
-              {{ dict.label }}
-            </el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item v-if="sysMenuForm.type === 1" label="缓存" prop="cache">
-          <el-radio-group v-model="sysMenuForm.cache">
-            <el-radio-button v-for="dict in menuCacheEnum" :key="dict.value" :value="dict.value" :disabled="disabled">
-              {{ dict.label }}
-            </el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item v-if="sysMenuForm.type !== 2" label="备注" prop="remark">
-          <el-input v-model="sysMenuForm.remark" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item v-if="sysMenuForm.type === 1" label="激活地址" prop="active">
-          <el-input v-model="sysMenuForm.active" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item v-if="sysMenuForm.type === 1" label="全屏" prop="full">
-          <el-radio-group v-model="sysMenuForm.full">
-            <el-radio-button v-for="dict in menuFullEnum" :key="dict.value" :value="dict.value" :disabled="disabled">
-              {{ dict.label }}
-            </el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item v-if="sysMenuForm.type !== 2" label="重定向" prop="redirect">
-          <el-input v-model="sysMenuForm.redirect" :disabled="disabled" />
-        </el-form-item>
+        <el-row :gutter="1">
+          <el-col :span="12">
+            <el-form-item label="名称" prop="name">
+              <el-input v-model="sysMenuForm.name" :disabled="disabled" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="上级菜单" prop="parentId">
+              <el-tree-select
+                v-model="sysMenuForm.parentId"
+                :data="menuOptions"
+                :props="{ value: 'id', label: 'name' }"
+                value-key="id"
+                node-key="id"
+                placeholder="请选择"
+                check-strictly
+                :disabled="disabled"
+                :render-after-expand="false"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="1">
+          <el-col :span="12">
+            <el-form-item label="类型" prop="type">
+              <el-radio-group v-model="sysMenuForm.type">
+                <el-radio-button
+                  v-for="dict in menuTypeEnum"
+                  :key="dict.value"
+                  :value="dict.value"
+                  :disabled="disabled"
+                >
+                  {{ dict.label }}
+                </el-radio-button>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="排序" prop="sort">
+              <el-input-number v-model="sysMenuForm.sort" controls-position="right" :min="0" :disabled="disabled" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="1">
+          <el-col :span="12">
+            <el-form-item v-if="sysMenuForm.type !== 0" label="编码" prop="code">
+              <el-input v-model="sysMenuForm.code" :disabled="disabled" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="1">
+          <el-col :span="12">
+            <el-form-item v-if="sysMenuForm.type !== 2" label="地址" prop="path">
+              <el-input v-model="sysMenuForm.path" :disabled="disabled" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item v-if="sysMenuForm.type !== 2" label="图标" prop="icon">
+              <SelectIcon v-model="sysMenuForm.icon" title="请选择图标" placeholder="搜索图标" :show-icon-name="true" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="1">
+          <el-col :span="12">
+            <el-form-item v-if="sysMenuForm.type === 1" label="组件路径" prop="component">
+              <el-input v-model="sysMenuForm.component" :disabled="disabled" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item v-if="sysMenuForm.type === 1" label="组件名称" prop="componentName">
+              <el-input v-model="sysMenuForm.componentName" :disabled="disabled" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="1">
+          <el-col :span="12">
+            <el-form-item v-if="sysMenuForm.type !== 2" label="重定向" prop="redirect">
+              <el-input v-model="sysMenuForm.redirect" :disabled="disabled" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item v-if="sysMenuForm.type === 1" label="激活地址" prop="active">
+              <el-input v-model="sysMenuForm.active" :disabled="disabled" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="1">
+          <el-col :span="8">
+            <el-form-item v-if="sysMenuForm.type !== 2" label="隐藏" prop="hide">
+              <el-radio-group v-model="sysMenuForm.hide">
+                <el-radio-button
+                  v-for="dict in menuHideEnum"
+                  :key="dict.value"
+                  :value="dict.value"
+                  :disabled="disabled"
+                >
+                  {{ dict.label }}
+                </el-radio-button>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item v-if="sysMenuForm.type === 1" label="缓存" prop="cache">
+              <el-radio-group v-model="sysMenuForm.cache">
+                <el-radio-button
+                  v-for="dict in menuCacheEnum"
+                  :key="dict.value"
+                  :value="dict.value"
+                  :disabled="disabled"
+                >
+                  {{ dict.label }}
+                </el-radio-button>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item v-if="sysMenuForm.type === 1" label="全屏" prop="full">
+              <el-radio-group v-model="sysMenuForm.full">
+                <el-radio-button
+                  v-for="dict in menuFullEnum"
+                  :key="dict.value"
+                  :value="dict.value"
+                  :disabled="disabled"
+                >
+                  {{ dict.label }}
+                </el-radio-button>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="sysMenuForm.status">
             <el-radio-button
@@ -163,6 +223,9 @@
               {{ dict.label }}
             </el-radio-button>
           </el-radio-group>
+        </el-form-item>
+        <el-form-item v-if="sysMenuForm.type !== 2" label="备注" prop="remark">
+          <el-input v-model="sysMenuForm.remark" :disabled="disabled" />
         </el-form-item>
       </el-form>
       <template v-if="!disabled" #footer>
@@ -330,7 +393,7 @@ const handleUpdate = async (row: ResSysMenu) => {
   dialogVisible.value = true
   reset()
   getMenuOptions()
-  const data = await getSysMenuApi(Number(row.id))
+  const { data } = await getSysMenuApi(Number(row.id))
   sysMenuForm.value = data
   disabled.value = false
 }
@@ -343,7 +406,7 @@ const handleItem = async (row: ResSysMenu) => {
   dialogVisible.value = true
   reset()
   getMenuOptions()
-  const data = await getSysMenuApi(Number(row.id))
+  const { data } = await getSysMenuApi(Number(row.id))
   sysMenuForm.value = data
   disabled.value = true
 }
@@ -392,9 +455,13 @@ const handleExpandAll = () => {
     menuOptions.value = []
   })
 }
+
+const menuHandleTree = (data: ResSysMenu[]) => {
+  return handleTree(data)
+}
 // 获取菜单选项
 const getMenuOptions = async () => {
-  const data = await getSysMenuListSimpleApi()
+  const { data } = await getSysMenuListSimpleApi()
   menuOptions.value = [
     {
       id: 0,
@@ -426,7 +493,6 @@ const getMenuOptions = async () => {
 
 // 定义列配置项
 const columns: ColumnProps<ResSysMenu>[] = [
-  { prop: 'id', type: 'index', label: '#', width: 80 },
   { prop: 'name', label: '名称', fixed: 'left', align: 'left' },
   { prop: 'code', label: '编码' },
   { prop: 'type', label: '类型' },
@@ -435,12 +501,6 @@ const columns: ColumnProps<ResSysMenu>[] = [
   { prop: 'icon', label: '图标' },
   { prop: 'component', label: '组件路径' },
   { prop: 'componentName', label: '组件名称' },
-  { prop: 'hide', label: '隐藏' },
-  { prop: 'cache', label: '缓存' },
-  { prop: 'remark', label: '备注' },
-  { prop: 'active', label: '激活地址' },
-  { prop: 'full', label: '全屏' },
-  { prop: 'redirect', label: '重定向' },
   { prop: 'status', label: '状态' },
   {
     prop: 'operation',

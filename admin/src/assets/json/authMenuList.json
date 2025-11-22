@@ -16,18 +16,63 @@
       }
     },
     {
-      "path": "/sys/post",
-      "name": "SysPost",
-      "component": "/sys/post/index",
+      "path": "/sys/menu",
+      "name": "SysMenu",
+      "component": "/sys/menu/index",
       "meta": {
         "icon": "Menu",
-        "title": "职位",
+        "title": "menu",
         "isLink": "",
         "isHide": false,
         "isFull": false,
         "isAffix": false,
         "isKeepAlive": true
       }
+    },
+    {
+      "path": "/sys/dept",
+      "name": "SysDept",
+      "component": "/sys/dept/index",
+      "meta": {
+        "icon": "Menu",
+        "title": "dept",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      }
+    },
+    {
+      "path": "/sys/dict",
+      "name": "SysDictType",
+      "component": "/sys/dict/index",
+      "meta": {
+        "icon": "Menu",
+        "title": "dict",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/sys/dict/:dictTypeId",
+          "name": "SysDict",
+          "component": "/sys/dict/item",
+          "meta": {
+            "icon": "Menu",
+            "title": "详情",
+            "activeMenu": "/sys/dict",
+            "isLink": "",
+            "isHide": true,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        }
+      ]
     },
     {
       "path": "/dataScreen",

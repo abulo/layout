@@ -21,7 +21,7 @@ const router = useRouter()
 const userStore = useUserStore()
 
 const handleToLogin = () => {
-  userStore.setToken('')
+  userStore.clearUserState()
   router.push(LOGIN_URL)
 }
 </script>

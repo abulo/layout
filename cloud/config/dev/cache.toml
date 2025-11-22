@@ -3,20 +3,18 @@
     [Cache.Verify]
         # 验证码
         Code = "Verify:Code"
-    [Cache.SystemOperateLog]
+    [Cache.SysLoggerOperate]
         # 后台操作日志队列
-        Queue = "SystemOperateLog:Queue"
-    [Cache.SystemMenu]
+        Queue = "SysLoggerOperate:Queue"
+    [Cache.SysMenu]
         # 后台菜单模块名称
-        Module = "SystemMenu:Module"
+        Module = "SysMenu:Module"
         # 后台菜单权限
-        Permission = "SystemMenu:Permission"
-    [Cache.SystemLoginLog]
+        Code = "SysMenu:Code"
+    [Cache.SysLoginLog]
         # 后台登录日志队列
-        Queue = "SystemLoginLog:Queue"
-    [Cache.SystemUser]
+        Queue = "SysLoginLog:Queue"
+    [Cache.SysUser]
         # 后台用户权限
-        Permission = "SystemUser:Permission::UserId"
-        # 设置过期时间
-        PermissionExpire = 3600
+        Code = "SysUser:Code::UserId"
 

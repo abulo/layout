@@ -316,10 +316,10 @@ const handleUpdate = async (row: ResSysTenant) => {
   dialogVisible.value = true
   reset()
   getSysTenantPackageOptions()
-  const data = await getSysTenantApi(Number(row.id))
+  const { data } = await getSysTenantApi(Number(row.id))
   sysTenantForm.value = data
   if (Number(data.userId) !== 0) {
-    const user = await getSysUserApi(Number(data.userId))
+    const { data: user } = await getSysUserApi(Number(data.userId))
     userItem.value = user.name
   }
 
@@ -334,10 +334,10 @@ const handleItem = async (row: ResSysTenant) => {
   dialogVisible.value = true
   reset()
   getSysTenantPackageOptions()
-  const data = await getSysTenantApi(Number(row.id))
+  const { data } = await getSysTenantApi(Number(row.id))
   sysTenantForm.value = data
   if (Number(data.userId) !== 0) {
-    const user = await getSysUserApi(Number(data.userId))
+    const { data: user } = await getSysUserApi(Number(data.userId))
     userItem.value = user.name
   }
   disabled.value = true
@@ -369,7 +369,7 @@ const handleRecover = async (row: ResSysTenant) => {
 
 // 获取服务包
 const getSysTenantPackageOptions = async () => {
-  const data = await getSysTenantPackageListSimpleApi()
+  const { data } = await getSysTenantPackageListSimpleApi()
   sysTenantPackageOptions.value = data
 }
 

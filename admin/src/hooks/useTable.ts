@@ -17,7 +17,7 @@ export interface StateProps<T> {
 
 // 重载1
 export function useTable<TableItem>(
-  _api: (_params: IObject) => Promise<ResultPage<TableItem>> | Promise<TableItem[]>,
+  _api: (_params: IObject) => Promise<ResultData<TableItem>> | Promise<TableItem[]>,
   _initParam: object,
   _pagination: boolean,
   _t: ComposerTranslation,
@@ -25,7 +25,7 @@ export function useTable<TableItem>(
 ): any
 
 export function useTable<TableItem>(
-  api: (_params: IObject) => Promise<ResultPage<TableItem>> | Promise<TableItem[]>,
+  api: (_params: IObject) => Promise<ResultData<TableItem>> | Promise<TableItem[]>,
   initParam: object = {},
   pagination: boolean = true,
   t: ComposerTranslation,
@@ -64,24 +64,27 @@ export function useTable<TableItem>(
         pagination !== false ? { pageNum: state.pageable.pageNum, pageSize: state.pageable.pageSize } : {}
       )
 
-      const data = await api({ ...state.searchInitParam, ...state.totalParam })
-      let listData: TableItem[] | IObject[] = []
-      if (pagination === true) {
-        if (Array.isArray((data as ResultPage<TableItem>).list)) {
-          listData = (data as ResultPage<TableItem>).list
-        } else {
-          throw new Error(t('error.tableDataShouldBeArray'))
-        }
-        state.pageable.total = (data as ResultPage<TableItem>).total
-      } else {
-        if (Array.isArray(data)) {
-          listData = data
-        } else {
-          throw new Error(t('error.tableDataShouldBeArray'))
-        }
-      }
-      // @ts-expect-error 类型不兼容
-      state.tableData = dataCallBack ? dataCallBack(listData) : listData
+      let { data } = await api({ ...state.searchInitParam, ...state.totalParam })
+      dataCallBack && (data = dataCallBack(data))
+      state.tableData = pagination ? (data as ResultPage<TableItem>).list : data
+      if (pagination === true) state.pageable.total = (data as ResultData<TableItem>).total
+      // let listData: TableItem[] | IObject[] = []
+      // if (pagination === true) {
+      //   if (Array.isArray((data as ResultPage<TableItem>).list)) {
+      //     listData = (data as ResultPage<TableItem>).list
+      //   } else {
+      //     throw new Error(t('error.tableDataShouldBeArray'))
+      //   }
+      //   state.pageable.total = (data as ResultPage<TableItem>).total
+      // } else {
+      //   if (Array.isArray(data)) {
+      //     listData = data
+      //   } else {
+      //     throw new Error(t('error.tableDataShouldBeArray'))
+      //   }
+      // }
+      // // @ts-expect-error 类型不兼容
+      // state.tableData = dataCallBack ? dataCallBack(listData) : listData
     } catch (error) {
       throw new Error(error as any)
     }

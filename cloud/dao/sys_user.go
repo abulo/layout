@@ -30,18 +30,33 @@ type SysUserScope struct {
 }
 
 type SysUserLogin struct {
-	Username    string `json:"username,required"`    // 用户名
-	Password    string `json:"password,required"`    // 密码
-	CaptchaCode string `json:"captchaCode,required"` // 验证码
-	CaptchaId   string `json:"captchaId,required"`   // 验证码ID
+	Username     string `json:"username,required"`     // 用户名
+	Password     string `json:"password,required"`     // 密码
+	VerifyCode   string `json:"verifyCode,required"`   // 验证码
+	VerifyCodeId string `json:"verifyCodeId,required"` // 验证码ID
 }
 
-// SysUserToken 用户令牌
-type SysUserToken struct {
+// UserVerify 用户令牌
+type UserVerify struct {
 	UserId   int64  `json:"userId"`   // 用户ID
+	Name     string `json:"name"`     // 姓名
 	UserName string `json:"userName"` // 用户名
 	TenantId int64  `json:"tenantId"` // 租户ID
 	jwt.RegisteredClaims
+}
+
+type UserToken struct {
+	UserName     *string `json:"userName"`     // 用户名
+	AccessToken  *string `json:"accessToken"`  // `token`
+	RefreshToken *string `json:"refreshToken"` // `refreshToken`
+	Expires      *string `json:"expires"`      // 过期时间
+}
+
+type RefreshUserToken struct {
+	AccessToken  *string `json:"accessToken"`  // `token`
+	RefreshToken *string `json:"refreshToken"` // `refreshToken`
+	Expires      *string `json:"expires"`      // 过期时间
+	UserName     *string `json:"userName"`     // 用户名
 }
 
 // 用户密码

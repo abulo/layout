@@ -235,7 +235,7 @@ const handleUpdate = async (row: ResSysUser) => {
   title.value = '编辑用户'
   dialogVisible.value = true
   reset()
-  const data = await getSysUserApi(Number(row.id))
+  const { data } = await getSysUserApi(Number(row.id))
   sysUserForm.value = data
   disabled.value = false
 }
@@ -247,7 +247,7 @@ const handleItem = async (row: ResSysUser) => {
   title.value = '查看用户'
   dialogVisible.value = true
   reset()
-  const data = await getSysUserApi(Number(row.id))
+  const { data } = await getSysUserApi(Number(row.id))
   sysUserForm.value = data
   disabled.value = true
 }

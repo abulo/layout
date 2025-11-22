@@ -107,7 +107,7 @@ func SysTenantDelete(ctx context.Context, id int64) (res int64, err error) {
 // SysTenant 查询单条数据
 func SysTenant(ctx context.Context, id int64) (res dao.SysTenant, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Read()
-	err = db.WithContext(ctx).Model(&dao.SysTenant{}).Select("`sys_tenant`.*", "`sys_user`.username", "`sys_user`.password").Joins("LEFT JOIN `sys_user` ON `sys_tenant`.user_id = `sys_user`.id").Where("id = ?", id).Find(&res).Error
+	err = db.WithContext(ctx).Model(&dao.SysTenant{}).Select("`sys_tenant`.*", "`sys_user`.username", "`sys_user`.`password`").Joins("LEFT JOIN `sys_user` ON `sys_tenant`.user_id = `sys_user`.id").Where("`sys_tenant`.id = ?", id).Find(&res).Error
 	return
 }
 

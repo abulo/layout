@@ -6,7 +6,7 @@ import "google.golang.org/grpc/codes"
 // 2000～2999 区间表示用户错误
 var (
 	Success               = int64(200)  // 执行成功
-	SystemError           = int64(1001) // 系统错误
+	SysError              = int64(1001) // 系统错误
 	ResourceNotAvailable  = int64(1002) // 服务端资源不可用
 	RemoteServiceError    = int64(1003) // 远程服务出错
 	ParamInvalid          = int64(1004) // 错误:参数错误
@@ -34,7 +34,7 @@ var (
 	//状态码对应的信息
 	statusText = map[int64]string{
 		Success:               "成功",
-		SystemError:           "系统错误",
+		SysError:              "系统错误",
 		ResourceNotAvailable:  "服务端资源不可用",
 		RemoteServiceError:    "远程服务出错",
 		ParamInvalid:          "参数错误",

@@ -25,19 +25,11 @@ func CronJob() func() {
 		task.WithNodeUpdateDuration(time.Second*10),
 		task.CronOptionLocation(initial.Core.Local),
 	)
-	// 刷新菜单模块名称缓存数据
-	// cron.AddFunc("SystemMenuModule", "0 */1 * * * *", SystemMenuModule)
-	// 后台操作日志写入
-	// cron.AddFunc("SystemOperateLogQueue", "*/2 * * * * *", SystemOperateLogQueue)
+	cron.AddFunc("SysMenu", "0 */1 * * * *", SysMenu)                   // 刷新菜单模块名称缓存数据
+	cron.AddFunc("SysLoggerOperate", "*/2 * * * * *", SysLoggerOperate) // 后台操作日志写入
 	// 后的登录日志写入
 	// cron.AddFunc("SystemLoginLogQueue", "*/2 * * * * *", SystemLoginLogQueue)
-
-	cron.AddFunc("CommonQueue", "*/2 * * * * *", CommonQueue)
+	// cron.AddFunc("CommonQueue", "*/2 * * * * *", CommonQueue)
 	cron.Start()
 	return func() { cron.Stop() }
-}
-
-func CommonQueue() {
-	// fmt.Println("CommonQueue")
-	return
 }

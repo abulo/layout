@@ -125,7 +125,7 @@ export interface ProTableProps<Query = any, Item extends DefaultRow = any, Extra
   columns: ColumnProps<Item>[] // 列配置项  ==> 必传
   pagination?: boolean // 是否需要分页组件 ==> 非必传（默认为true）
   paginationLayout?: string // 分页组件布局 ==> 非必传（默认为'total, sizes, prev, pager, next, jumper'）
-  requestApi: (_params: Query & ExtraQuery) => Promise<ResultPage<Item>> | Promise<Item[]> // 请求表格数据的 api ==> 非必传
+  requestApi: (_params: Query & ExtraQuery) => Promise<ResultData<Item>> | Promise<Item[]> // 请求表格数据的 api ==> 非必传
   requestAuto?: boolean // 是否自动执行请求 api ==> 非必传（默认为true）
   dataCallback?: (_data: Item[]) => IObject[] // 返回数据的回调函数，可以对数据进行处理 ==> 非必传
   title?: string // 表格标题 ==> 非必传

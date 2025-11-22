@@ -1,6 +1,7 @@
+// import { MenuOptions } from './../api/system/menu'
 import { isArray } from '@/utils/is'
 import type { FieldNamesProps } from '@/components/ProTable/interface'
-// import type { MenuOptions } from '@/api/system/menu'
+import md5 from 'md5'
 
 const mode = import.meta.env.VITE_ROUTER_MODE
 
@@ -422,14 +423,8 @@ export function treeMap<T, R, K extends string = 'children'>(
 
 // 使用Web Crypto API进行SHA-256加盐哈希，提高密码安全性。
 // 请替换为自己项目的加密方法。如果确定使用这个方法加密通讯，也请替换盐值。
-export async function encryptPassword(password: string) {
-  const salt = 'admin-salt'
-  const encoder = new TextEncoder()
-  const data = encoder.encode(password + salt)
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  const hashedPassword = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
-  return hashedPassword
+export function encryptPassword(password: string) {
+  return md5(password)
 }
 
 export function toKebabCase(oldStr: any): string {
@@ -447,4 +442,14 @@ export function toPascalCase(oldStr: any): string {
     .split('-') // 按连字符分割字符串
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // 将每个单词的首字母大写，其他字母小写
     .join('') // 将单词重新组合成一个字符串
+}
+
+export function refactorMenu(menuList: MenuOptions[]): MenuOptions[] {
+  //当 menuList中的元素component是空值时需要设置 redirect 的值为  children中有值中 isHide 是否为false的children 的 path
+  //希望是递归函数来完成, 返回新的menuList
+  return menuList.map(menu => {
+    if (!menu.name) {
+      menu.redirect = menu.children.find(child => child.meta.isHide === false)?.path
+    }
+  })
 }

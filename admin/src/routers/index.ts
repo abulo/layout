@@ -52,7 +52,7 @@ router.beforeEach(async (to, from, next) => {
 
   // 3.判断是访问登陆页，有 Token 就在当前页面，没有 Token 重置路由到登陆页
   if (to.path.toLocaleLowerCase() === LOGIN_URL) {
-    if (userStore.token) {
+    if (userStore.accessToken) {
       return next(from.fullPath)
     }
     resetRouter()
@@ -65,7 +65,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   // 5.判断是否有 Token，没有重定向到 login 页面
-  if (!userStore.token) {
+  if (!userStore.accessToken) {
     return next({ path: LOGIN_URL, replace: true })
   }
 

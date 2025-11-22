@@ -42,9 +42,7 @@
                 <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>
               </div>
               <div v-auth="'dict.SysDictTypeDelete'">
-                <el-dropdown-item v-if="scope.row.deleted === 0" :icon="Delete" @click="handleDelete(scope.row)">
-                  删除
-                </el-dropdown-item>
+                <el-dropdown-item :icon="Delete" @click="handleDelete(scope.row)"> 删除 </el-dropdown-item>
               </div>
             </el-dropdown-menu>
           </template>
@@ -206,7 +204,7 @@ const handleUpdate = async (row: ResSysDictType) => {
   title.value = '编辑字典类型'
   dialogVisible.value = true
   reset()
-  const data = await getSysDictTypeApi(Number(row.id))
+  const { data } = await getSysDictTypeApi(Number(row.id))
   sysDictTypeForm.value = data
   disabled.value = false
 }
@@ -218,7 +216,7 @@ const handleItem = async (row: ResSysDictType) => {
   title.value = '查看字典类型'
   dialogVisible.value = true
   reset()
-  const data = await getSysDictTypeApi(Number(row.id))
+  const { data } = await getSysDictTypeApi(Number(row.id))
   sysDictTypeForm.value = data
   disabled.value = true
 }

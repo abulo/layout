@@ -265,7 +265,7 @@ const handleUpdate = async (row: ResSysTenantPackage) => {
   dialogVisible.value = true
   reset()
   getMenuOptions()
-  const data = await getSysTenantPackageApi(Number(row.id))
+  const { data } = await getSysTenantPackageApi(Number(row.id))
   sysTenantPackageForm.value = data
   disabled.value = false
   useTimeoutFn(() => {
@@ -283,7 +283,7 @@ const handleItem = async (row: ResSysTenantPackage) => {
   dialogVisible.value = true
   reset()
   getMenuOptions()
-  const data = await getSysTenantPackageApi(Number(row.id))
+  const { data } = await getSysTenantPackageApi(Number(row.id))
   sysTenantPackageForm.value = data
   disabled.value = true
   useTimeoutFn(() => {
@@ -333,7 +333,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 
 // 获取菜单选项
 const getMenuOptions = async () => {
-  const data = await getSysMenuListSimpleApi()
+  const { data } = await getSysMenuListSimpleApi()
   menuOptions.value = handleTree(data)
 }
 
