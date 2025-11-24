@@ -90,22 +90,19 @@
         <el-form-item v-if="sysTenantForm.userId === undefined" label="用户密码" prop="password">
           <el-input v-model="sysTenantForm.password" placeholder="请输入用户密码" show-password type="password" />
         </el-form-item>
-        <el-form-item
-          v-if="sysTenantForm.userId !== 0 && sysTenantForm.userId === undefined"
-          label="负责人"
-          prop="userId"
-        >
+        <el-form-item v-if="sysTenantForm.userId !== 0" label="负责人" prop="userId">
           <el-popover placement="bottom-start" :width="600" :show-arrow="false" trigger="click" :visible="isUserOpen">
             <template #reference>
               <el-button class="mr-4" @click.stop="userOpen">{{ userItem }}</el-button>
             </template>
             <div class="table-box">
               <ProTable
+                ref="userProTable"
                 title="用户列表"
                 row-key="id"
                 :columns="userColumns"
                 :request-api="getCustomSysTenantUserListApi"
-                :request-auto="true"
+                :request-auto="false"
                 :tool-button="false"
                 :pagination-layout="'prev, pager, next'"
                 :init-param="initUserParam"
@@ -206,6 +203,7 @@ const disabled = ref(true)
 const title = ref('')
 //列表数据
 const proTable = ref<ProTableInstance>()
+const userProTable = ref<ProTableInstance>()
 //显示弹出层
 const dialogVisible = ref(false)
 // 定义负责人
@@ -322,7 +320,6 @@ const handleUpdate = async (row: ResSysTenant) => {
     const { data: user } = await getSysUserApi(Number(data.userId))
     userItem.value = user.name as string
   }
-
   disabled.value = false
 }
 /**
@@ -402,6 +399,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 const userOpen = () => {
   if (disabled.value) return
   isUserOpen.value = true
+  userProTable.value?.getTableList()
 }
 
 // 在 el-dialog 上添加点击事件监听器
@@ -434,6 +432,10 @@ const userColumns: ColumnProps<ResSysUser>[] = [
   },
 ]
 
+onMounted(() => {
+  getSysTenantPackageOptions()
+})
+
 //删除状态
 const deletedEnum = getIntDictOptions('deleted')
 // 表格配置项
@@ -453,7 +455,6 @@ const deleteSearch = reactive<SearchProps>(
 const columns: ColumnProps<ResSysTenant>[] = [
   { prop: 'id', label: '编号' },
   { prop: 'name', label: '名称', search: { el: 'input', span: 2 } },
-  { prop: 'userId', label: '用户' },
   { prop: 'contactName', label: '联系人' },
   { prop: 'contactMobile', label: '联系电话' },
   {

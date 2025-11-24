@@ -24,5 +24,5 @@ export const getSysTenantPackageListApi = (params?: ReqSysTenantPackageParams) =
 
 // 租户套餐列表(精简)数据
 export const getSysTenantPackageListSimpleApi = (params?: ReqSysTenantPackageParams) => {
-  return http.get<ResSysTenantPackage[]>(`/v1/sys/tenant/package`, params)
+  return http.get<ResSysTenantPackage[]>(`/v1/sys/tenant/package/simple`, params)
 }

@@ -39,9 +39,7 @@
                 <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>
               </div>
               <div v-auth="'tenant.SysTenantPackageDelete'">
-                <el-dropdown-item v-if="scope.row.deleted === 0" :icon="Delete" @click="handleDelete(scope.row)">
-                  删除
-                </el-dropdown-item>
+                <el-dropdown-item :icon="Delete" @click="handleDelete(scope.row)"> 删除 </el-dropdown-item>
               </div>
             </el-dropdown-menu>
           </template>
@@ -357,7 +355,6 @@ const handleMenuExpand = () => {
 const columns: ColumnProps<ResSysTenantPackage>[] = [
   { prop: 'id', label: '编号' },
   { prop: 'name', label: '名称', search: { el: 'input', span: 2 } },
-  { prop: 'scopeMenu', label: '数据范围' },
   { prop: 'sort', label: '排序' },
   { prop: 'status', label: '状态', tag: true, enum: statusEnum, search: { el: 'select', span: 2 } },
   { prop: 'remark', label: '备注' },

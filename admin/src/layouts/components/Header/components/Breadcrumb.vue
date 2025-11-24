@@ -34,7 +34,7 @@ const globalStore = useGlobalStore()
 
 const breadcrumbList = computed(() => {
   let breadcrumbData = authStore.breadcrumbListGet[route.matched[route.matched.length - 1].path] ?? []
-  const menuItem = authStore.showHomeMenu
+  const menuItem = authStore.showHomeMenu as MenuOptions
   // 🙅‍♀️不需要首页面包屑可删除以下判断
   if (breadcrumbData[0].path !== menuItem.path) {
     breadcrumbData = [
