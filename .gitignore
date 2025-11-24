@@ -1,3 +1,4 @@
 cloud/bin/*
 cloud/bin/grpc
 cloud/bin/hertz
+cloud/test/*
