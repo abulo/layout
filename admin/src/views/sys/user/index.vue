@@ -326,7 +326,7 @@ const columns: ColumnProps<ResSysUser>[] = [
   { prop: 'username', label: '用户名', search: { el: 'input', span: 2 } },
   { prop: 'password', label: '密码' },
   { prop: 'status', label: '状态:0正常/1停用', search: { el: 'input', span: 2 } },
-  { prop: 'deleted', label: '删除:0否/1是', search: { el: 'input', span: 2 } },
+  { prop: 'deleted', label: '删除', tag: true, enum: deletedEnum, search: deleteSearch },
   { prop: 'tenantId', label: '租户', search: { el: 'input', span: 2 } },
   { prop: 'creator', label: '创建人' },
   { prop: 'createTime', label: '创建时间' },

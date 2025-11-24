@@ -142,7 +142,13 @@ func SysMenuListTotal(ctx context.Context, condition map[string]any) (res int64,
 // SystemMenuListRecursive 递归查询向上查询, 用于在计划任务中使用
 func SysMenuListRecursive(ctx context.Context, id int64) (res []dao.SysMenu, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Read()
-	db.WithContext(ctx).Raw("WITH RECURSIVE filter_sys_menu (id,name,code,type,sort,parent_id,path,icon,component,component_name,hide,link,cache,remark,active,full,redirect,status,creator,create_time,updater,update_time) AS ( SELECT * FROM sys_menu WHERE id = ? UNION ALL SELECT t.* FROM sys_menu t INNER JOIN filter_sys_menu ON filter_sys_menu.parent_id=t.id) SELECT DISTINCT * FROM filter_sys_menu ORDER BY filter_sys_menu.sort ASC,filter_sys_menu.parent_id ASC,filter_sys_menu.id DESC", id).Scan(&res)
+	db.WithContext(ctx).Raw("WITH RECURSIVE menu_path AS ( SELECT id,name,code,type,sort,parent_id,path,icon,component,component_name,hide,link,cache,remark,active,full,redirect,status,creator,create_time,updater,update_time FROM sys_menu WHERE id = ? UNION ALL SELECT m.id,m.name,m.code,m.type,m.sort,m.parent_id,m.path,m.icon,m.component,m.component_name,m.hide,m.link,m.cache,m.remark,m.active,m.full,m.redirect,m.status,m.creator,m.create_time,m.updater,m.update_time FROM sys_menu m INNER JOIN menu_path mp ON m.id = mp.parent_id WHERE m.parent_id != 0 OR m.id = mp.parent_id ) SELECT * FROM menu_path;", id).Scan(&res)
 	err = nil
+	// 将 res 倒序
+	if len(res) > 0 {
+		for i, j := 0, len(res)-1; i < j; i, j = i+1, j-1 {
+			res[i], res[j] = res[j], res[i]
+		}
+	}
 	return
 }

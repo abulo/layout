@@ -1,37 +1,12 @@
 import { reactive, toRefs } from 'vue'
-import type { ComposerTranslation } from 'vue-i18n'
 
-export interface Pageable {
-  pageNum: number
-  pageSize: number
-  total: number
-}
-export interface StateProps<T> {
-  tableData: (T & IObject)[]
-  pageable: Pageable
-  searchParam: IObject
-  searchInitParam: IObject
-  totalParam: IObject
-  icon?: IObject
-}
-
-// 重载1
-export function useTable<TableItem>(
-  _api: (_params: IObject) => Promise<ResultData<TableItem>> | Promise<TableItem[]>,
-  _initParam: object,
-  _pagination: boolean,
-  _t: ComposerTranslation,
-  _dataCallBack?: (_data: TableItem[]) => IObject[]
-): any
-
-export function useTable<TableItem>(
-  api: (_params: IObject) => Promise<ResultData<TableItem>> | Promise<TableItem[]>,
+export const useTable = (
+  api?: (_params: any) => Promise<any>,
   initParam: object = {},
   pagination: boolean = true,
-  t: ComposerTranslation,
-  dataCallBack?: (_data: TableItem[]) => IObject[]
-) {
-  const state = reactive<StateProps<TableItem>>({
+  dataCallBack?: (_data: any) => any
+) => {
+  const state = reactive<StateProps>({
     // 表格数据
     tableData: [],
     // 分页数据
@@ -56,6 +31,7 @@ export function useTable<TableItem>(
    * @return void
    * */
   const getTableList = async () => {
+    if (!api) return
     try {
       // 先把初始化参数和分页参数放到总参数里面
       Object.assign(
@@ -63,11 +39,66 @@ export function useTable<TableItem>(
         initParam,
         pagination !== false ? { pageNum: state.pageable.pageNum, pageSize: state.pageable.pageSize } : {}
       )
+      // 先把初始化参数和分页参数放到总参数里面
+      // Object.assign(state.totalParam, initParam, pagination ? pageParam.value : {})
+      // let { data } = await api({ ...state.searchInitParam, ...state.totalParam })
+      // dataCallBack && (data = dataCallBack(data))
+      // state.tableData = pagination ? data.list : data
+      // // 解构后台返回的分页数据 (如果有分页更新分页信息)
+      // if (pagination) {
+      //   state.pageable.total = data.total
+      // }
 
-      let { data } = await api({ ...state.searchInitParam, ...state.totalParam })
-      dataCallBack && (data = dataCallBack(data))
-      state.tableData = pagination ? (data as ResultPage<TableItem>).list : data
-      if (pagination === true) state.pageable.total = (data as ResultData<TableItem>).total
+      // 修复: 安全地调用 api 并处理返回数据
+      const response = await api({ ...state.searchInitParam, ...state.totalParam })
+      let { data } = response
+
+      // 修复: 确保 dataCallBack 存在后再调用
+      if (dataCallBack && data) {
+        data = dataCallBack(data)
+      }
+
+      // 修复: 安全地访问 data.list 或直接使用 data
+      state.tableData = pagination && data?.list ? data.list : data || []
+
+      // 解构后台返回的分页数据 (如果有分页更新分页信息)
+      if (pagination && data?.total) {
+        state.pageable.total = data.total
+      }
+
+      // const { data: result } = await api({ ...state.searchInitParam, ...state.totalParam })
+      // const data = await api({ ...state.searchInitParam, ...state.totalParam })
+      // let listData: TableItem[] | IObject[] = []
+      // if (Array.isArray((data as ResultPage<TableItem>).list)) {
+      // listData = (data as ResultPage<TableItem>).list
+      // }
+      // if (Array.isArray(data)) {
+      // listData = data
+      // }
+      // dataCallBack && (listData = dataCallBack(listData))
+      // 修复类型不匹配问题
+      // if (dataCallBack) {
+      // const callBackResult = dataCallBack(listData)
+      // listData = callBackResult as unknown as TableItem[]
+      // }
+      // dataCallBack && (listData = dataCallBack(listData))
+      // // 判断返回的是对象还是数组
+      // let data: TableItem[] | undefined
+      // if (Array.isArray(result)) {
+      //   data = result
+      // } else {
+      //   data = (result as ResultPage<TableItem>).list
+      // }
+
+      // if (pagination === true) {
+      // state.pageable.total = (data as ResultPage<TableItem>).total
+      // }
+      // state.tableData = pagination ? (result as ResultPage<TableItem>).list : data
+
+      // let { data } = await api({ ...state.searchInitParam, ...state.totalParam })
+      // dataCallBack && (data = dataCallBack(data))
+      // state.tableData = pagination ? (data as ResultPage<TableItem>).list : data
+      // if (pagination === true) state.pageable.total = (data as ResultData<TableItem>).total
       // let listData: TableItem[] | IObject[] = []
       // if (pagination === true) {
       //   if (Array.isArray((data as ResultPage<TableItem>).list)) {
@@ -85,6 +116,14 @@ export function useTable<TableItem>(
       // }
       // // @ts-expect-error 类型不兼容
       // state.tableData = dataCallBack ? dataCallBack(listData) : listData
+      // 替换原来的第102行
+      // if (dataCallBack) {
+      //   const callBackResult = dataCallBack(listData)
+      //   state.tableData = callBackResult as (TableItem & IObject)[]
+      // } else {
+      //   state.tableData = listData as (TableItem & IObject)[]
+      // }
+      // state.tableData = listData as (TableItem & IObject)[]
     } catch (error) {
       throw new Error(error as any)
     }
@@ -97,7 +136,7 @@ export function useTable<TableItem>(
   const updatedTotalParam = () => {
     state.totalParam = {}
     // 处理查询参数，可以给查询参数加自定义前缀操作
-    const nowSearchParam: StateProps<TableItem>['searchParam'] = {}
+    const nowSearchParam: StateProps['searchParam'] = {}
     // 防止手动清空输入框携带参数（这里可以自定义查询参数前缀）
     for (const key in state.searchParam) {
       // 某些情况下参数为 false/0 也应该携带参数

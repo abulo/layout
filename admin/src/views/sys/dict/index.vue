@@ -36,7 +36,7 @@
           <template #dropdown>
             <el-dropdown-menu>
               <div v-auth="'dict.SysDictList'">
-                <el-dropdown-item :icon="DataBoard" @click="toLinkDict(scope.row)"> 数据 </el-dropdown-item>
+                <el-dropdown-item :icon="DataBoard" @click="toLinkDict(scope.row)"> 字典列表 </el-dropdown-item>
               </div>
               <div v-auth="'dict.SysDictTypeUpdate'">
                 <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>

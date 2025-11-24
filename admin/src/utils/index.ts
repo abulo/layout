@@ -443,13 +443,3 @@ export function toPascalCase(oldStr: any): string {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // 将每个单词的首字母大写，其他字母小写
     .join('') // 将单词重新组合成一个字符串
 }
-
-export function refactorMenu(menuList: MenuOptions[]): MenuOptions[] {
-  //当 menuList中的元素component是空值时需要设置 redirect 的值为  children中有值中 isHide 是否为false的children 的 path
-  //希望是递归函数来完成, 返回新的menuList
-  return menuList.map(menu => {
-    if (!menu.name) {
-      menu.redirect = menu.children.find(child => child.meta.isHide === false)?.path
-    }
-  })
-}

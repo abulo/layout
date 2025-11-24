@@ -15,7 +15,6 @@ declare module 'vue' {
     404: typeof import('./../components/ErrorMessage/404.vue')['default']
     500: typeof import('./../components/ErrorMessage/500.vue')['default']
     ColSetting: typeof import('./../components/ProTable/components/ColSetting.vue')['default']
-    Dict: typeof import('./../components/Dict/index.vue')['default']
     DictTag: typeof import('./../components/DictTag/DictTag.vue')['default']
     ECharts: typeof import('./../components/ECharts/index.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
@@ -58,7 +57,6 @@ declare module 'vue' {
     ElRadio: typeof import('element-plus/es')['ElRadio']
     ElRadioButton: typeof import('element-plus/es')['ElRadioButton']
     ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
-    ElRol: typeof import('element-plus/es')['ElRol']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     ElSelect: typeof import('element-plus/es')['ElSelect']
@@ -79,8 +77,6 @@ declare module 'vue' {
     GridItem: typeof import('./../components/Grid/components/GridItem.vue')['default']
     Icon: typeof import('./../components/Icon/index.vue')['default']
     IconSelect: typeof import('./../components/ProTable/components/IconSelect.vue')['default']
-    Img: typeof import('./../components/Upload/Img.vue')['default']
-    Imgs: typeof import('./../components/Upload/Imgs.vue')['default']
     ImportExcel: typeof import('./../components/ImportExcel/index.vue')['default']
     InputTag: typeof import('./../components/ProTable/components/InputTag.vue')['default']
     Loading: typeof import('./../components/Loading/index.vue')['default']
@@ -95,6 +91,5 @@ declare module 'vue' {
     SelectIcon: typeof import('./../components/SelectIcon/index.vue')['default']
     SwitchDark: typeof import('./../components/SwitchDark/index.vue')['default']
     TreeFilter: typeof import('./../components/TreeFilter/index.vue')['default']
-    WangEditor: typeof import('./../components/WangEditor/index.vue')['default']
   }
 }

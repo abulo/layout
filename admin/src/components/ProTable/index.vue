@@ -151,7 +151,6 @@ import TableColumn from './components/TableColumn'
 import Sortable from 'sortablejs'
 import { toolbarButtonsConfig } from '@/utils/proTable'
 // import { Operation } from '@element-plus/icons-vue'
-import { useI18n } from 'vue-i18n'
 import { useLoadingStore } from '@/stores/modules/loading'
 
 // 接受父组件参数，配置默认值
@@ -192,8 +191,6 @@ const exportModal = ref({
   title: '导出',
   type: 'export',
 })
-
-const { t } = useI18n()
 
 // 搜索表单实例
 const searchFormRef = ref<InstanceType<typeof SearchForm>>()
@@ -269,7 +266,7 @@ const {
   reset,
   handleSizeChange,
   handleCurrentChange,
-} = useTable(props.requestApi, props.initParam, props.pagination, t, props.dataCallback)
+} = useTable(props.requestApi, props.initParam, props.pagination, props.dataCallback)
 
 // 清空选中数据列表
 const clearSelection = () => tableRef.value!.clearSelection()
@@ -293,7 +290,7 @@ onMounted(() => {
 // 监听页面 initParam 改化，重新获取表格数据
 watch(
   () => props.initParam,
-  () => getTableList(false),
+  () => getTableList(),
   { deep: true }
 )
 

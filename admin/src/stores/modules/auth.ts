@@ -37,7 +37,7 @@ export const useAuthStore = defineStore('admin-auth', () => {
     },
     async getAuthMenuList() {
       const { data } = await getSysUserMenuApi()
-      this.authMenuList = data
+      state.authMenuList = data
     },
     async setRouteName(name: string) {
       state.routeName = name

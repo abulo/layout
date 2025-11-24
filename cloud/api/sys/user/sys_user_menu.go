@@ -5,12 +5,14 @@ import (
 	"cloud/code"
 	"cloud/dao"
 	"cloud/internal/response"
+	"cloud/service/sys/menu"
 	"context"
 
 	"github.com/abulo/ratel/v3/util"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"github.com/gogo/protobuf/proto"
 )
 
 // 获取登录用户的菜单
@@ -26,14 +28,23 @@ func SysUserMenu(ctx context.Context, newCtx *app.RequestContext) {
 		return
 	}
 	var curList []dao.SysMenuTree
+	var homeId int64
+	homeId = 0
 	for _, item := range list {
 		if item.Type == 2 {
 			continue
 		}
 		if util.InArray(item.Id, currentMenuIds) {
 			curList = append(curList, *item)
+			if item.Id > homeId {
+				homeId = item.Id
+			}
 		}
 	}
+	homeId = homeId + 1
+	homeMenu := common.SysUserMenuDao(BuildVMenu(homeId))
+	// 将homeMenu插入到curList的最前面
+	curList = append([]dao.SysMenuTree{*homeMenu}, curList...)
 	newList := SysUserMenuTree(curList)
 	RefactorMenuRedirect(newList)
 	RefactorMenuAffix(newList)
@@ -42,6 +53,25 @@ func SysUserMenu(ctx context.Context, newCtx *app.RequestContext) {
 		"msg":  code.StatusText(code.Success),
 		"data": newList,
 	})
+}
+
+func BuildVMenu(homeId int64) *menu.SysMenuObject {
+	item := &menu.SysMenuObject{}
+	item.Id = proto.Int64(homeId)
+	item.Name = proto.String("首页")
+	item.Code = proto.String("home")
+	item.Type = proto.Int32(1)
+	item.Sort = proto.Int32(0)
+	item.ParentId = proto.Int64(0)
+	item.Path = proto.String("/home/index")
+	item.Icon = proto.String("ep:home-filled")
+	item.Component = proto.String("/home/index")
+	item.ComponentName = proto.String("Home")
+	item.Hide = proto.Int32(0)
+	item.Cache = proto.Int32(0)
+	item.Full = proto.Int32(0)
+	item.Status = proto.Int32(0)
+	return item
 }
 
 func SysUserMenuTree(menus []dao.SysMenuTree) []*dao.SysMenuTree {

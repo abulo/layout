@@ -32,6 +32,7 @@ func SysUserCode(ctx context.Context, newCtx *app.RequestContext) {
 			}
 		}
 	}
+	codeList = append(codeList, "home")
 	resList := make(map[string][]string)
 	for _, v := range codeList {
 		if !strings.Contains(v, ".") {

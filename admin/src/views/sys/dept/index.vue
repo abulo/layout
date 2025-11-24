@@ -306,7 +306,7 @@ const handleUpdate = async (row: ResSysDept) => {
   sysDeptForm.value = data
   if (Number(data.userId) !== 0) {
     const { data: user } = await getSysUserApi(Number(data.userId))
-    userItem.value = user.name
+    userItem.value = user.name as string
   }
   disabled.value = false
 }
@@ -323,7 +323,7 @@ const handleItem = async (row: ResSysDept) => {
   sysDeptForm.value = data
   if (Number(data.userId) !== 0) {
     const { data: user } = await getSysUserApi(Number(data.userId))
-    userItem.value = user.name
+    userItem.value = user.name as string
   }
   disabled.value = true
 }
@@ -368,7 +368,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
   formEl.validate(async valid => {
     if (!valid) return
     // loading.value = true
-    const { data } = sysDeptForm.value as unknown as ResSysDept
+    const data = sysDeptForm.value as unknown as ResSysDept
     if (data.id !== 0) {
       await useHandleSet(updateSysDeptApi, data.id, data, '修改部门')
     } else {
@@ -430,7 +430,7 @@ const getCustomSysUserListApi = (params: any) => {
 }
 
 const handleUser = (row: ResSysUser) => {
-  userItem.value = row.name
+  userItem.value = row.name as string
   sysDeptForm.value.userId = Number(row.id)
   isUserOpen.value = false
 }

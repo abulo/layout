@@ -99,6 +99,28 @@ declare global {
     [key: string]: any
   }
 
+  export interface Pageable {
+    pageNum: number
+    pageSize: number
+    total: number
+  }
+  export interface StateProps {
+    tableData: any[]
+    pageable: Pageable
+    searchParam: {
+      [key: string]: any
+    }
+    searchInitParam: {
+      [key: string]: any
+    }
+    totalParam: {
+      [key: string]: any
+    }
+    icon?: {
+      [key: string]: any
+    }
+  }
+
   type TreeLike<T, K extends string = 'children'> = T & { [P in K]: TreeLike<T, K>[] }
 
   type NullableString = string | null

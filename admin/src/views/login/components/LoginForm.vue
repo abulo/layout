@@ -49,7 +49,7 @@ import { useRouter } from 'vue-router'
 import { encryptPassword, getTimeState } from '@/utils'
 import { ElNotification } from 'element-plus'
 import { useUserStore } from '@/stores/modules/user'
-import { useAuthStore } from '@/stores/modules/auth'
+// import { useAuthStore } from '@/stores/modules/auth'
 import { useTabsStore } from '@/stores/modules/tabs'
 import { useKeepAliveStore } from '@/stores/modules/keepAlive'
 import { initDynamicRouter } from '@/routers/modules/dynamicRouter'
@@ -61,11 +61,12 @@ import type { ResCaptcha } from '@/api/interface/captcha'
 import { getCaptchaApi } from '@/api/modules/captcha'
 import { type ReqSysUserLogin } from '@/api/interface/sysUser'
 import { postSysUserLogin } from '@/api/modules/sysUser'
+import { HOME_URL } from '@/config'
 
 //验证码
 const resCaptcha = reactive<ResCaptcha>({
-  captchaId: '', // 验证码id
-  captchaImage: '', // 验证码图片
+  verifyCodeId: '', // 验证码id
+  verifyImage: '', // 验证码图片
 })
 
 // todo caps lock
@@ -74,7 +75,7 @@ const resCaptcha = reactive<ResCaptcha>({
 const router = useRouter()
 const userStore = useUserStore()
 const tabsStore = useTabsStore()
-const authStore = useAuthStore()
+// const authStore = useAuthStore()
 const keepAliveStore = useKeepAliveStore()
 
 type FormInstance = InstanceType<typeof ElForm>
@@ -122,9 +123,9 @@ const login = (formEl: FormInstance | undefined) => {
       // 3.清空 tabs、keepAlive 数据
       tabsStore.setTabs([])
       keepAliveStore.setKeepAliveName([])
-      const menuItem = authStore.showHomeMenu
+      // const menuItem = authStore.showHomeMenu as MenuOptions
       // 4.跳转到首页
-      router.push(menuItem.path)
+      router.push(HOME_URL)
       ElNotification({
         title: getTimeState(),
         message: '欢迎登录',

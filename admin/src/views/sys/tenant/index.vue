@@ -320,7 +320,7 @@ const handleUpdate = async (row: ResSysTenant) => {
   sysTenantForm.value = data
   if (Number(data.userId) !== 0) {
     const { data: user } = await getSysUserApi(Number(data.userId))
-    userItem.value = user.name
+    userItem.value = user.name as string
   }
 
   disabled.value = false
@@ -338,7 +338,7 @@ const handleItem = async (row: ResSysTenant) => {
   sysTenantForm.value = data
   if (Number(data.userId) !== 0) {
     const { data: user } = await getSysUserApi(Number(data.userId))
-    userItem.value = user.name
+    userItem.value = user.name as string
   }
   disabled.value = true
 }
@@ -411,7 +411,7 @@ const handleDialogClick = () => {
 
 // 当用户被选择
 const handleUser = (row: ResSysUser) => {
-  userItem.value = row.name
+  userItem.value = row.name as string
   sysTenantForm.value.userId = Number(row.id)
   isUserOpen.value = false
 }
