@@ -33,6 +33,12 @@ export const createVitePlugins = (viteEnv: ViteEnv): (PluginOption | PluginOptio
     devtoolsJson(),
     // devTools
     VITE_DEVTOOLS && NextDevTools({ launchEditor: 'code' }),
+    /**
+     * 在页面上按住组合键时，鼠标在页面移动即会在 DOM 上出现遮罩层并显示相关信息，点击一下将自动打开 IDE 并将光标定位到元素对应的代码位置
+     * Mac 默认组合键 Option + Shift
+     * Windows 默认组合键 Alt + Shift
+     * 更多用法看 https://inspector.fe-dev.cn/guide/start.html
+     */
     // esLint 报错信息显示在浏览器界面上
     eslintPlugin({
       failOnError: false,
@@ -115,6 +121,7 @@ export const createVitePlugins = (viteEnv: ViteEnv): (PluginOption | PluginOptio
     VITE_CODE_INSPECTOR &&
       codeInspectorPlugin({
         bundler: 'vite',
+        hideConsole: true,
       }),
     // mock
     // mockDevServerPlugin(),

@@ -254,6 +254,9 @@ const rulesSysTenantForm = reactive<FormRules>({
 const getTableList = (params: any) => {
   // 深拷贝参数对象，避免修改原始参数
   let newParams = JSON.parse(JSON.stringify(params))
+  newParams.expireDate && (newParams.beginExpireDate = newParams.expireDate[0])
+  newParams.expireDate && (newParams.finishExpireDate = newParams.expireDate[1])
+  delete newParams.expireDate
   return getSysTenantListApi(newParams)
 }
 
@@ -461,30 +464,9 @@ const columns: ColumnProps<ResSysTenant>[] = [
     prop: 'expireDate',
     label: '过期时间',
     search: {
-      render: ({ searchParam }) => {
-        return (
-          <div class="flex items-center justify-center">
-            <ElDatePicker
-              modelValue={searchParam.beginExpireDate}
-              clearable
-              placeholder="开始时间"
-              type="date"
-              format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD"
-            />
-            <span class="mr-2.5 ml-2.5">-</span>
-            <ElDatePicker
-              modelValue={searchParam.finishExpireDate}
-              clearable
-              placeholder="结束时间"
-              type="date"
-              format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD"
-            />
-          </div>
-        )
-      },
+      el: 'date-picker',
       span: 4,
+      attrs: { type: 'daterange', valueFormat: 'YYYY-MM-DD' },
     },
   },
   { prop: 'accountTotal', label: '账号数量' },
