@@ -16,7 +16,10 @@
       </template>
       <!-- 删除状态 -->
       <template #deleted="scope">
-        <DictTag type="delete" :value="scope.row.deleted" />
+        <DictTag type="deleted" :value="scope.row.deleted" />
+      </template>
+      <template #status="scope">
+        <DictTag type="status" :value="scope.row.status" />
       </template>
       <!-- 菜单操作 -->
       <template #operation="scope">
@@ -70,41 +73,29 @@
       class="dialog-settings"
     >
       <el-form ref="refSysUserForm" :model="sysUserForm" :rules="rulesSysUserForm" label-width="100px">
-        <el-form-item label="编号" prop="id">
-          <el-input v-model="sysUserForm.id" :disabled="disabled" />
-        </el-form-item>
         <el-form-item label="姓名" prop="name">
           <el-input v-model="sysUserForm.name" :disabled="disabled" />
         </el-form-item>
         <el-form-item label="手机号码" prop="mobile">
           <el-input v-model="sysUserForm.mobile" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="用户名" prop="username">
+        <el-form-item v-if="sysUserForm.id === 0" label="用户名" prop="username">
           <el-input v-model="sysUserForm.username" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="sysUserForm.password" :disabled="disabled" />
+        <el-form-item v-if="sysUserForm.id === 0" label="密码" prop="password">
+          <el-input v-model="sysUserForm.password" show-password type="password" :disabled="disabled" />
         </el-form-item>
-        <el-form-item label="状态:0正常/1停用" prop="status">
-          <el-input v-model="sysUserForm.status" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="删除:0否/1是" prop="deleted">
-          <el-input v-model="sysUserForm.deleted" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="租户" prop="tenantId">
-          <el-input v-model="sysUserForm.tenantId" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="创建人" prop="creator">
-          <el-input v-model="sysUserForm.creator" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="创建时间" prop="createTime">
-          <el-input v-model="sysUserForm.createTime" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="更新人" prop="updater">
-          <el-input v-model="sysUserForm.updater" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="更新时间" prop="updateTime">
-          <el-input v-model="sysUserForm.updateTime" :disabled="disabled" />
+        <el-form-item label="状态" prop="status">
+          <el-radio-group v-model="sysUserForm.status">
+            <el-radio-button
+              v-for="dict in statusEnum"
+              :key="Number(dict.value)"
+              :value="dict.value"
+              :disabled="disabled"
+            >
+              {{ dict.label }}
+            </el-radio-button>
+          </el-radio-group>
         </el-form-item>
       </el-form>
       <template v-if="!disabled" #footer>
@@ -148,6 +139,8 @@ const title = ref('')
 const proTable = ref<ProTableInstance>()
 //显示弹出层
 const dialogVisible = ref(false)
+// 状态枚举
+const statusEnum = getIntDictOptions('status')
 //数据接口
 const sysUserForm = ref<ResSysUser>({
   id: 0, // 编号
@@ -167,12 +160,9 @@ const sysUserForm = ref<ResSysUser>({
 const refSysUserForm = ref<FormInstance>()
 //校验
 const rulesSysUserForm = reactive<FormRules>({
-  id: [{ required: true, message: '编号不能为空', trigger: 'blur' }],
   username: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
   password: [{ required: true, message: '密码不能为空', trigger: 'blur' }],
-  status: [{ required: true, message: '状态:0正常/1停用不能为空', trigger: 'blur' }],
-  deleted: [{ required: true, message: '删除:0否/1是不能为空', trigger: 'blur' }],
-  tenantId: [{ required: true, message: '租户不能为空', trigger: 'blur' }],
+  status: [{ required: true, message: '状态', trigger: 'blur' }],
 })
 
 /**
@@ -325,15 +315,12 @@ const columns: ColumnProps<ResSysUser>[] = [
   { prop: 'name', label: '姓名', search: { el: 'input', span: 2 } },
   { prop: 'mobile', label: '手机号码', search: { el: 'input', span: 2 } },
   { prop: 'username', label: '用户名', search: { el: 'input', span: 2 } },
-  { prop: 'password', label: '密码' },
-  { prop: 'status', label: '状态:0正常/1停用', search: { el: 'input', span: 2 } },
+  { prop: 'status', label: '状态', tag: true, enum: statusEnum, search: { el: 'select', span: 2 } },
   { prop: 'deleted', label: '删除', tag: true, enum: deletedEnum, search: deleteSearch },
-  { prop: 'tenantId', label: '租户', search: { el: 'input', span: 2 } },
   { prop: 'creator', label: '创建人' },
   { prop: 'createTime', label: '创建时间' },
   { prop: 'updater', label: '更新人' },
   { prop: 'updateTime', label: '更新时间' },
-
   {
     prop: 'operation',
     label: '操作',
