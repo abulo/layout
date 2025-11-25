@@ -1,7 +1,6 @@
 import { reactive, toRefs } from 'vue'
 import { DEFAULT_PAGE_SIZE } from '@/constants/proTable'
 import { ProTablePaginationEnum } from '@/enums'
-import type { ComposerTranslation } from 'vue-i18n'
 
 export interface Pageable {
   pageNum: number
@@ -22,7 +21,6 @@ export function useTable<TableItem>(
   _api: (_params: IObject) => Promise<ResultData<TableItem>> | Promise<TableItem[]>,
   _initParam: object,
   _pagination: ProTablePaginationEnum,
-  _t: ComposerTranslation,
   _fePaginationFilterMethod?: (_query: IObject) => IObject[],
   _dataCallBack?: (_data: TableItem[]) => IObject[]
 ): any
@@ -31,7 +29,6 @@ export function useTable<TableItem>(
   api: (_params: IObject) => Promise<ResultData<TableItem>> | Promise<TableItem[]>,
   initParam: object = {},
   pagination: ProTablePaginationEnum = ProTablePaginationEnum.BE,
-  t: ComposerTranslation,
   fePaginationFilterMethod?: (_query: IObject) => IObject[],
   dataCallBack?: (_data: TableItem[]) => IObject[]
 ) {
@@ -78,15 +75,11 @@ export function useTable<TableItem>(
       if (pagination === ProTablePaginationEnum.BE) {
         if (Array.isArray((data as ResultPage<TableItem>).list)) {
           listData = (data as ResultPage<TableItem>).list
-        } else {
-          throw new Error(t('error.tableDataShouldBeArray'))
         }
         state.pageable.total = (data as ResultPage<TableItem>).total
       } else {
         if (Array.isArray(data)) {
           listData = data
-        } else {
-          throw new Error(t('error.tableDataShouldBeArray'))
         }
       }
 
