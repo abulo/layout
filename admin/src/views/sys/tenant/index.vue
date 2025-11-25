@@ -475,6 +475,7 @@ const columns: ColumnProps<ResSysTenant>[] = [
     prop: 'packageId',
     label: '套餐',
     enum: sysTenantPackageOptions,
+    tag: true,
     fieldNames: { label: 'name', value: 'id' },
     search: { el: 'select', span: 2 },
   },
