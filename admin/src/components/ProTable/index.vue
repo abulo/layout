@@ -383,11 +383,21 @@ const setSearchParamForm = (key: string, value: any) => {
 }
 
 // 列设置 ==> 需要过滤掉不需要设置的列
+// const colRef = ref()
+// const colSetting = tableColumns.value.filter(item => {
+//   const { type, prop, isSetting } = item
+//   return !columnTypes.includes(type!) && prop !== 'operation' && isSetting
+// })
+
+// 列设置 ==> 需要过滤掉不需要设置的列
 const colRef = ref()
 const colSetting = tableColumns.value.filter(item => {
+  // 添加空值检查
+  if (!item) return false
   const { type, prop, isSetting } = item
-  return !columnTypes.includes(type!) && prop !== 'operation' && isSetting
+  return type != null && !columnTypes.includes(type) && prop !== 'operation' && isSetting !== false
 })
+
 const openColSetting = () => colRef.value.openColSetting()
 
 // 定义 emit 事件

@@ -57,7 +57,6 @@ export const useTable = (
       if (dataCallBack && data) {
         data = dataCallBack(data)
       }
-
       // 修复: 安全地访问 data.list 或直接使用 data
       state.tableData = pagination && data?.list ? data.list : data || []
 
@@ -65,65 +64,6 @@ export const useTable = (
       if (pagination && data?.total) {
         state.pageable.total = data.total
       }
-
-      // const { data: result } = await api({ ...state.searchInitParam, ...state.totalParam })
-      // const data = await api({ ...state.searchInitParam, ...state.totalParam })
-      // let listData: TableItem[] | IObject[] = []
-      // if (Array.isArray((data as ResultPage<TableItem>).list)) {
-      // listData = (data as ResultPage<TableItem>).list
-      // }
-      // if (Array.isArray(data)) {
-      // listData = data
-      // }
-      // dataCallBack && (listData = dataCallBack(listData))
-      // 修复类型不匹配问题
-      // if (dataCallBack) {
-      // const callBackResult = dataCallBack(listData)
-      // listData = callBackResult as unknown as TableItem[]
-      // }
-      // dataCallBack && (listData = dataCallBack(listData))
-      // // 判断返回的是对象还是数组
-      // let data: TableItem[] | undefined
-      // if (Array.isArray(result)) {
-      //   data = result
-      // } else {
-      //   data = (result as ResultPage<TableItem>).list
-      // }
-
-      // if (pagination === true) {
-      // state.pageable.total = (data as ResultPage<TableItem>).total
-      // }
-      // state.tableData = pagination ? (result as ResultPage<TableItem>).list : data
-
-      // let { data } = await api({ ...state.searchInitParam, ...state.totalParam })
-      // dataCallBack && (data = dataCallBack(data))
-      // state.tableData = pagination ? (data as ResultPage<TableItem>).list : data
-      // if (pagination === true) state.pageable.total = (data as ResultData<TableItem>).total
-      // let listData: TableItem[] | IObject[] = []
-      // if (pagination === true) {
-      //   if (Array.isArray((data as ResultPage<TableItem>).list)) {
-      //     listData = (data as ResultPage<TableItem>).list
-      //   } else {
-      //     throw new Error(t('error.tableDataShouldBeArray'))
-      //   }
-      //   state.pageable.total = (data as ResultPage<TableItem>).total
-      // } else {
-      //   if (Array.isArray(data)) {
-      //     listData = data
-      //   } else {
-      //     throw new Error(t('error.tableDataShouldBeArray'))
-      //   }
-      // }
-      // // @ts-expect-error 类型不兼容
-      // state.tableData = dataCallBack ? dataCallBack(listData) : listData
-      // 替换原来的第102行
-      // if (dataCallBack) {
-      //   const callBackResult = dataCallBack(listData)
-      //   state.tableData = callBackResult as (TableItem & IObject)[]
-      // } else {
-      //   state.tableData = listData as (TableItem & IObject)[]
-      // }
-      // state.tableData = listData as (TableItem & IObject)[]
     } catch (error) {
       throw new Error(error as any)
     }

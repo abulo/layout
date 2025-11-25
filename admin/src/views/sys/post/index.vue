@@ -104,7 +104,8 @@
 <script setup lang="tsx">
 defineOptions({ name: 'SysPost' })
 import type { ResSysPost } from '@/api/interface/sysPost'
-import type { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
+import type { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
+// import type { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
 import { EditPen, CirclePlus, Delete, Refresh, DeleteFilled, View, DArrowRight } from '@element-plus/icons-vue'
 import {
   getSysPostListApi,
@@ -280,28 +281,27 @@ const submitForm = (formEl: FormInstance | undefined) => {
   })
 }
 //删除状态
-const deletedEnum = getIntDictOptions('deleted')
-// 表格配置项
-const deleteSearch = reactive<SearchProps>(
-  HasAuth('post.SysPostDelete')
-    ? {
-        el: 'switch',
-        span: 2,
-        attrs: {
-          activeValue: 1,
-          inactiveValue: 0,
-        },
-      }
-    : {}
-)
+// const deletedEnum = getIntDictOptions('deleted')
+// // 表格配置项
+// const deleteSearch = reactive<SearchProps>(
+//   HasAuth('post.SysPostDelete')
+//     ? {
+//         el: 'switch',
+//         span: 2,
+//         attrs: {
+//           activeValue: 1,
+//           inactiveValue: 0,
+//         },
+//       }
+//     : {}
+// )
 
 const columns: ColumnProps<ResSysPost>[] = [
   { prop: 'id', label: '编号', fixed: 'left' },
   { prop: 'name', label: '名称', search: { el: 'input', span: 2 } },
   { prop: 'sort', label: '排序' },
-  { prop: 'status', label: '状态', tag: true, enum: statusEnum, search: { el: 'select', span: 2 } },
-  { prop: 'deleted', label: '删除', tag: true, enum: deletedEnum, search: deleteSearch },
-  { prop: 'tenantId', label: '租户' },
+  // { prop: 'status', label: '状态', tag: true, enum: statusEnum, search: { el: 'select', span: 2 } },
+  // { prop: 'deleted', label: '删除', tag: true, enum: deletedEnum, search: deleteSearch },
   { prop: 'creator', label: '创建人' },
   { prop: 'createTime', label: '创建时间' },
   { prop: 'updater', label: '更新人' },

@@ -472,7 +472,7 @@ const columns: ColumnProps<ResSysTenant>[] = [
   { prop: 'accountTotal', label: '账号数量' },
   {
     prop: 'packageId',
-    label: '套餐编号',
+    label: '套餐',
     enum: sysTenantPackageOptions,
     fieldNames: { label: 'name', value: 'id' },
     search: { el: 'select', span: 2 },
