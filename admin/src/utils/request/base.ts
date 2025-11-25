@@ -9,6 +9,7 @@ import router from '@/routers'
 import { useLoadingStore } from '@/stores/modules/loading'
 import { statusMessages } from '@/constants'
 import qs from 'qs'
+import { logoutWithRedirect } from '@/utils'
 
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   loading?: boolean
@@ -119,7 +120,7 @@ export class RequestHttp {
         if (data.code == ResultEnum.OVERDUE) {
           userStore.clearUserState()
           ElMessage.error(data.msg)
-          return Promise.reject(router.replace(LOGIN_URL))
+          return Promise.reject(logoutWithRedirect(location.hash.slice(1)))
         }
         // 全局错误信息拦截（防止下载文件的时候返回数据流，没有 code 直接报错）
         if (data.code && data.code !== ResultEnum.SUCCESS) {

@@ -9,6 +9,7 @@
       :toolbar-right="['search', 'refresh', 'export', 'layout']"
       :request-api="getTableList"
       :default-expand-all="isExpandAll"
+      :data-callback="deptHandleTree"
       :request-auto="true"
       :pagination="ProTablePaginationEnum.NONE"
       :search-col="12"
@@ -113,11 +114,12 @@
             </template>
             <div class="table-box">
               <ProTable
+                ref="userProTable"
                 title="用户列表"
                 row-key="id"
                 :columns="userColumns"
                 :request-api="getCustomSysUserListApi"
-                :request-auto="true"
+                :request-auto="false"
                 :tool-button="false"
                 :layout="'prev, pager, next'"
                 :init-param="initUserParam"
@@ -192,6 +194,7 @@ const disabled = ref(true)
 const title = ref('')
 //列表数据
 const proTable = ref<ProTableInstance>()
+const userProTable = ref<ProTableInstance>()
 //显示弹出层
 const dialogVisible = ref(false)
 //是否展开，默认全部折叠
@@ -423,6 +426,7 @@ const handleDialogClick = () => {
 const userOpen = () => {
   if (disabled.value) return
   isUserOpen.value = true
+  userProTable.value?.getTableList()
 }
 
 const getCustomSysUserListApi = (params: any) => {
@@ -434,6 +438,10 @@ const handleUser = (row: ResSysUser) => {
   userItem.value = row.name as string
   sysDeptForm.value.userId = Number(row.id)
   isUserOpen.value = false
+}
+
+const deptHandleTree = (data: ResSysDept[]) => {
+  return handleTree(data)
 }
 
 const userColumns: ColumnProps<ResSysUser>[] = [

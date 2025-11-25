@@ -2,12 +2,14 @@ package user
 
 import (
 	"context"
+	"encoding/json"
 
 	"cloud/code"
 	"cloud/dao"
 	"cloud/initial"
 	"cloud/internal/response"
 	"cloud/service/pagination"
+	"cloud/service/sys/tenant"
 	"cloud/service/sys/user"
 
 	globalLogger "github.com/abulo/ratel/v3/core/logger"
@@ -334,6 +336,50 @@ func SysUserList(ctx context.Context, newCtx *app.RequestContext) {
 		})
 		return
 	}
+	clientTenant := tenant.NewSysTenantServiceClient(grpcClient)
+	requestTenant := &tenant.SysTenantRequest{}
+	requestTenant.Id = newCtx.GetInt64("tenantId")
+	// 执行服务
+	resTenant, err := clientTenant.SysTenant(ctx, requestTenant)
+	if err != nil {
+		globalLogger.Logger.WithFields(logrus.Fields{
+			"req": requestTenant,
+			"err": err,
+		}).Error("GrpcCall:租户:sys_tenant:SysTenant")
+		fromError := status.Convert(err)
+		response.JSON(newCtx, consts.StatusOK, utils.H{
+			"code": code.ConvertToHttp(fromError.Code()),
+			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
+		})
+		return
+	}
+	tenantItem := tenant.SysTenantDao(resTenant.GetData())
+
+	clientUser := user.NewSysUserServiceClient(grpcClient)
+	scopeReq := &user.SysUserScopeRequest{}
+	scopeReq.UserId = *tenantItem.UserId.Ptr()
+	scopeReq.TenantId = newCtx.GetInt64("tenantId")
+	userRes, err := clientUser.SysUserScope(ctx, scopeReq)
+	if err != nil {
+		globalLogger.Logger.WithFields(logrus.Fields{
+			"req": scopeReq,
+			"err": err,
+		}).Error("GrpcCall:部门:sys_dept:SysDeptList")
+		fromError := status.Convert(err)
+		response.JSON(newCtx, consts.StatusOK, utils.H{
+			"code": code.ConvertToHttp(fromError.Code()),
+			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
+		})
+		return
+	}
+	userScope := user.SysUserScopeDao(userRes.GetData())
+	if len(userScope.ScopeDept) < 1 {
+		response.JSON(newCtx, consts.StatusOK, utils.H{
+			"code": code.DeptError,
+			"msg":  code.StatusText(code.DeptError),
+		})
+		return
+	}
 	//链接服务
 	client := user.NewSysUserServiceClient(grpcClient)
 	// 构造查询条件
@@ -348,6 +394,10 @@ func SysUserList(ctx context.Context, newCtx *app.RequestContext) {
 			request.Deleted = nil
 			requestTotal.Deleted = nil
 		}
+	}
+	if val, ok := newCtx.GetQuery("deptId"); ok {
+		request.DeptId = proto.Int64(cast.ToInt64(val))      // 用户状态（0正常 1停用）
+		requestTotal.DeptId = proto.Int64(cast.ToInt64(val)) // 用户状态（0正常 1停用）
 	}
 	if val, ok := newCtx.GetQuery("username"); ok {
 		request.Username = proto.String(val)      // 用户名
@@ -365,6 +415,13 @@ func SysUserList(ctx context.Context, newCtx *app.RequestContext) {
 		request.Name = proto.String(val)      // 姓名
 		requestTotal.Name = proto.String(val) // 姓名
 	}
+	request.UserId = tenantItem.UserId.Ptr()      // 用户ID
+	requestTotal.UserId = tenantItem.UserId.Ptr() // 用户ID
+	request.Scope = userScope.Scope
+	requestTotal.Scope = userScope.Scope
+	scopeDept, _ := json.Marshal(userScope.ScopeDept)
+	request.ScopeDept = scopeDept
+	requestTotal.ScopeDept = scopeDept
 
 	// 执行服务,获取数据量
 	resTotal, err := client.SysUserListTotal(ctx, requestTotal)
@@ -434,6 +491,52 @@ func SysUserListSimple(ctx context.Context, newCtx *app.RequestContext) {
 		})
 		return
 	}
+
+	clientTenant := tenant.NewSysTenantServiceClient(grpcClient)
+	requestTenant := &tenant.SysTenantRequest{}
+	requestTenant.Id = newCtx.GetInt64("tenantId")
+	// 执行服务
+	resTenant, err := clientTenant.SysTenant(ctx, requestTenant)
+	if err != nil {
+		globalLogger.Logger.WithFields(logrus.Fields{
+			"req": requestTenant,
+			"err": err,
+		}).Error("GrpcCall:租户:sys_tenant:SysTenant")
+		fromError := status.Convert(err)
+		response.JSON(newCtx, consts.StatusOK, utils.H{
+			"code": code.ConvertToHttp(fromError.Code()),
+			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
+		})
+		return
+	}
+	tenantItem := tenant.SysTenantDao(resTenant.GetData())
+
+	clientUser := user.NewSysUserServiceClient(grpcClient)
+	scopeReq := &user.SysUserScopeRequest{}
+	scopeReq.UserId = *tenantItem.UserId.Ptr()
+	scopeReq.TenantId = newCtx.GetInt64("tenantId")
+	userRes, err := clientUser.SysUserScope(ctx, scopeReq)
+	if err != nil {
+		globalLogger.Logger.WithFields(logrus.Fields{
+			"req": scopeReq,
+			"err": err,
+		}).Error("GrpcCall:部门:sys_dept:SysDeptList")
+		fromError := status.Convert(err)
+		response.JSON(newCtx, consts.StatusOK, utils.H{
+			"code": code.ConvertToHttp(fromError.Code()),
+			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
+		})
+		return
+	}
+	userScope := user.SysUserScopeDao(userRes.GetData())
+	if len(userScope.ScopeDept) < 1 {
+		response.JSON(newCtx, consts.StatusOK, utils.H{
+			"code": code.DeptError,
+			"msg":  code.StatusText(code.DeptError),
+		})
+		return
+	}
+
 	//链接服务
 	client := user.NewSysUserServiceClient(grpcClient)
 	// 构造查询条件
@@ -449,6 +552,10 @@ func SysUserListSimple(ctx context.Context, newCtx *app.RequestContext) {
 			request.Deleted = nil
 			requestTotal.Deleted = nil
 		}
+	}
+	if val, ok := newCtx.GetQuery("deptId"); ok {
+		request.DeptId = proto.Int64(cast.ToInt64(val))      // 用户状态（0正常 1停用）
+		requestTotal.DeptId = proto.Int64(cast.ToInt64(val)) // 用户状态（0正常 1停用）
 	}
 	if val, ok := newCtx.GetQuery("username"); ok {
 		request.Username = proto.String(val)      // 用户名
@@ -466,6 +573,13 @@ func SysUserListSimple(ctx context.Context, newCtx *app.RequestContext) {
 		request.Name = proto.String(val)      // 姓名
 		requestTotal.Name = proto.String(val) // 姓名
 	}
+	request.UserId = tenantItem.UserId.Ptr()      // 用户ID
+	requestTotal.UserId = tenantItem.UserId.Ptr() // 用户ID
+	request.Scope = userScope.Scope
+	requestTotal.Scope = userScope.Scope
+	scopeDept, _ := json.Marshal(userScope.ScopeDept)
+	request.ScopeDept = scopeDept
+	requestTotal.ScopeDept = scopeDept
 
 	// 执行服务,获取数据量
 	resTotal, err := client.SysUserListTotal(ctx, requestTotal)

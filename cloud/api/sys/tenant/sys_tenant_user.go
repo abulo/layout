@@ -117,7 +117,6 @@ func SysTenantUserList(ctx context.Context, newCtx *app.RequestContext) {
 	}
 	request.UserId = tenantItem.UserId.Ptr()      // 用户ID
 	requestTotal.UserId = tenantItem.UserId.Ptr() // 用户ID
-
 	request.Scope = userScope.Scope
 	requestTotal.Scope = userScope.Scope
 	scopeDept, _ := json.Marshal(userScope.ScopeDept)

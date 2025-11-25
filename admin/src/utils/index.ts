@@ -2,8 +2,27 @@
 import { isArray } from '@/utils/is'
 import type { FieldNamesProps } from '@/components/ProTable/interface'
 import md5 from 'md5'
+import { LOGIN_URL } from '@/config'
 
 const mode = import.meta.env.VITE_ROUTER_MODE
+
+// 给登出加上redirect，登录之后自动跳转到对应页面
+export const logoutWithRedirect = (to: RouteLocationNormalized | string) => {
+  let redirect = ''
+  const redirectString = 'redirect'
+  if (typeof to === 'string') {
+    if (to.includes(`${LOGIN_URL}?${redirectString}`)) {
+      redirect = decodeURIComponent(to.split(`${LOGIN_URL}?${redirectString}=`)[1])
+    } else {
+      redirect = to
+    }
+  } else {
+    const params = new URLSearchParams(to.query as Record<string, string>)
+    const queryString = params.toString()
+    redirect = queryString ? `${to.path}?${queryString}` : to.path
+  }
+  return router.push(`${LOGIN_URL}?${redirectString}=${encodeURIComponent(redirect)}`)
+}
 
 /**
  * @description 获取localStorage
