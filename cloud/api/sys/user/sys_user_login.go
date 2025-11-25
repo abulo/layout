@@ -155,8 +155,7 @@ func SysUserLogin(ctx context.Context, newCtx *app.RequestContext) {
 	userVerifyItem.UserId = cast.ToInt64(userItem.Id)          // 用户ID
 	userVerifyItem.UserName = cast.ToString(userItem.Username) // 用户名
 	userVerifyItem.TenantId = cast.ToInt64(userItem.TenantId)  // 租户ID
-	userVerifyItem.Name = cast.ToString(userItem.Name)         // 用户姓名
-
+	userVerifyItem.Name = cast.ToString(userItem.Name.Ptr())   // 用户姓名
 	userTokenItem := dao.UserToken{}
 	userTokenItem.UserName = proto.String(cast.ToString(userItem.Username)) // 用户名
 	dateTime := util.Now().Add(time.Duration(86000*30) * time.Second)
