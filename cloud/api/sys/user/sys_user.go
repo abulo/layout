@@ -224,10 +224,12 @@ func SysUser(ctx context.Context, newCtx *app.RequestContext) {
 		})
 		return
 	}
+	userItem := user.SysUserDao(res.GetData())
+	userItem.Password = nil
 	response.JSON(newCtx, consts.StatusOK, utils.H{
 		"code": res.GetCode(),
 		"msg":  res.GetMsg(),
-		"data": user.SysUserDao(res.GetData()),
+		"data": userItem,
 	})
 }
 
@@ -463,7 +465,9 @@ func SysUserList(ctx context.Context, newCtx *app.RequestContext) {
 	if res.GetCode() == code.Success {
 		rpcList := res.GetData()
 		for _, item := range rpcList {
-			list = append(list, user.SysUserDao(item))
+			userItem := user.SysUserDao(item)
+			userItem.Password = nil
+			list = append(list, userItem)
 		}
 	}
 	response.JSON(newCtx, consts.StatusOK, utils.H{
@@ -621,7 +625,9 @@ func SysUserListSimple(ctx context.Context, newCtx *app.RequestContext) {
 	if res.GetCode() == code.Success {
 		rpcList := res.GetData()
 		for _, item := range rpcList {
-			list = append(list, user.SysUserDao(item))
+			userItem := user.SysUserDao(item)
+			userItem.Password = nil
+			list = append(list, userItem)
 		}
 	}
 	response.JSON(newCtx, consts.StatusOK, utils.H{

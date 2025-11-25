@@ -222,10 +222,12 @@ func SysTenant(ctx context.Context, newCtx *app.RequestContext) {
 		})
 		return
 	}
+	tenantItem := tenant.SysTenantDao(res.GetData())
+	tenantItem.Password = nil
 	response.JSON(newCtx, consts.StatusOK, utils.H{
 		"code": res.GetCode(),
 		"msg":  res.GetMsg(),
-		"data": tenant.SysTenantDao(res.GetData()),
+		"data": tenantItem,
 	})
 }
 
@@ -409,7 +411,9 @@ func SysTenantList(ctx context.Context, newCtx *app.RequestContext) {
 	if res.GetCode() == code.Success {
 		rpcList := res.GetData()
 		for _, item := range rpcList {
-			list = append(list, tenant.SysTenantDao(item))
+			tenantItem := tenant.SysTenantDao(item)
+			tenantItem.Password = nil
+			list = append(list, tenantItem)
 		}
 	}
 	response.JSON(newCtx, consts.StatusOK, utils.H{
@@ -512,7 +516,9 @@ func SysTenantListSimple(ctx context.Context, newCtx *app.RequestContext) {
 	if res.GetCode() == code.Success {
 		rpcList := res.GetData()
 		for _, item := range rpcList {
-			list = append(list, tenant.SysTenantDao(item))
+			tenantItem := tenant.SysTenantDao(item)
+			tenantItem.Password = nil
+			list = append(list, tenantItem)
 		}
 	}
 	response.JSON(newCtx, consts.StatusOK, utils.H{
