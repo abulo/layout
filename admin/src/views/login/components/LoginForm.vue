@@ -47,8 +47,8 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
-import { useRouter } from 'vue-router'
-import { encryptPassword, getTimeState } from '@/utils'
+import { useRoute, useRouter } from 'vue-router'
+import { encryptPassword, getTimeState, parseRedirect } from '@/utils'
 import { ElNotification } from 'element-plus'
 import { useUserStore } from '@/stores/modules/user'
 // import { useAuthStore } from '@/stores/modules/auth'
@@ -75,6 +75,7 @@ const resCaptcha = reactive<ResCaptcha>({
 // todo forget password
 // todo remember me
 const router = useRouter()
+const route = useRoute()
 const userStore = useUserStore()
 const tabsStore = useTabsStore()
 // const authStore = useAuthStore()
@@ -121,13 +122,12 @@ const login = (formEl: FormInstance | undefined) => {
       userStore.setUser(data)
       // 2.添加动态路由
       await initDynamicRouter()
-
       // 3.清空 tabs、keepAlive 数据
       tabsStore.setTabs([])
       keepAliveStore.setKeepAliveName([])
-      // const menuItem = authStore.showHomeMenu as MenuOptions
       // 4.跳转到首页
-      router.push(HOME_URL)
+      const { path, queryParams } = parseRedirect(route.query)
+      router.push({ path, query: queryParams })
       ElNotification({
         title: getTimeState(),
         message: '欢迎登录',

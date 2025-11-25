@@ -2,27 +2,11 @@
 import { isArray } from '@/utils/is'
 import type { FieldNamesProps } from '@/components/ProTable/interface'
 import md5 from 'md5'
-import { LOGIN_URL } from '@/config'
+import type { LocationQuery, RouteLocationNormalized } from 'vue-router'
+import router from '@/routers'
+import { HOME_URL, LOGIN_URL } from '@/config'
 
 const mode = import.meta.env.VITE_ROUTER_MODE
-
-// 给登出加上redirect，登录之后自动跳转到对应页面
-export const logoutWithRedirect = (to: RouteLocationNormalized | string) => {
-  let redirect = ''
-  const redirectString = 'redirect'
-  if (typeof to === 'string') {
-    if (to.includes(`${LOGIN_URL}?${redirectString}`)) {
-      redirect = decodeURIComponent(to.split(`${LOGIN_URL}?${redirectString}=`)[1])
-    } else {
-      redirect = to
-    }
-  } else {
-    const params = new URLSearchParams(to.query as Record<string, string>)
-    const queryString = params.toString()
-    redirect = queryString ? `${to.path}?${queryString}` : to.path
-  }
-  return router.push(`${LOGIN_URL}?${redirectString}=${encodeURIComponent(redirect)}`)
-}
 
 /**
  * @description 获取localStorage
@@ -471,4 +455,40 @@ export function toPascalCase(oldStr: any): string {
     .split('-') // 按连字符分割字符串
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // 将每个单词的首字母大写，其他字母小写
     .join('') // 将单词重新组合成一个字符串
+}
+
+// 给登出加上redirect，登录之后自动跳转到对应页面
+export const logoutWithRedirect = (to: RouteLocationNormalized | string) => {
+  let redirect = ''
+  const redirectString = 'redirect'
+  if (typeof to === 'string') {
+    if (to.includes(`${LOGIN_URL}?${redirectString}`)) {
+      redirect = decodeURIComponent(to.split(`${LOGIN_URL}?${redirectString}=`)[1])
+    } else {
+      redirect = to
+    }
+  } else {
+    const params = new URLSearchParams(to.query as Record<string, string>)
+    const queryString = params.toString()
+    redirect = queryString ? `${to.path}?${queryString}` : to.path
+  }
+  return router.push(`${LOGIN_URL}?${redirectString}=${encodeURIComponent(redirect)}`)
+}
+
+/**
+ * 解析 redirect 字符串 为 path 和  queryParams
+ * @returns { path: string, queryParams: Record<string, string> } 解析后的 path 和 queryParams
+ */
+export const parseRedirect = (query: LocationQuery): { path: string; queryParams: Record<string, string> } => {
+  const redirect = (query.redirect as string) ?? HOME_URL
+
+  const url = new URL(redirect, window.location.origin)
+  const path = url.pathname === LOGIN_URL ? HOME_URL : url.pathname
+  const queryParams: Record<string, string> = {}
+
+  url.searchParams.forEach((value, key) => {
+    queryParams[key] = value
+  })
+
+  return { path, queryParams }
 }
