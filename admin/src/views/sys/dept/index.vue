@@ -10,7 +10,7 @@
       :request-api="getTableList"
       :default-expand-all="isExpandAll"
       :request-auto="true"
-      :pagination="false"
+      :pagination="ProTablePaginationEnum.NONE"
       :search-col="12"
       :indent="20"
     >
@@ -121,7 +121,7 @@
                 :tool-button="false"
                 :pagination-layout="'prev, pager, next'"
                 :init-param="initUserParam"
-                :pagination="true"
+                :pagination="ProTablePaginationEnum.BE"
               >
                 <template #operation="scope">
                   <el-button type="primary" link :icon="CirclePlus" @click.stop="handleUser(scope.row)">确定</el-button>
@@ -183,6 +183,7 @@ import { storeToRefs } from 'pinia'
 import { handleTree } from '@pureadmin/utils'
 import type { ResSysUser } from '@/api/interface/sysUser'
 import { getSysUserApi, getSysUserListSimpleApi } from '@/api/modules/sysUser'
+import { ProTablePaginationEnum } from '@/enums'
 // 获取loading状态
 const { loading } = storeToRefs(useLoadingStore())
 //禁用

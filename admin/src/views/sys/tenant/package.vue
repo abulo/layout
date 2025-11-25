@@ -8,7 +8,7 @@
       :toolbar-right="['search', 'refresh', 'export', 'layout']"
       :request-api="getTableList"
       :request-auto="true"
-      :pagination="true"
+      :pagination="ProTablePaginationEnum.BE"
       :search-col="12"
     >
       <template #toolbarLeft>
@@ -157,6 +157,7 @@ import type Node from 'element-plus/es/components/tree/src/model/node'
 import { useTimeoutFn } from '@vueuse/core'
 import { useLoadingStore } from '@/stores/modules/loading'
 import { storeToRefs } from 'pinia'
+import { ProTablePaginationEnum } from '@/enums'
 // 获取loading状态
 const { loading } = storeToRefs(useLoadingStore())
 //禁用

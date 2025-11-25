@@ -8,7 +8,7 @@
       :toolbar-right="['search', 'refresh', 'export', 'layout']"
       :request-api="getTableList"
       :request-auto="true"
-      :pagination="true"
+      :pagination="ProTablePaginationEnum.BE"
       :search-col="12"
     >
       <template #toolbarLeft>
@@ -106,7 +106,7 @@
                 :tool-button="false"
                 :pagination-layout="'prev, pager, next'"
                 :init-param="initUserParam"
-                :pagination="true"
+                :pagination="ProTablePaginationEnum.BE"
               >
                 <template #operation="scope">
                   <el-button type="primary" link :icon="CirclePlus" @click.stop="handleUser(scope.row)">确定</el-button>
@@ -195,6 +195,7 @@ import { useLoadingStore } from '@/stores/modules/loading'
 import { storeToRefs } from 'pinia'
 import type { ResSysUser } from '@/api/interface/sysUser'
 import { getSysUserApi } from '@/api/modules/sysUser'
+import { ProTablePaginationEnum } from '@/enums'
 // 获取loading状态
 const { loading } = storeToRefs(useLoadingStore())
 //禁用

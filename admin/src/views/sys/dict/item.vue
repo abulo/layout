@@ -8,7 +8,7 @@
       :toolbar-right="['search', 'refresh', 'export', 'layout']"
       :request-api="getTableList"
       :request-auto="true"
-      :pagination="true"
+      :pagination="ProTablePaginationEnum.BE"
       :search-col="12"
     >
       <template #toolbarLeft>
@@ -123,6 +123,7 @@ import { getIntDictOptions } from '@/utils/dict'
 import type { ResSysDictType } from '@/api/interface/sysDictType'
 import { useLoadingStore } from '@/stores/modules/loading'
 import { storeToRefs } from 'pinia'
+import { ProTablePaginationEnum } from '@/enums'
 // 获取loading状态
 const { loading } = storeToRefs(useLoadingStore())
 // 获取当前路由信息

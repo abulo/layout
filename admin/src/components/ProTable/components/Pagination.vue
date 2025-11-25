@@ -8,7 +8,7 @@
     :page-count="Math.ceil(pageable.total / pageable.pageSize)"
     :total="pageable.total"
     :size="globalStore?.assemblySize ?? 'default'"
-    :layout="layout"
+    layout="total, sizes, prev, pager, next, jumper"
     @size-change="handleSizeChange"
     @current-change="handleCurrentChange"
   />
@@ -27,7 +27,6 @@ interface Pageable {
 
 interface PaginationProps {
   pageable: Pageable
-  layout: string
   handleSizeChange: (_size: number) => void
   handleCurrentChange: (_currentPage: number) => void
 }

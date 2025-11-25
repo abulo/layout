@@ -5,6 +5,7 @@ import type ProTable from '@/components/ProTable/index.vue'
 import type { ColProps, DialogProps, DrawerProps, ButtonProps, FormItemRule, FormProps } from 'element-plus'
 import type { MaybeRef } from 'vue'
 import type { DefaultRow } from 'element-plus/es/components/table/src/table/defaults.mjs'
+import type { ProTablePaginationEnum } from '@/enums'
 import type { JSX } from 'vue/jsx-runtime'
 
 export interface EnumProps {
@@ -89,6 +90,7 @@ export interface ColumnProps<T extends DefaultRow = any>
 }
 
 export type ProTableInstance = Omit<InstanceType<typeof ProTable>, keyof ComponentPublicInstance | keyof ProTableProps>
+export type RequestApiReturnType<I, P> = P extends ProTablePaginationEnum.BE ? Promise<ResultPage<I>> : Promise<I[]>
 
 export interface ProTableProps<Query = any, Item extends DefaultRow = any, ExtraQuery = IObject> {
   loading?: boolean // 表格是否加载中 ==> 非必传（默认为false）
@@ -123,10 +125,11 @@ export interface ProTableProps<Query = any, Item extends DefaultRow = any, Extra
   >
   toolbarMiddle?: () => VNodeChild | Component | JSX.Element | JSX.Element[] // 表格工具栏中间内容
   columns: ColumnProps<Item>[] // 列配置项  ==> 必传
-  pagination?: boolean // 是否需要分页组件 ==> 非必传（默认为true）
-  paginationLayout?: string // 分页组件布局 ==> 非必传（默认为'total, sizes, prev, pager, next, jumper'）
+  pagination?: ProTablePaginationEnum // 是否需要分页组件 ==> 非必传（默认为1）
+  fePaginationFilterMethod?: (_query: IObject) => IObject[] // 前端分页过滤方法 ==> 非必传
   // requestApi: (_params: Query & ExtraQuery) => Promise<ResultPage<Item>> | Promise<Item[]> // 请求表格数据的 api ==> 非必传
-  requestApi?: (_params: Query & ExtraQuery) => Promise<any> // 请求表格数据的 api ==> 非必传
+  requestApi: (_params: Query & ExtraQuery) => Promise<ResultData<Item>> | Promise<Item[]> // 请求表格数据的api ==> 非必传
+
   requestAuto?: boolean // 是否自动执行请求 api ==> 非必传（默认为true）
   dataCallback?: (_data: Item[]) => IObject[] // 返回数据的回调函数，可以对数据进行处理 ==> 非必传
   title?: string // 表格标题 ==> 非必传

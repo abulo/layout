@@ -11,7 +11,7 @@
       :data-callback="menuHandleTree"
       :default-expand-all="isExpandAll"
       :request-auto="true"
-      :pagination="false"
+      :pagination="ProTablePaginationEnum.NONE"
       :search-col="12"
       :indent="20"
     >
@@ -257,6 +257,7 @@ import { handleTree } from '@pureadmin/utils'
 import { getIntDictOptions } from '@/utils/dict'
 import { useLoadingStore } from '@/stores/modules/loading'
 import { storeToRefs } from 'pinia'
+import { ProTablePaginationEnum } from '@/enums'
 // 获取loading状态
 const { loading } = storeToRefs(useLoadingStore())
 //禁用

@@ -27,7 +27,9 @@
     <el-form-item prop="verifyCode">
       <el-input v-model="loginForm.verifyCode" placeholder="验证码">
         <template #prefix>
-          <el-icon class="el-input__icon"><Key /></el-icon>
+          <el-icon class="el-input__icon">
+            <Key />
+          </el-icon>
         </template>
         <template #append>
           <el-image class="captchaImg" :src="resCaptcha.verifyImage" fit="fill" @click="createCaptcha" />

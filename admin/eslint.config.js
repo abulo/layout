@@ -89,12 +89,13 @@ export default [
 
       // 空行规则
       'no-multiple-empty-lines': ['error', { max: 1, maxBOF: 0, maxEOF: 0 }],
-
+      'no-extra-boolean-cast': 'off',
       // TypeScript 规则
-      '@typescript-eslint/consistent-type-imports': 'error',
+      '@typescript-eslint/consistent-type-imports': 'off',
       '@typescript-eslint/no-unused-expressions': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-type-only-import': 'off',
 
       // Vue 规则
       'vue/multi-word-component-names': 'off',

@@ -52,11 +52,11 @@
             @click="handleToolbarClick(item.name)"
           />
         </template>
-        <!-- <template v-if="toolbarRightArr.length === 0">
+        <template v-if="toolbarRightArr.length === 0">
           <slot name="toolbarRight">
             <el-button v-if="columns.length" :icon="Operation" circle @click="openColSetting" />
           </slot>
-        </template> -->
+        </template>
       </div>
     </div>
     <!-- 表格主体 -->
@@ -97,7 +97,6 @@
           </template>
         </el-table-column>
         <!-- other -->
-        <!-- <table-column v-else :column="{ ...item, label: unref(label) }"> -->
         <table-column v-else :column="{ ...item, label: unref(label) }" :search-param="searchParam">
           <template v-for="slotName in Object.keys($slots)" #[slotName]="scope">
             <slot :name="slotName" v-bind="scope"></slot>
@@ -121,9 +120,8 @@
     <!-- 分页组件 -->
     <slot name="pagination">
       <pagination
-        v-if="pagination"
+        v-if="pagination !== ProTablePaginationEnum.NONE"
         :pageable="pageable"
-        :layout="paginationLayout"
         :handle-size-change="handleSizeChange"
         :handle-current-change="handleCurrentChange"
       />
@@ -139,7 +137,7 @@
 
 <script setup lang="ts">
 defineOptions({ name: 'ProTable' })
-import { ElTable } from 'element-plus'
+import { ElTable, ElMessage } from 'element-plus'
 import { useTable } from '@/hooks/useTable'
 import { useSelection } from '@/hooks/useSelection'
 import type { ColumnProps, TypeProps, ProTableProps } from './interface'
@@ -150,15 +148,17 @@ import ColSetting from './components/ColSetting.vue'
 import TableColumn from './components/TableColumn'
 import Sortable from 'sortablejs'
 import { toolbarButtonsConfig } from '@/utils/proTable'
-// import { Operation } from '@element-plus/icons-vue'
+import { Operation } from '@element-plus/icons-vue'
+import { ProTablePaginationEnum } from '@/enums'
+import { useI18n } from 'vue-i18n'
 import { useLoadingStore } from '@/stores/modules/loading'
+import { TABLE_COLUMN_OPERATIONS_NAME } from '@/constants/proTable'
 
 // 接受父组件参数，配置默认值
 const props = withDefaults(defineProps<ProTableProps>(), {
   columns: () => [],
   requestAuto: true,
-  pagination: true,
-  paginationLayout: 'total, sizes, prev, pager, next, jumper',
+  pagination: ProTablePaginationEnum.BE,
   initParam: () => ({}),
   border: true,
   rowKey: 'id',
@@ -192,6 +192,8 @@ const exportModal = ref({
   type: 'export',
 })
 
+const { t } = useI18n()
+
 // 搜索表单实例
 const searchFormRef = ref<InstanceType<typeof SearchForm>>()
 
@@ -214,8 +216,7 @@ const toolbarLeftArr = computed(() => {
 const toolbarRightArr = computed(() => {
   // default toolbarRight is [layout]
   if (!props.toolbarRight) {
-    // return [toolbarButtonsConfig.layout]
-    return []
+    return [toolbarButtonsConfig.layout]
   }
   return props.toolbarRight.map(item => {
     if (typeof item === 'string') {
@@ -266,7 +267,7 @@ const {
   reset,
   handleSizeChange,
   handleCurrentChange,
-} = useTable(props.requestApi, props.initParam, props.pagination, props.dataCallback)
+} = useTable(props.requestApi, props.initParam, props.pagination, t, props.fePaginationFilterMethod, props.dataCallback)
 
 // 清空选中数据列表
 const clearSelection = () => tableRef.value!.clearSelection()
@@ -290,7 +291,7 @@ onMounted(() => {
 // 监听页面 initParam 改化，重新获取表格数据
 watch(
   () => props.initParam,
-  () => getTableList(),
+  () => getTableList(false),
   { deep: true }
 )
 
@@ -355,13 +356,13 @@ const searchColumns = computed(() => {
 })
 
 // 如果是前端分页，且有筛选参数，但是没有 fePaginationFilterMethod，则抛出错误
-// if (
-//   props.pagination === true &&
-//   searchColumns.value.length !== 0 &&
-//   !props.fePaginationFilterMethod
-// ) {
-//   ElMessage.error(t('error.fePaginationFilterMethodIsRequired'))
-// }
+if (
+  props.pagination === ProTablePaginationEnum.FE &&
+  searchColumns.value.length !== 0 &&
+  !props.fePaginationFilterMethod
+) {
+  ElMessage.error(t('error.fePaginationFilterMethodIsRequired'))
+}
 
 // 设置 搜索表单默认排序 && 搜索表单项的默认值
 searchColumns.value?.forEach((column, index) => {
@@ -383,21 +384,11 @@ const setSearchParamForm = (key: string, value: any) => {
 }
 
 // 列设置 ==> 需要过滤掉不需要设置的列
-// const colRef = ref()
-// const colSetting = tableColumns.value.filter(item => {
-//   const { type, prop, isSetting } = item
-//   return !columnTypes.includes(type!) && prop !== 'operation' && isSetting
-// })
-
-// 列设置 ==> 需要过滤掉不需要设置的列
 const colRef = ref()
 const colSetting = tableColumns.value.filter(item => {
-  // 添加空值检查
-  if (!item) return false
   const { type, prop, isSetting } = item
-  return type != null && !columnTypes.includes(type) && prop !== 'operation' && isSetting !== false
+  return !columnTypes.includes(type!) && prop !== TABLE_COLUMN_OPERATIONS_NAME && isSetting
 })
-
 const openColSetting = () => colRef.value.openColSetting()
 
 // 定义 emit 事件
