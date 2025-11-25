@@ -76,7 +76,7 @@
     <el-dialog
       v-model="dialogVisible"
       :title="title"
-      width="40%"
+      width="60%"
       destroy-on-close
       align-center
       center
@@ -107,7 +107,7 @@
           <el-input-number v-model="sysDeptForm.sort" controls-position="right" :min="0" :disabled="disabled" />
         </el-form-item>
         <el-form-item label="负责人" prop="userId">
-          <el-popover placement="bottom-start" :width="600" :show-arrow="false" trigger="click" :visible="isUserOpen">
+          <el-popover placement="bottom-start" :width="800" :show-arrow="false" trigger="click" :visible="isUserOpen">
             <template #reference>
               <el-button class="mr-4" @click.stop="userOpen">{{ userItem }}</el-button>
             </template>
@@ -119,7 +119,7 @@
                 :request-api="getCustomSysUserListApi"
                 :request-auto="true"
                 :tool-button="false"
-                :pagination-layout="'prev, pager, next'"
+                :layout="'prev, pager, next'"
                 :init-param="initUserParam"
                 :pagination="ProTablePaginationEnum.BE"
               >

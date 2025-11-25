@@ -43,7 +43,7 @@
     <el-dialog
       v-model="dialogVisible"
       :title="title"
-      width="40%"
+      width="60%"
       destroy-on-close
       align-center
       center

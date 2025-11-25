@@ -70,7 +70,7 @@
     <el-dialog
       v-model="dialogVisible"
       :title="title"
-      width="40%"
+      width="60%"
       destroy-on-close
       align-center
       center
@@ -91,7 +91,7 @@
           <el-input v-model="sysTenantForm.password" placeholder="请输入用户密码" show-password type="password" />
         </el-form-item>
         <el-form-item v-if="sysTenantForm.userId !== 0" label="负责人" prop="userId">
-          <el-popover placement="bottom-start" :width="600" :show-arrow="false" trigger="click" :visible="isUserOpen">
+          <el-popover placement="bottom-start" :width="800" :show-arrow="false" trigger="click" :visible="isUserOpen">
             <template #reference>
               <el-button class="mr-4" @click.stop="userOpen">{{ userItem }}</el-button>
             </template>
@@ -104,7 +104,7 @@
                 :request-api="getCustomSysTenantUserListApi"
                 :request-auto="false"
                 :tool-button="false"
-                :pagination-layout="'prev, pager, next'"
+                :layout="'prev, pager, next'"
                 :init-param="initUserParam"
                 :pagination="ProTablePaginationEnum.BE"
               >
