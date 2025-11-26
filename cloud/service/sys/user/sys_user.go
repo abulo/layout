@@ -58,6 +58,9 @@ func SysUserDao(item *SysUserObject) *dao.SysUser {
 		var deptIdsByte []byte
 		if err := json.Unmarshal(item.GetDeptIds(), &deptIds); err == nil {
 			for _, deptId := range deptIds {
+				if deptId == 0 {
+					continue
+				}
 				if !util.InArray(deptId, deptIdsNew) {
 					deptIdsNew = append(deptIdsNew, deptId)
 				}
@@ -73,6 +76,9 @@ func SysUserDao(item *SysUserObject) *dao.SysUser {
 		var postIdsByte []byte
 		if err := json.Unmarshal(item.GetPostIds(), &postIds); err == nil {
 			for _, postId := range postIds {
+				if postId == 0 {
+					continue
+				}
 				if !util.InArray(postId, postIdsNew) {
 					postIdsNew = append(postIdsNew, postId)
 				}
@@ -88,6 +94,9 @@ func SysUserDao(item *SysUserObject) *dao.SysUser {
 		var roleIdsByte []byte
 		if err := json.Unmarshal(item.GetRoleIds(), &roleIds); err == nil {
 			for _, roleId := range roleIds {
+				if roleId == 0 {
+					continue
+				}
 				if !util.InArray(roleId, roleIdsNew) {
 					roleIdsNew = append(roleIdsNew, roleId)
 				}

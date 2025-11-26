@@ -40,6 +40,9 @@ func SysUserCreate(ctx context.Context, data dao.SysUser) (res int64, err error)
 		return
 	}
 	for _, deptId := range userDeptIds {
+		if deptId == 0 {
+			continue
+		}
 		userDeptList = append(userDeptList, dao.SysUserDept{
 			UserId:   data.Id,
 			DeptId:   proto.Int64(deptId),
@@ -61,6 +64,9 @@ func SysUserCreate(ctx context.Context, data dao.SysUser) (res int64, err error)
 		return
 	}
 	for _, postId := range userPostIds {
+		if postId == 0 {
+			continue
+		}
 		userPostList = append(userPostList, dao.SysUserPost{
 			UserId:   data.Id,
 			PostId:   proto.Int64(postId),
@@ -82,6 +88,9 @@ func SysUserCreate(ctx context.Context, data dao.SysUser) (res int64, err error)
 		return
 	}
 	for _, roleId := range userRoleIds {
+		if roleId == 0 {
+			continue
+		}
 		userRoleList = append(userRoleList, dao.SysUserRole{
 			UserId:   data.Id,
 			RoleId:   proto.Int64(roleId),
@@ -95,6 +104,7 @@ func SysUserCreate(ctx context.Context, data dao.SysUser) (res int64, err error)
 			return
 		}
 	}
+	err = tx.Commit().Error
 	return
 }
 
@@ -320,6 +330,7 @@ func SysUserList(ctx context.Context, condition map[string]any) (res []dao.SysUs
 	case 5: // 仅本人数据
 		newBuilder.Where("sys_user_dept.user_id= ?", userId)
 	}
+	newBuilder.Group("newTable.id")
 	if val, ok := condition["pagination"]; ok {
 		pagination := val.(*sql.Pagination)
 		if val, err := pagination.GetOffset(); err == nil {
@@ -390,6 +401,7 @@ func SysUserListTotal(ctx context.Context, condition map[string]any) (res int64,
 	case 5: // 仅本人数据
 		newBuilder.Where("sys_user_dept.user_id= ?", userId)
 	}
+	newBuilder.Group("newTable.id")
 	newBuilder.Count(&res)
 	return
 }

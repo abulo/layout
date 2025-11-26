@@ -85,6 +85,62 @@
         <el-form-item v-if="sysUserForm.id === 0" label="密码" prop="password">
           <el-input v-model="sysUserForm.password" show-password type="password" :disabled="disabled" />
         </el-form-item>
+        <el-form-item label="角色" prop="roleIds">
+          <el-select v-model="sysUserForm.roleIds" multiple placeholder="请选择角色" :disabled="disabled">
+            <el-option
+              v-for="item in roleOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+              :disabled="disabled"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="职位" prop="postIds">
+          <el-select v-model="sysUserForm.postIds" multiple placeholder="请选择职位" :disabled="disabled">
+            <el-option
+              v-for="item in postOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+              :disabled="disabled"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="部门" prop="deptIds">
+          <el-card class="cardHeight">
+            <template #header>
+              全选/不选:
+              <el-switch
+                v-model="deptSelect"
+                active-text="是"
+                inactive-text="否"
+                inline-prompt
+                @change="handleDeptSelect"
+              />
+              展开/折叠:
+              <el-switch
+                v-model="deptExpand"
+                active-text="展开"
+                inactive-text="折叠"
+                inline-prompt
+                @change="handleDeptExpand"
+              />
+            </template>
+            <el-tree
+              ref="deptRef"
+              :data="deptOptions"
+              :props="{
+                children: 'children',
+                label: 'name',
+              }"
+              :list="sysUserForm.deptIds"
+              empty-text="加载中，请稍候"
+              node-key="id"
+              show-checkbox
+            />
+          </el-card>
+        </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="sysUserForm.status">
             <el-radio-button
@@ -121,7 +177,7 @@ import {
   addSysUserApi,
   updateSysUserApi,
 } from '@/api/modules/sysUser'
-import type { FormInstance, FormRules } from 'element-plus'
+import type { FormInstance, FormRules, ElTree } from 'element-plus'
 import { getIntDictOptions } from '@/utils/dict'
 import { DictTag } from '@/components/DictTag'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
@@ -129,6 +185,16 @@ import { HasAuth } from '@/utils/auth'
 import { useLoadingStore } from '@/stores/modules/loading'
 import { storeToRefs } from 'pinia'
 import { ProTablePaginationEnum } from '@/enums'
+import { handleTree } from '@pureadmin/utils'
+import { getSysRoleListSimpleApi } from '@/api/modules/sysRole'
+import { getSysDeptListSimpleApi } from '@/api/modules/sysDept'
+import { getSysPostListSimpleApi } from '@/api/modules/sysPost'
+import { ResSysDept } from '@/api/interface/sysDept'
+import { ResSysPost } from '@/api/interface/sysPost'
+import { ResSysRole } from '@/api/interface/sysRole'
+import { useTimeoutFn } from '@vueuse/core'
+import Node from 'element-plus/es/components/tree/src/model/node'
+import { encryptPassword } from '@/utils'
 // 获取loading状态
 const { loading } = storeToRefs(useLoadingStore())
 //禁用
@@ -141,6 +207,20 @@ const proTable = ref<ProTableInstance>()
 const dialogVisible = ref(false)
 // 状态枚举
 const statusEnum = getIntDictOptions('status')
+// 定义部门
+const deptOptions = ref<ResSysDept[]>([])
+// 定义岗位
+const postOptions = ref<ResSysPost[]>([])
+// 定义角色
+const roleOptions = ref<ResSysRole[]>([])
+
+// 获取选择
+const deptSelect = ref(false)
+// 菜单ref
+const deptRef = ref<InstanceType<typeof ElTree>>()
+// 菜单展开/折叠
+const deptExpand = ref(false)
+
 //数据接口
 const sysUserForm = ref<ResSysUser>({
   id: 0, // 编号
@@ -213,6 +293,9 @@ const reset = () => {
   // loading.value = false
   resetSysUser()
   disabled.value = true
+  deptSelect.value = false
+  deptExpand.value = false
+  deptRef.value?.setCheckedNodes([])
 }
 /**
  * 处理新增操作
@@ -222,6 +305,7 @@ const handleAdd = () => {
   title.value = '新增用户'
   dialogVisible.value = true
   reset()
+  getOptions()
   disabled.value = false
 }
 /**
@@ -232,9 +316,15 @@ const handleUpdate = async (row: ResSysUser) => {
   title.value = '编辑用户'
   dialogVisible.value = true
   reset()
+  getOptions()
   const { data } = await getSysUserApi(Number(row.id))
   sysUserForm.value = data
   disabled.value = false
+  useTimeoutFn(() => {
+    data.deptIds?.forEach((deptId: number) => {
+      deptRef.value?.setChecked(deptId, true, false)
+    })
+  }, 200)
 }
 /**
  * 处理查看操作
@@ -244,9 +334,15 @@ const handleItem = async (row: ResSysUser) => {
   title.value = '查看用户'
   dialogVisible.value = true
   reset()
+  getOptions()
   const { data } = await getSysUserApi(Number(row.id))
   sysUserForm.value = data
   disabled.value = true
+  useTimeoutFn(() => {
+    data.deptIds?.forEach((deptId: number) => {
+      deptRef.value?.setChecked(deptId, true, false)
+    })
+  }, 200)
 }
 /**
  * 处理清理操作
@@ -273,6 +369,33 @@ const handleRecover = async (row: ResSysUser) => {
   proTable.value?.getTableList()
 }
 
+// 获取菜单选项
+const getOptions = async () => {
+  const { data: deptItem } = await getSysDeptListSimpleApi()
+  deptOptions.value = handleTree(deptItem)
+  const { data: roleItem } = await getSysRoleListSimpleApi()
+  roleOptions.value = roleItem
+  const { data: postItem } = await getSysPostListSimpleApi()
+  postOptions.value = handleTree(postItem)
+}
+
+/** 全选/全不选 */
+const handleDeptSelect = () => {
+  let data = deptSelect.value ? deptOptions.value : []
+  deptRef.value!.setCheckedNodes(data as unknown as Node[])
+}
+
+/** 展开/折叠全部 */
+const handleDeptExpand = () => {
+  const nodes = deptRef.value?.store.nodesMap
+  for (let node in nodes) {
+    if (nodes[node].expanded === deptExpand.value) {
+      continue
+    }
+    nodes[node].expanded = deptExpand.value
+  }
+}
+
 /**
  * 重置表单并关闭对话框
  * @param formEl - 表单实例对象，用于调用重置方法
@@ -290,9 +413,14 @@ const submitForm = (formEl: FormInstance | undefined) => {
     if (!valid) return
     // loading.value = true
     const data = sysUserForm.value as unknown as ResSysUser
+    data.deptIds = [
+      ...(deptRef.value!.getCheckedKeys(false) as unknown as Array<number>), // 获得当前选中节点
+      ...(deptRef.value!.getHalfCheckedKeys() as unknown as Array<number>), // 获得半选中的父节点
+    ]
     if (data.id !== 0) {
       await useHandleSet(updateSysUserApi, data.id, data, '修改用户')
     } else {
+      data.password = encryptPassword(data.password)
       await useHandleData(addSysUserApi, data, '添加用户')
     }
     resetForm(formEl)
