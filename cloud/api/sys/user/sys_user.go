@@ -393,8 +393,8 @@ func SysUserList(ctx context.Context, newCtx *app.RequestContext) {
 	requestTotal.Deleted = proto.Int32(0)                            // 删除状态
 	if val, ok := newCtx.GetQuery("deleted"); ok {
 		if cast.ToBool(val) {
-			request.Deleted = nil
-			requestTotal.Deleted = nil
+			request.Deleted = proto.Int32(1)
+			requestTotal.Deleted = proto.Int32(1)
 		}
 	}
 	if val, ok := newCtx.GetQuery("deptId"); ok {
@@ -553,8 +553,8 @@ func SysUserListSimple(ctx context.Context, newCtx *app.RequestContext) {
 	requestTotal.Deleted = proto.Int32(0)                            // 删除状态
 	if val, ok := newCtx.GetQuery("deleted"); ok {
 		if cast.ToBool(val) {
-			request.Deleted = nil
-			requestTotal.Deleted = nil
+			request.Deleted = proto.Int32(1)
+			requestTotal.Deleted = proto.Int32(1)
 		}
 	}
 	if val, ok := newCtx.GetQuery("deptId"); ok {
