@@ -155,6 +155,9 @@ const sysUserForm = ref<ResSysUser>({
   createTime: undefined, // 创建时间
   updater: undefined, // 更新人
   updateTime: undefined, // 更新时间
+  roleIds: undefined, // 角色编号
+  deptIds: undefined, // 部门编号
+  postIds: undefined, // 岗位编号
 })
 //表单
 const refSysUserForm = ref<FormInstance>()
@@ -196,6 +199,9 @@ const resetSysUser = () => {
     createTime: undefined, // 创建时间
     updater: undefined, // 更新人
     updateTime: undefined, // 更新时间
+    roleIds: undefined, // 角色编号
+    deptIds: undefined, // 部门编号
+    postIds: undefined, // 岗位编号
   })
 }
 

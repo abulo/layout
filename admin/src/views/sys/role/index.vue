@@ -213,6 +213,7 @@ import { ResSysDept } from '@/api/interface/sysDept'
 import { getSysDeptListSimpleApi } from '@/api/modules/sysDept'
 import { handleTree } from '@pureadmin/utils'
 import { useTimeoutFn } from '@vueuse/core'
+import Node from 'element-plus/es/components/tree/src/model/node'
 // 获取loading状态
 const { loading } = storeToRefs(useLoadingStore())
 //禁用
