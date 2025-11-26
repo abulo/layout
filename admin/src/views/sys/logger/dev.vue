@@ -23,7 +23,7 @@
           :icon="Delete"
           @click="handleDelete(scope.row)"
         >
-          查看
+          删除
         </el-button>
       </template>
     </ProTable>
