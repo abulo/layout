@@ -5,6 +5,7 @@ import (
 	"cloud/api/sys/dict"
 	"cloud/api/sys/menu"
 	"cloud/api/sys/post"
+	"cloud/api/sys/role"
 	"cloud/api/sys/tenant"
 	"cloud/api/sys/user"
 	"cloud/internal/middleware"
@@ -62,6 +63,11 @@ func SysInitRoute(handle *xhertz.Server) {
 		route.GET("/sys/user/:id/item", user.SysUser)
 		// sys_user->用户->列表(精简)
 		route.GET("/sys/user/simple", user.SysUserListSimple)
+
+		// sys_role->角色->单条数据信息查看
+		route.GET("/sys/role/:id/item", role.SysRole)
+		// sys_role->角色->列表(精简)
+		route.GET("/sys/role/simple", role.SysRoleListSimple)
 	}
 
 	route = handle.Group("/v1").Use(middleware.TokenMiddleware(), middleware.AuthMiddleware())
@@ -155,6 +161,19 @@ func SysInitRoute(handle *xhertz.Server) {
 		route.DELETE("/sys/user/:id/drop", user.SysUserDrop)
 		// sys_user->用户->列表
 		route.GET("/sys/user", user.SysUserList)
+
+		// sys_role->角色->创建
+		route.POST("/sys/role", role.SysRoleCreate)
+		// sys_role->角色->更新
+		route.PUT("/sys/role/:id/update", role.SysRoleUpdate)
+		// sys_role->角色->删除
+		route.DELETE("/sys/role/:id/delete", role.SysRoleDelete)
+		// sys_role->角色->恢复
+		route.PUT("/sys/role/:id/recover", role.SysRoleRecover)
+		// sys_role->角色->清理
+		route.DELETE("/sys/role/:id/drop", role.SysRoleDrop)
+		// sys_role->角色->列表
+		route.GET("/sys/role", role.SysRoleList)
 
 	}
 }

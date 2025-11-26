@@ -18,8 +18,8 @@ type SysTenant struct {
 	CreateTime    null.DateTime `gorm:"column:create_time" json:"createTime"`               //datetime 创建时间
 	Updater       null.String   `gorm:"column:updater" json:"updater"`                      //varchar 更新人
 	UpdateTime    null.DateTime `gorm:"column:update_time" json:"updateTime"`               //datetime 更新时间
-	Username      *string       `gorm:"column:username,<-:false" json:"username,omitempty"` //varchar 用户名称
-	Password      *string       `gorm:"column:password,<-:false" json:"password,omitempty"` //varchar 用户密码
+	Username      *string       `gorm:"column:username;<-:false" json:"username,omitempty"` //varchar 用户名称
+	Password      *string       `gorm:"column:password;<-:false" json:"password,omitempty"` //varchar 用户密码
 }
 
 func (SysTenant) TableName() string {

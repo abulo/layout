@@ -83,6 +83,7 @@ func SysTenantCreate(ctx context.Context, data dao.SysTenant) (res int64, err er
 		tx.Rollback()
 		return
 	}
+	err = tx.Commit().Error
 	return
 }
 

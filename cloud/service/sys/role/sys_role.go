@@ -2,6 +2,7 @@ package role
 
 import (
 	"cloud/dao"
+	"encoding/json"
 
 	"github.com/abulo/ratel/v3/stores/null"
 	"github.com/abulo/ratel/v3/util"
@@ -27,7 +28,18 @@ func SysRoleDao(item *SysRoleObject) *dao.SysRole {
 		daoItem.Scope = null.Int32From(item.GetScope()) // 数据范围:1:全部数据权限/2:自定数据权限/3:本部门数据权限/4:本部门及以下数据权限
 	}
 	if item != nil && item.ScopeDept != nil {
-		daoItem.ScopeDept = null.JSONFrom(item.GetScopeDept()) // 数据范围(指定部门数组)
+		var deptIds []int64
+		var deptIdsNew []int64
+		var deptIdsByte []byte
+		if err := json.Unmarshal(item.GetScopeDept(), &deptIds); err == nil {
+			for _, deptId := range deptIds {
+				if !util.InArray(deptId, deptIdsNew) {
+					deptIdsNew = append(deptIdsNew, deptId)
+				}
+			}
+			deptIdsByte, _ = json.Marshal(deptIdsNew)
+		}
+		daoItem.ScopeDept = null.JSONFrom(deptIdsByte)
 	}
 	if item != nil && item.Sort != nil {
 		daoItem.Sort = item.Sort // 排序
@@ -52,6 +64,21 @@ func SysRoleDao(item *SysRoleObject) *dao.SysRole {
 	}
 	if item != nil && item.UpdateTime != nil {
 		daoItem.UpdateTime = null.DateTimeFrom(util.GrpcTime(item.UpdateTime)) // 更新时间
+	}
+	if item != nil && item.MenuIds != nil {
+		// 这里需要将数据去重一下
+		var menuIds []int64
+		var menuIdsNew []int64
+		var menuIdsByte []byte
+		if err := json.Unmarshal(item.GetMenuIds(), &menuIds); err == nil {
+			for _, menuId := range menuIds {
+				if !util.InArray(menuId, menuIdsNew) {
+					menuIdsNew = append(menuIdsNew, menuId)
+				}
+			}
+			menuIdsByte, _ = json.Marshal(menuIdsNew)
+		}
+		daoItem.MenuIds = null.JSONFrom(menuIdsByte)
 	}
 
 	return daoItem
@@ -98,6 +125,9 @@ func SysRoleProto(item dao.SysRole) *SysRoleObject {
 	}
 	if item.UpdateTime.IsValid() {
 		res.UpdateTime = timestamppb.New(*item.UpdateTime.Ptr())
+	}
+	if item.MenuIds.IsValid() {
+		res.MenuIds = *item.MenuIds.Ptr()
 	}
 
 	return res

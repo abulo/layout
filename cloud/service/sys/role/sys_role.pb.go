@@ -53,7 +53,9 @@ type SysRoleObject struct {
 	// @inject_tag: gorm:"column:updater" json:"updater"
 	Updater *string `protobuf:"bytes,12,opt,name=updater,proto3,oneof" json:"updater" gorm:"column:updater"` //更新人
 	// @inject_tag: gorm:"column:update_time" json:"updateTime"
-	UpdateTime    *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=update_time,json=updateTime,proto3" json:"updateTime" gorm:"column:update_time"` //更新时间
+	UpdateTime *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=update_time,json=updateTime,proto3" json:"updateTime" gorm:"column:update_time"` //更新时间
+	// @inject_tag: db:"menu_ids" json:"menuIds"
+	MenuIds       []byte `protobuf:"bytes,14,opt,name=menu_ids,json=menuIds,proto3,oneof" json:"menuIds" db:"menu_ids"` //菜单
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -175,6 +177,13 @@ func (x *SysRoleObject) GetUpdater() string {
 func (x *SysRoleObject) GetUpdateTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.UpdateTime
+	}
+	return nil
+}
+
+func (x *SysRoleObject) GetMenuIds() []byte {
+	if x != nil {
+		return x.MenuIds
 	}
 	return nil
 }
@@ -1211,7 +1220,7 @@ var File_sys_role_proto protoreflect.FileDescriptor
 
 const file_sys_role_proto_rawDesc = "" +
 	"\n" +
-	"\x0esys_role.proto\x12\x04role\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\xbc\x04\n" +
+	"\x0esys_role.proto\x12\x04role\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\xe9\x04\n" +
 	"\rSysRoleObject\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x01R\x04name\x88\x01\x01\x12\x17\n" +
@@ -1230,7 +1239,8 @@ const file_sys_role_proto_rawDesc = "" +
 	"\aupdater\x18\f \x01(\tH\n" +
 	"R\aupdater\x88\x01\x01\x12;\n" +
 	"\vupdate_time\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"updateTimeB\x05\n" +
+	"updateTime\x12\x1e\n" +
+	"\bmenu_ids\x18\x0e \x01(\fH\vR\amenuIds\x88\x01\x01B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\a\n" +
 	"\x05_codeB\b\n" +
@@ -1245,7 +1255,8 @@ const file_sys_role_proto_rawDesc = "" +
 	"\n" +
 	"\b_creatorB\n" +
 	"\n" +
-	"\b_updater\"P\n" +
+	"\b_updaterB\v\n" +
+	"\t_menu_ids\"P\n" +
 	"\x14SysRoleTotalResponse\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x03R\x04code\x12\x10\n" +
 	"\x03msg\x18\x02 \x01(\tR\x03msg\x12\x12\n" +

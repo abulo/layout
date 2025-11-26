@@ -51,14 +51,50 @@ func SysUserDao(item *SysUserObject) *dao.SysUser {
 	if item != nil && item.UpdateTime != nil {
 		daoItem.UpdateTime = null.DateTimeFrom(util.GrpcTime(item.UpdateTime)) // 更新时间
 	}
-	if item != nil && item.PostIds != nil {
-		daoItem.PostIds = null.JSONFrom(item.GetPostIds())
-	}
 	if item != nil && item.DeptIds != nil {
-		daoItem.DeptIds = null.JSONFrom(item.GetDeptIds())
+		// 这里需要将数据去重一下
+		var deptIds []int64
+		var deptIdsNew []int64
+		var deptIdsByte []byte
+		if err := json.Unmarshal(item.GetDeptIds(), &deptIds); err == nil {
+			for _, deptId := range deptIds {
+				if !util.InArray(deptId, deptIdsNew) {
+					deptIdsNew = append(deptIdsNew, deptId)
+				}
+			}
+			deptIdsByte, _ = json.Marshal(deptIdsNew)
+		}
+		daoItem.DeptIds = null.JSONFrom(deptIdsByte)
+	}
+	if item != nil && item.PostIds != nil {
+		// 这里需要将数据去重一下
+		var postIds []int64
+		var postIdsNew []int64
+		var postIdsByte []byte
+		if err := json.Unmarshal(item.GetPostIds(), &postIds); err == nil {
+			for _, postId := range postIds {
+				if !util.InArray(postId, postIdsNew) {
+					postIdsNew = append(postIdsNew, postId)
+				}
+			}
+			postIdsByte, _ = json.Marshal(postIdsNew)
+		}
+		daoItem.PostIds = null.JSONFrom(postIdsByte)
 	}
 	if item != nil && item.RoleIds != nil {
-		daoItem.RoleIds = null.JSONFrom(item.GetRoleIds())
+		// 这里需要将数据去重一下
+		var roleIds []int64
+		var roleIdsNew []int64
+		var roleIdsByte []byte
+		if err := json.Unmarshal(item.GetRoleIds(), &roleIds); err == nil {
+			for _, roleId := range roleIds {
+				if !util.InArray(roleId, roleIdsNew) {
+					roleIdsNew = append(roleIdsNew, roleId)
+				}
+			}
+			roleIdsByte, _ = json.Marshal(roleIdsNew)
+		}
+		daoItem.RoleIds = null.JSONFrom(roleIdsByte)
 	}
 
 	return daoItem

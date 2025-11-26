@@ -33,6 +33,8 @@ message SysRoleObject {
 	optional string updater = 12; //更新人
 	// @inject_tag: gorm:"column:update_time" json:"updateTime"
 	google.protobuf.Timestamp update_time = 13; //更新时间
+	// @inject_tag: db:"menu_ids" json:"menuIds"
+	optional bytes menu_ids = 14; //菜单
 }
 // SysRoleTotalResponse 列表数据总量
 message SysRoleTotalResponse {
@@ -104,7 +106,7 @@ message SysRoleDropResponse {
 }
 // SysRoleCodeRequest 查询单条数据请求
 message SysRoleCodeRequest {
-	
+
 	// @inject_tag: db:"tenant_id" json:"tenantId"
 	optional int64 tenant_id = 1; // 租户
 	// @inject_tag: db:"code" json:"code"
@@ -119,7 +121,7 @@ message SysRoleCodeResponse {
 }
 // SysRoleListRequest 列表数据
 message SysRoleListRequest {
-	
+
 	// @inject_tag: db:"tenant_id" json:"tenantId"
 	optional int64 tenant_id = 1; // 租户
 	// @inject_tag: db:"code" json:"code"
@@ -143,7 +145,7 @@ message SysRoleListResponse {
 }
 // SysRoleListTotalRequest 列表数据
 message SysRoleListTotalRequest {
-	
+
 	// @inject_tag: db:"tenant_id" json:"tenantId"
 	optional int64 tenant_id = 1; // 租户
 	// @inject_tag: db:"code" json:"code"

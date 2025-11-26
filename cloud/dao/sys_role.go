@@ -17,6 +17,7 @@ type SysRole struct {
 	CreateTime null.DateTime `gorm:"column:create_time" json:"createTime"`         //datetime 创建时间
 	Updater    null.String   `gorm:"column:updater" json:"updater"`                //varchar 更新人
 	UpdateTime null.DateTime `gorm:"column:update_time" json:"updateTime"`         //datetime 更新时间
+	MenuIds    null.JSON     `gorm:"column:menu_ids;<-:false" json:"menuIds"`      //菜单
 }
 
 func (SysRole) TableName() string {

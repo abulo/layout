@@ -125,6 +125,9 @@ func SysUserUpdate(ctx context.Context, id int64, data dao.SysUser) (res int64, 
 		return
 	}
 	for _, deptId := range userDeptIds {
+		if deptId == 0 {
+			continue
+		}
 		userDeptList = append(userDeptList, dao.SysUserDept{
 			UserId:   data.Id,
 			DeptId:   proto.Int64(deptId),
@@ -132,7 +135,7 @@ func SysUserUpdate(ctx context.Context, id int64, data dao.SysUser) (res int64, 
 		})
 	}
 
-	err = tx.WithContext(ctx).Model(&dao.SysUserDept{}).Where("tenant_id").Where("user_id = ?", id).Delete(&dao.SysUserDept{}).Error
+	err = tx.WithContext(ctx).Model(&dao.SysUserDept{}).Where("tenant_id = ?", data.TenantId).Where("user_id = ?", id).Delete(&dao.SysUserDept{}).Error
 	if err != nil {
 		tx.Rollback()
 		return
@@ -152,11 +155,19 @@ func SysUserUpdate(ctx context.Context, id int64, data dao.SysUser) (res int64, 
 		return
 	}
 	for _, postId := range userPostIds {
+		if postId == 0 {
+			continue
+		}
 		userPostList = append(userPostList, dao.SysUserPost{
 			UserId:   data.Id,
 			PostId:   proto.Int64(postId),
 			TenantId: data.TenantId,
 		})
+	}
+	err = tx.WithContext(ctx).Model(&dao.SysUserPost{}).Where("tenant_id = ?", data.TenantId).Where("user_id = ?", id).Delete(&dao.SysUserPost{}).Error
+	if err != nil {
+		tx.Rollback()
+		return
 	}
 	if len(userPostList) > 0 {
 		err = tx.WithContext(ctx).Model(&dao.SysUserPost{}).Create(&userPostList).Error
@@ -172,7 +183,15 @@ func SysUserUpdate(ctx context.Context, id int64, data dao.SysUser) (res int64, 
 		tx.Rollback()
 		return
 	}
+	err = tx.WithContext(ctx).Model(&dao.SysUserRole{}).Where("tenant_id = ?", data.TenantId).Where("user_id = ?", id).Delete(&dao.SysUserRole{}).Error
+	if err != nil {
+		tx.Rollback()
+		return
+	}
 	for _, roleId := range userRoleIds {
+		if roleId == 0 {
+			continue
+		}
 		userRoleList = append(userRoleList, dao.SysUserRole{
 			UserId:   data.Id,
 			RoleId:   proto.Int64(roleId),
@@ -186,7 +205,7 @@ func SysUserUpdate(ctx context.Context, id int64, data dao.SysUser) (res int64, 
 			return
 		}
 	}
-
+	err = tx.Commit().Error
 	return
 }
 
@@ -203,7 +222,9 @@ func SysUserDelete(ctx context.Context, id int64) (res int64, err error) {
 // SysUser 查询单条数据
 func SysUser(ctx context.Context, id int64) (res dao.SysUser, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Read()
-	err = db.WithContext(ctx).Model(&dao.SysUser{}).Select("`sys_user`.*", "COALESCE(( SELECT JSON_ARRAYAGG(dept_id)  FROM sys_user_dept  WHERE user_id = sys_user.id AND tenant_id = sys_user.tenant_id  ), JSON_ARRAY()) AS dept_ids", "COALESCE(( SELECT JSON_ARRAYAGG(post_id) FROM sys_user_post WHERE user_id = sys_user.id AND tenant_id = sys_user.tenant_id ), JSON_ARRAY()) AS post_ids", "COALESCE((  SELECT JSON_ARRAYAGG(role_id)  FROM sys_user_role   WHERE user_id = sys_user.id AND tenant_id = sys_user.tenant_id ), JSON_ARRAY()) AS role_ids").Where("sys_user.id = ?", id).Find(&res).Error
+	err = db.WithContext(ctx).Model(&dao.SysUser{}).Select("`sys_user`.*", "JSON_ARRAYAGG(sys_user_dept.dept_id) AS dept_ids",
+		"JSON_ARRAYAGG(sys_user_post.post_id) AS post_ids",
+		"JSON_ARRAYAGG(sys_user_role.role_id) AS role_ids").Joins("LEFT JOIN `sys_user_dept` ON `sys_user`.`id` = `sys_user_dept`.`user_id`  AND sys_user.tenant_id = sys_user_dept.tenant_id  LEFT JOIN `sys_dept` ON `sys_dept`.tenant_id = sys_user_dept.tenant_id  AND sys_dept.deleted = 0 LEFT JOIN  `sys_user_post` ON `sys_user`.`id` = `sys_user_post`.`user_id`  AND sys_user.tenant_id = sys_user_post.tenant_id LEFT JOIN  `sys_user_role` ON `sys_user`.`id` = `sys_user_role`.`user_id`  AND sys_user.tenant_id = sys_user_role.tenant_id").Where("sys_user.id = ?", id).Group("`sys_user`.id").Find(&res).Error
 	return
 }
 
@@ -232,7 +253,9 @@ func SysUserLogin(ctx context.Context, condition map[string]any) (res dao.SysUse
 		return
 	}
 	db := initial.Core.Store.LoadSQL("mysql").Read()
-	builder := db.WithContext(ctx).Model(&dao.SysUser{}).Select("`sys_user`.*", "COALESCE(( SELECT JSON_ARRAYAGG(dept_id)  FROM sys_user_dept  WHERE user_id = sys_user.id AND tenant_id = sys_user.tenant_id  ), JSON_ARRAY()) AS dept_ids", "COALESCE(( SELECT JSON_ARRAYAGG(post_id) FROM sys_user_post WHERE user_id = sys_user.id AND tenant_id = sys_user.tenant_id ), JSON_ARRAY()) AS post_ids", "COALESCE((  SELECT JSON_ARRAYAGG(role_id)  FROM sys_user_role   WHERE user_id = sys_user.id AND tenant_id = sys_user.tenant_id ), JSON_ARRAY()) AS role_ids")
+	builder := db.WithContext(ctx).Model(&dao.SysUser{}).Select("`sys_user`.*", "JSON_ARRAYAGG(sys_user_dept.dept_id) AS dept_ids",
+		"JSON_ARRAYAGG(sys_user_post.post_id) AS post_ids",
+		"JSON_ARRAYAGG(sys_user_role.role_id) AS role_ids").Joins("LEFT JOIN `sys_user_dept` ON `sys_user`.`id` = `sys_user_dept`.`user_id`  AND sys_user.tenant_id = sys_user_dept.tenant_id  LEFT JOIN `sys_dept` ON `sys_dept`.tenant_id = sys_user_dept.tenant_id  AND sys_dept.deleted = 0 LEFT JOIN  `sys_user_post` ON `sys_user`.`id` = `sys_user_post`.`user_id`  AND sys_user.tenant_id = sys_user_post.tenant_id LEFT JOIN  `sys_user_role` ON `sys_user`.`id` = `sys_user_role`.`user_id`  AND sys_user.tenant_id = sys_user_role.tenant_id")
 	if val, ok := condition["username"]; ok {
 		builder.Where("sys_user.username = ?", val)
 	}

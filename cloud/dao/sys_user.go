@@ -19,9 +19,9 @@ type SysUser struct {
 	CreateTime null.DateTime `gorm:"column:create_time" json:"createTime"`         //datetime 创建时间
 	Updater    null.String   `gorm:"column:updater" json:"updater"`                //varchar 更新人
 	UpdateTime null.DateTime `gorm:"column:update_time" json:"updateTime"`         //datetime 更新时间
-	DeptIds    null.JSON     `gorm:"column:dept_ids,<-:false" json:"deptIds"`      // 部门ID
-	RoleIds    null.JSON     `gorm:"column:role_ids,<-:false" json:"roleIds"`      // 角色ID
-	PostIds    null.JSON     `gorm:"column:post_ids,<-:false" json:"postIds"`      // 岗位ID
+	DeptIds    null.JSON     `gorm:"column:dept_ids;<-:false" json:"deptIds"`      // 部门ID
+	RoleIds    null.JSON     `gorm:"column:role_ids;<-:false" json:"roleIds"`      // 角色ID
+	PostIds    null.JSON     `gorm:"column:post_ids;<-:false" json:"postIds"`      // 岗位ID
 }
 
 type SysUserScope struct {

@@ -35,4 +35,7 @@ export interface ResSysUser {
   createTime: string | undefined // 创建时间
   updater: string | undefined // 更新人
   updateTime: string | undefined // 更新时间
+  roleIds: any | undefined // 角色编号
+  deptIds: any | undefined // 部门编号
+  postIds: any | undefined // 岗位编号
 }
