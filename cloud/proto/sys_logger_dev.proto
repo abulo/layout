@@ -74,16 +74,18 @@ message SysLoggerDevResponse {
 }
 // SysLoggerDevListRequest 列表数据
 message SysLoggerDevListRequest {
-	
-	// @inject_tag: db:"timestamp" json:"timestamp"
-	google.protobuf.Timestamp timestamp = 1; // 时间
+
+	// @inject_tag: db:"begin_timestamp" json:"beginTimestamp"
+	google.protobuf.Timestamp begin_timestamp = 1; // 时间
+	// @inject_tag: db:"finish_timestamp" json:"finishTimestamp"
+	google.protobuf.Timestamp finish_timestamp = 2;
 	// @inject_tag: db:"host" json:"host"
-	optional string host = 2; // 服务名
+	optional string host = 3; // 服务名
 	// @inject_tag: db:"level" json:"level"
-	optional string level = 3; // 等级
+	optional string level = 4; // 等级
 
 	// @inject_tag: json:"pagination"
-	optional pagination.PaginationRequest pagination = 4; // 分页
+	optional pagination.PaginationRequest pagination = 5; // 分页
 }
 
 // SysLoggerDevListResponse 数据响应
@@ -94,13 +96,15 @@ message SysLoggerDevListResponse {
 }
 // SysLoggerDevListTotalRequest 列表数据
 message SysLoggerDevListTotalRequest {
-	
-	// @inject_tag: db:"timestamp" json:"timestamp"
-	google.protobuf.Timestamp timestamp = 1; // 时间
+
+	// @inject_tag: db:"begin_timestamp" json:"beginTimestamp"
+	google.protobuf.Timestamp begin_timestamp = 1; // 时间
+	// @inject_tag: db:"finish_timestamp" json:"finishTimestamp"
+	google.protobuf.Timestamp finish_timestamp = 2;
 	// @inject_tag: db:"host" json:"host"
-	optional string host = 2; // 服务名
+	optional string host = 3; // 服务名
 	// @inject_tag: db:"level" json:"level"
-	optional string level = 3; // 等级
+	optional string level = 4; // 等级
 
 }
 

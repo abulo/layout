@@ -46,8 +46,11 @@ func SysLoggerDev(ctx context.Context, id int64) (res dao.SysLoggerDev, err erro
 func SysLoggerDevList(ctx context.Context, condition map[string]any) (res []dao.SysLoggerDev, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysLoggerDev{})
-	if val, ok := condition["timestamp"]; ok {
-		builder.Where("timestamp = ?", val)
+	if val, ok := condition["beginTimestamp"]; ok {
+		builder.Where("timestamp >= ?", val)
+	}
+	if val, ok := condition["finishTimestamp"]; ok {
+		builder.Where("timestamp <= ?", val)
 	}
 	if val, ok := condition["host"]; ok {
 		builder.Where("host = ?", val)
@@ -74,8 +77,11 @@ func SysLoggerDevList(ctx context.Context, condition map[string]any) (res []dao.
 func SysLoggerDevListTotal(ctx context.Context, condition map[string]any) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysLoggerDev{})
-	if val, ok := condition["timestamp"]; ok {
-		builder.Where("timestamp = ?", val)
+	if val, ok := condition["beginTimestamp"]; ok {
+		builder.Where("timestamp >= ?", val)
+	}
+	if val, ok := condition["finishTimestamp"]; ok {
+		builder.Where("timestamp <= ?", val)
 	}
 	if val, ok := condition["host"]; ok {
 		builder.Where("host = ?", val)

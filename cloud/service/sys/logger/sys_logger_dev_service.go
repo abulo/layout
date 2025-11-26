@@ -105,8 +105,11 @@ func (srv SrvSysLoggerDevServiceServer) SysLoggerDevList(ctx context.Context, re
 	// 数据库查询条件
 	condition := make(map[string]any)
 	// 构造查询条件
-	if request.Timestamp != nil {
-		condition["timestamp"] = request.GetTimestamp()
+	if request.BeginTimestamp != nil {
+		condition["beginTimestamp"] = request.GetBeginTimestamp()
+	}
+	if request.FinishTimestamp != nil {
+		condition["finishTimestamp"] = request.GetFinishTimestamp()
 	}
 	if request.Host != nil {
 		condition["host"] = request.GetHost()
@@ -160,8 +163,12 @@ func (srv SrvSysLoggerDevServiceServer) SysLoggerDevListTotal(ctx context.Contex
 	// 数据库查询条件
 	condition := make(map[string]any)
 	// 构造查询条件
-	if request.Timestamp != nil {
-		condition["timestamp"] = request.GetTimestamp()
+	// 构造查询条件
+	if request.BeginTimestamp != nil {
+		condition["beginTimestamp"] = request.GetBeginTimestamp()
+	}
+	if request.FinishTimestamp != nil {
+		condition["finishTimestamp"] = request.GetFinishTimestamp()
 	}
 	if request.Host != nil {
 		condition["host"] = request.GetHost()

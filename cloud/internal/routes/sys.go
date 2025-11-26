@@ -3,6 +3,7 @@ package routes
 import (
 	"cloud/api/sys/dept"
 	"cloud/api/sys/dict"
+	"cloud/api/sys/logger"
 	"cloud/api/sys/menu"
 	"cloud/api/sys/post"
 	"cloud/api/sys/role"
@@ -68,6 +69,9 @@ func SysInitRoute(handle *xhertz.Server) {
 		route.GET("/sys/role/:id/item", role.SysRole)
 		// sys_role->角色->列表(精简)
 		route.GET("/sys/role/simple", role.SysRoleListSimple)
+
+		// sys_logger_dev->开发日志->单条数据信息查看
+		route.GET("/sys/logger/dev/:id/item", logger.SysLoggerDev)
 	}
 
 	route = handle.Group("/v1").Use(middleware.TokenMiddleware(), middleware.AuthMiddleware())
@@ -174,6 +178,11 @@ func SysInitRoute(handle *xhertz.Server) {
 		route.DELETE("/sys/role/:id/drop", role.SysRoleDrop)
 		// sys_role->角色->列表
 		route.GET("/sys/role", role.SysRoleList)
+
+		// sys_logger_dev->开发日志->删除
+		route.DELETE("/sys/logger/dev/:id/delete", logger.SysLoggerDevDelete)
+		// sys_logger_dev->开发日志->列表
+		route.GET("/sys/logger/dev", logger.SysLoggerDevList)
 
 	}
 }

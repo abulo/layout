@@ -617,14 +617,16 @@ func (x *SysLoggerDevResponse) GetData() *SysLoggerDevObject {
 // SysLoggerDevListRequest 列表数据
 type SysLoggerDevListRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// @inject_tag: db:"timestamp" json:"timestamp"
-	Timestamp *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=timestamp,proto3" json:"timestamp" db:"timestamp"` // 时间
+	// @inject_tag: db:"begin_timestamp" json:"beginTimestamp"
+	BeginTimestamp *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=begin_timestamp,json=beginTimestamp,proto3" json:"beginTimestamp" db:"begin_timestamp"` // 时间
+	// @inject_tag: db:"finish_timestamp" json:"finishTimestamp"
+	FinishTimestamp *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=finish_timestamp,json=finishTimestamp,proto3" json:"finishTimestamp" db:"finish_timestamp"`
 	// @inject_tag: db:"host" json:"host"
-	Host *string `protobuf:"bytes,2,opt,name=host,proto3,oneof" json:"host" db:"host"` // 服务名
+	Host *string `protobuf:"bytes,3,opt,name=host,proto3,oneof" json:"host" db:"host"` // 服务名
 	// @inject_tag: db:"level" json:"level"
-	Level *string `protobuf:"bytes,3,opt,name=level,proto3,oneof" json:"level" db:"level"` // 等级
+	Level *string `protobuf:"bytes,4,opt,name=level,proto3,oneof" json:"level" db:"level"` // 等级
 	// @inject_tag: json:"pagination"
-	Pagination    *pagination.PaginationRequest `protobuf:"bytes,4,opt,name=pagination,proto3,oneof" json:"pagination"` // 分页
+	Pagination    *pagination.PaginationRequest `protobuf:"bytes,5,opt,name=pagination,proto3,oneof" json:"pagination"` // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -659,9 +661,16 @@ func (*SysLoggerDevListRequest) Descriptor() ([]byte, []int) {
 	return file_sys_logger_dev_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *SysLoggerDevListRequest) GetTimestamp() *timestamppb.Timestamp {
+func (x *SysLoggerDevListRequest) GetBeginTimestamp() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Timestamp
+		return x.BeginTimestamp
+	}
+	return nil
+}
+
+func (x *SysLoggerDevListRequest) GetFinishTimestamp() *timestamppb.Timestamp {
+	if x != nil {
+		return x.FinishTimestamp
 	}
 	return nil
 }
@@ -751,12 +760,14 @@ func (x *SysLoggerDevListResponse) GetData() []*SysLoggerDevObject {
 // SysLoggerDevListTotalRequest 列表数据
 type SysLoggerDevListTotalRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// @inject_tag: db:"timestamp" json:"timestamp"
-	Timestamp *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=timestamp,proto3" json:"timestamp" db:"timestamp"` // 时间
+	// @inject_tag: db:"begin_timestamp" json:"beginTimestamp"
+	BeginTimestamp *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=begin_timestamp,json=beginTimestamp,proto3" json:"beginTimestamp" db:"begin_timestamp"` // 时间
+	// @inject_tag: db:"finish_timestamp" json:"finishTimestamp"
+	FinishTimestamp *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=finish_timestamp,json=finishTimestamp,proto3" json:"finishTimestamp" db:"finish_timestamp"`
 	// @inject_tag: db:"host" json:"host"
-	Host *string `protobuf:"bytes,2,opt,name=host,proto3,oneof" json:"host" db:"host"` // 服务名
+	Host *string `protobuf:"bytes,3,opt,name=host,proto3,oneof" json:"host" db:"host"` // 服务名
 	// @inject_tag: db:"level" json:"level"
-	Level         *string `protobuf:"bytes,3,opt,name=level,proto3,oneof" json:"level" db:"level"` // 等级
+	Level         *string `protobuf:"bytes,4,opt,name=level,proto3,oneof" json:"level" db:"level"` // 等级
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -791,9 +802,16 @@ func (*SysLoggerDevListTotalRequest) Descriptor() ([]byte, []int) {
 	return file_sys_logger_dev_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *SysLoggerDevListTotalRequest) GetTimestamp() *timestamppb.Timestamp {
+func (x *SysLoggerDevListTotalRequest) GetBeginTimestamp() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Timestamp
+		return x.BeginTimestamp
+	}
+	return nil
+}
+
+func (x *SysLoggerDevListTotalRequest) GetFinishTimestamp() *timestamppb.Timestamp {
+	if x != nil {
+		return x.FinishTimestamp
 	}
 	return nil
 }
@@ -860,13 +878,14 @@ const file_sys_logger_dev_proto_rawDesc = "" +
 	"\x14SysLoggerDevResponse\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x03R\x04code\x12\x10\n" +
 	"\x03msg\x18\x02 \x01(\tR\x03msg\x12.\n" +
-	"\x04data\x18\x03 \x01(\v2\x1a.logger.SysLoggerDevObjectR\x04data\"\xed\x01\n" +
-	"\x17SysLoggerDevListRequest\x128\n" +
-	"\ttimestamp\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp\x12\x17\n" +
-	"\x04host\x18\x02 \x01(\tH\x00R\x04host\x88\x01\x01\x12\x19\n" +
-	"\x05level\x18\x03 \x01(\tH\x01R\x05level\x88\x01\x01\x12B\n" +
+	"\x04data\x18\x03 \x01(\v2\x1a.logger.SysLoggerDevObjectR\x04data\"\xbf\x02\n" +
+	"\x17SysLoggerDevListRequest\x12C\n" +
+	"\x0fbegin_timestamp\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x0ebeginTimestamp\x12E\n" +
+	"\x10finish_timestamp\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x0ffinishTimestamp\x12\x17\n" +
+	"\x04host\x18\x03 \x01(\tH\x00R\x04host\x88\x01\x01\x12\x19\n" +
+	"\x05level\x18\x04 \x01(\tH\x01R\x05level\x88\x01\x01\x12B\n" +
 	"\n" +
-	"pagination\x18\x04 \x01(\v2\x1d.pagination.PaginationRequestH\x02R\n" +
+	"pagination\x18\x05 \x01(\v2\x1d.pagination.PaginationRequestH\x02R\n" +
 	"pagination\x88\x01\x01B\a\n" +
 	"\x05_hostB\b\n" +
 	"\x06_levelB\r\n" +
@@ -874,11 +893,12 @@ const file_sys_logger_dev_proto_rawDesc = "" +
 	"\x18SysLoggerDevListResponse\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x03R\x04code\x12\x10\n" +
 	"\x03msg\x18\x02 \x01(\tR\x03msg\x12.\n" +
-	"\x04data\x18\x03 \x03(\v2\x1a.logger.SysLoggerDevObjectR\x04data\"\x9f\x01\n" +
-	"\x1cSysLoggerDevListTotalRequest\x128\n" +
-	"\ttimestamp\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp\x12\x17\n" +
-	"\x04host\x18\x02 \x01(\tH\x00R\x04host\x88\x01\x01\x12\x19\n" +
-	"\x05level\x18\x03 \x01(\tH\x01R\x05level\x88\x01\x01B\a\n" +
+	"\x04data\x18\x03 \x03(\v2\x1a.logger.SysLoggerDevObjectR\x04data\"\xf1\x01\n" +
+	"\x1cSysLoggerDevListTotalRequest\x12C\n" +
+	"\x0fbegin_timestamp\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x0ebeginTimestamp\x12E\n" +
+	"\x10finish_timestamp\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x0ffinishTimestamp\x12\x17\n" +
+	"\x04host\x18\x03 \x01(\tH\x00R\x04host\x88\x01\x01\x12\x19\n" +
+	"\x05level\x18\x04 \x01(\tH\x01R\x05level\x88\x01\x01B\a\n" +
 	"\x05_hostB\b\n" +
 	"\x06_level2\xb0\x04\n" +
 	"\x13SysLoggerDevService\x12[\n" +
@@ -924,27 +944,29 @@ var file_sys_logger_dev_proto_depIdxs = []int32{
 	0,  // 1: logger.SysLoggerDevCreateRequest.data:type_name -> logger.SysLoggerDevObject
 	0,  // 2: logger.SysLoggerDevUpdateRequest.data:type_name -> logger.SysLoggerDevObject
 	0,  // 3: logger.SysLoggerDevResponse.data:type_name -> logger.SysLoggerDevObject
-	13, // 4: logger.SysLoggerDevListRequest.timestamp:type_name -> google.protobuf.Timestamp
-	14, // 5: logger.SysLoggerDevListRequest.pagination:type_name -> pagination.PaginationRequest
-	0,  // 6: logger.SysLoggerDevListResponse.data:type_name -> logger.SysLoggerDevObject
-	13, // 7: logger.SysLoggerDevListTotalRequest.timestamp:type_name -> google.protobuf.Timestamp
-	2,  // 8: logger.SysLoggerDevService.SysLoggerDevCreate:input_type -> logger.SysLoggerDevCreateRequest
-	4,  // 9: logger.SysLoggerDevService.SysLoggerDevUpdate:input_type -> logger.SysLoggerDevUpdateRequest
-	6,  // 10: logger.SysLoggerDevService.SysLoggerDevDelete:input_type -> logger.SysLoggerDevDeleteRequest
-	8,  // 11: logger.SysLoggerDevService.SysLoggerDev:input_type -> logger.SysLoggerDevRequest
-	10, // 12: logger.SysLoggerDevService.SysLoggerDevList:input_type -> logger.SysLoggerDevListRequest
-	12, // 13: logger.SysLoggerDevService.SysLoggerDevListTotal:input_type -> logger.SysLoggerDevListTotalRequest
-	3,  // 14: logger.SysLoggerDevService.SysLoggerDevCreate:output_type -> logger.SysLoggerDevCreateResponse
-	5,  // 15: logger.SysLoggerDevService.SysLoggerDevUpdate:output_type -> logger.SysLoggerDevUpdateResponse
-	7,  // 16: logger.SysLoggerDevService.SysLoggerDevDelete:output_type -> logger.SysLoggerDevDeleteResponse
-	9,  // 17: logger.SysLoggerDevService.SysLoggerDev:output_type -> logger.SysLoggerDevResponse
-	11, // 18: logger.SysLoggerDevService.SysLoggerDevList:output_type -> logger.SysLoggerDevListResponse
-	1,  // 19: logger.SysLoggerDevService.SysLoggerDevListTotal:output_type -> logger.SysLoggerDevTotalResponse
-	14, // [14:20] is the sub-list for method output_type
-	8,  // [8:14] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	13, // 4: logger.SysLoggerDevListRequest.begin_timestamp:type_name -> google.protobuf.Timestamp
+	13, // 5: logger.SysLoggerDevListRequest.finish_timestamp:type_name -> google.protobuf.Timestamp
+	14, // 6: logger.SysLoggerDevListRequest.pagination:type_name -> pagination.PaginationRequest
+	0,  // 7: logger.SysLoggerDevListResponse.data:type_name -> logger.SysLoggerDevObject
+	13, // 8: logger.SysLoggerDevListTotalRequest.begin_timestamp:type_name -> google.protobuf.Timestamp
+	13, // 9: logger.SysLoggerDevListTotalRequest.finish_timestamp:type_name -> google.protobuf.Timestamp
+	2,  // 10: logger.SysLoggerDevService.SysLoggerDevCreate:input_type -> logger.SysLoggerDevCreateRequest
+	4,  // 11: logger.SysLoggerDevService.SysLoggerDevUpdate:input_type -> logger.SysLoggerDevUpdateRequest
+	6,  // 12: logger.SysLoggerDevService.SysLoggerDevDelete:input_type -> logger.SysLoggerDevDeleteRequest
+	8,  // 13: logger.SysLoggerDevService.SysLoggerDev:input_type -> logger.SysLoggerDevRequest
+	10, // 14: logger.SysLoggerDevService.SysLoggerDevList:input_type -> logger.SysLoggerDevListRequest
+	12, // 15: logger.SysLoggerDevService.SysLoggerDevListTotal:input_type -> logger.SysLoggerDevListTotalRequest
+	3,  // 16: logger.SysLoggerDevService.SysLoggerDevCreate:output_type -> logger.SysLoggerDevCreateResponse
+	5,  // 17: logger.SysLoggerDevService.SysLoggerDevUpdate:output_type -> logger.SysLoggerDevUpdateResponse
+	7,  // 18: logger.SysLoggerDevService.SysLoggerDevDelete:output_type -> logger.SysLoggerDevDeleteResponse
+	9,  // 19: logger.SysLoggerDevService.SysLoggerDev:output_type -> logger.SysLoggerDevResponse
+	11, // 20: logger.SysLoggerDevService.SysLoggerDevList:output_type -> logger.SysLoggerDevListResponse
+	1,  // 21: logger.SysLoggerDevService.SysLoggerDevListTotal:output_type -> logger.SysLoggerDevTotalResponse
+	16, // [16:22] is the sub-list for method output_type
+	10, // [10:16] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_sys_logger_dev_proto_init() }
