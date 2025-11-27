@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/cast"
 	"google.golang.org/protobuf/proto"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 // sys_role 角色
@@ -190,8 +191,12 @@ func SysRoleList(ctx context.Context, condition map[string]any) (res []dao.SysRo
 			builder.Limit(cast.ToInt(val))
 		}
 	}
+	builder.Group("`sys_role`.id")
+	builder.Order(clause.OrderBy{Columns: []clause.OrderByColumn{
+		{Column: clause.Column{Name: "sys_role.sort"}, Desc: false},
+		{Column: clause.Column{Name: "sys_role.id"}, Desc: true},
+	}})
 
-	builder.Group("`sys_role`.id").Order("sys_role.id")
 	err = builder.Find(&res).Error
 	return
 }

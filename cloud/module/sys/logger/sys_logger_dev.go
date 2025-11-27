@@ -8,6 +8,7 @@ import (
 	"github.com/abulo/ratel/v3/stores/sql"
 	"github.com/spf13/cast"
 	"google.golang.org/protobuf/proto"
+	"gorm.io/gorm/clause"
 )
 
 // sys_logger_dev 开发日志
@@ -68,7 +69,9 @@ func SysLoggerDevList(ctx context.Context, condition map[string]any) (res []dao.
 			builder.Limit(cast.ToInt(val))
 		}
 	}
-	builder.Order("id")
+	builder.Order(clause.OrderBy{Columns: []clause.OrderByColumn{
+		{Column: clause.Column{Name: "id"}, Desc: true},
+	}})
 	err = builder.Find(&res).Error
 	return
 }

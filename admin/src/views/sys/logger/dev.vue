@@ -39,32 +39,16 @@
       :lock-scroll="false"
       class="dialog-settings"
     >
-      <el-form ref="refSysLoggerDevForm" :model="sysLoggerDevForm" :rules="rulesSysLoggerDevForm" label-width="100px">
-        <el-form-item label="编号" prop="id">
-          <el-input v-model="sysLoggerDevForm.id" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="服务名" prop="host">
-          <el-input v-model="sysLoggerDevForm.host" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="时间" prop="timestamp">
-          <el-input v-model="sysLoggerDevForm.timestamp" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="文件" prop="file">
-          <el-input v-model="sysLoggerDevForm.file" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="方法名" prop="func">
-          <el-input v-model="sysLoggerDevForm.func" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="消息" prop="message">
-          <el-input v-model="sysLoggerDevForm.message" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="等级" prop="level">
-          <el-input v-model="sysLoggerDevForm.level" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="数据" prop="data">
-          <el-input v-model="sysLoggerDevForm.data" :disabled="disabled" />
-        </el-form-item>
-      </el-form>
+      <el-descriptions :column="1" border>
+        <el-descriptions-item label="编号"> {{ sysLoggerDevForm.id }}</el-descriptions-item>
+        <el-descriptions-item label="服务名"> {{ sysLoggerDevForm.host }}</el-descriptions-item>
+        <el-descriptions-item label="时间"> {{ sysLoggerDevForm.timestamp }}</el-descriptions-item>
+        <el-descriptions-item label="文件"> {{ sysLoggerDevForm.file }}</el-descriptions-item>
+        <el-descriptions-item label="方法名"> {{ sysLoggerDevForm.func }}</el-descriptions-item>
+        <el-descriptions-item label="消息"> {{ sysLoggerDevForm.message }}</el-descriptions-item>
+        <el-descriptions-item label="等级"> {{ sysLoggerDevForm.level }}</el-descriptions-item>
+        <el-descriptions-item label="数据"> {{ sysLoggerDevForm.data }}</el-descriptions-item>
+      </el-descriptions>
     </el-dialog>
   </div>
 </template>
@@ -74,7 +58,6 @@ import type { ResSysLoggerDev } from '@/api/interface/sysLoggerDev'
 import type { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
 import { Delete, View } from '@element-plus/icons-vue'
 import { getSysLoggerDevListApi, deleteSysLoggerDevApi, getSysLoggerDevApi } from '@/api/modules/sysLoggerDev'
-import type { FormInstance, FormRules } from 'element-plus'
 import { useHandleData } from '@/hooks/useHandleData'
 import { HasAuth } from '@/utils/auth'
 import { ProTablePaginationEnum } from '@/enums'
@@ -97,14 +80,6 @@ const sysLoggerDevForm = ref<ResSysLoggerDev>({
   level: undefined, // 等级
   data: undefined, // 数据
 })
-//表单
-const refSysLoggerDevForm = ref<FormInstance>()
-//校验
-const rulesSysLoggerDevForm = reactive<FormRules>({
-  id: [{ required: true, message: '编号不能为空', trigger: 'blur' }],
-  timestamp: [{ required: true, message: '时间不能为空', trigger: 'blur' }],
-})
-
 /**
  * 获取表格数据列表
  * @param params 查询参数对象

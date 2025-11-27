@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cast"
 	"google.golang.org/protobuf/proto"
+	"gorm.io/gorm/clause"
 )
 
 // sys_dict_type 字典类型
@@ -83,7 +84,9 @@ func SysDictTypeList(ctx context.Context, condition map[string]any) (res []dao.S
 			builder.Limit(cast.ToInt(val))
 		}
 	}
-	builder.Order("id")
+	builder.Order(clause.OrderBy{Columns: []clause.OrderByColumn{
+		{Column: clause.Column{Name: "id"}, Desc: true},
+	}})
 	err = builder.Find(&res).Error
 	return
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cast"
 	"google.golang.org/protobuf/proto"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 // sys_tenant 租户
@@ -163,7 +164,9 @@ func SysTenantList(ctx context.Context, condition map[string]any) (res []dao.Sys
 			builder.Limit(cast.ToInt(val))
 		}
 	}
-	builder.Order("`sys_tenant`.id")
+	builder.Order(clause.OrderBy{Columns: []clause.OrderByColumn{
+		{Column: clause.Column{Name: "sys_tenant.id"}, Desc: true},
+	}})
 	err = builder.Find(&res).Error
 	return
 }
