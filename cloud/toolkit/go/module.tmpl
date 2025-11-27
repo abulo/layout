@@ -12,6 +12,7 @@ import (
 	{{- if .Page}}
 	"github.com/spf13/cast"
 	{{- end}}
+	"gorm.io/gorm/clause"
 )
 // {{.Table.TableName}} {{.Table.TableComment}}
 
@@ -103,7 +104,9 @@ func {{.Name}}(ctx context.Context,condition map[string]any)(res []dao.{{CamelSt
 		}
 	}
 	{{- end}}
-	builder.Order("{{.Primary.ColumnName}}")
+	builder.Order(clause.OrderBy{Columns: []clause.OrderByColumn{
+		{Column: clause.Column{Name: "{{.Primary.ColumnName}}"}, Desc: true},
+	}})
 	err = builder.Find(&res).Error
 	return
 }
