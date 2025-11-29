@@ -22,7 +22,6 @@ export const HasAuth = (...permissionList: string[]) => {
 }
 
 export const HasAuthItem = (permission: string) => {
-  return true
   const authStore = useAuthStore()
   let itemName = ''
   if (permission.indexOf('.') > -1) {

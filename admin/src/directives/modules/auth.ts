@@ -15,13 +15,9 @@ const auth: Directive = {
         hasAuth = HasAuthItem(value[index])
         if (hasAuth) break
       }
-      if (!hasAuth) {
-        el.remove()
-      }
+      if (!hasAuth) el.remove()
     } else {
-      if (!HasAuthItem(value)) {
-        el.remove()
-      }
+      if (!HasAuthItem(value)) el.remove()
     }
   },
 }

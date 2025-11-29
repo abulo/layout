@@ -505,7 +505,7 @@ const columns: ColumnProps<ResSysUser>[] = [
   {
     prop: 'operation',
     label: '操作',
-    width: 150,
+    width: 220,
     fixed: 'right',
     isShow: HasAuth(
       'user.SysUserUpdate',

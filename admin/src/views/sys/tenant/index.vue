@@ -544,7 +544,7 @@ const columns: ColumnProps<ResSysTenant>[] = [
   {
     prop: 'operation',
     label: '操作',
-    width: 150,
+    width: 220,
     fixed: 'right',
     isShow: HasAuth(
       'tenant.SysTenantUpdate',
