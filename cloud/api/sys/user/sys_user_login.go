@@ -73,7 +73,7 @@ func SysUserLogin(ctx context.Context, newCtx *app.RequestContext) {
 	// 	return
 	// }
 
-	userTokenItem, err := common.SysUserLogin(ctx, req, true)
+	userTokenItem, err := common.SysUserLogin(ctx, newCtx, req, true)
 	if err != nil {
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.LoginFail,

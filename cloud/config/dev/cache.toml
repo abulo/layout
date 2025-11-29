@@ -11,9 +11,9 @@
         Module = "SysMenu:Module"
         # 后台菜单权限
         Code = "SysMenu:Code"
-    [Cache.SysLoginLog]
+    [Cache.SysLoggerLogin]
         # 后台登录日志队列
-        Queue = "SysLoginLog:Queue"
+        Queue = "SysLoggerLogin:Queue"
     [Cache.SysUser]
         # 后台用户权限
         Code = "SysUser:Code::UserId"

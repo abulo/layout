@@ -15,7 +15,9 @@ import (
 	"time"
 
 	globalLogger "github.com/abulo/ratel/v3/core/logger"
+	"github.com/abulo/ratel/v3/stores/null"
 	"github.com/abulo/ratel/v3/util"
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/gogo/protobuf/proto"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
@@ -186,7 +188,7 @@ func SysUserTree(ctx context.Context, sysUserId, tenantId int64) (list []*dao.Sy
 	return list, currentMenuIds, nil
 }
 
-func SysUserLogin(ctx context.Context, req dao.SysUserLogin, verifyPassword bool) (userTokenItem dao.UserToken, err error) {
+func SysUserLogin(ctx context.Context, newCtx *app.RequestContext, req dao.SysUserLogin, verifyPassword bool) (userTokenItem dao.UserToken, err error) {
 	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
@@ -276,5 +278,27 @@ func SysUserLogin(ctx context.Context, req dao.SysUserLogin, verifyPassword bool
 	keyMenu := util.NewReplacer(initial.Core.Config.String("Cache.SysUser.Code"), ":UserId", userInfo.GetId())
 	permission, _ := json.Marshal(permissionList)
 	redisHandler.Set(ctx, keyMenu, cast.ToString(permission), time.Duration(time.Duration(86000*30))*time.Second)
+
+	//这里需要将登录信息写入操作列队
+	nowTime := util.Now()
+	var sysLoggerLogin dao.SysLoggerLogin
+	sysLoggerLogin.Name = null.StringFrom(userInfo.GetName())
+	sysLoggerLogin.Username = proto.String(userInfo.GetUsername())
+	sysLoggerLogin.UserId = proto.Int64(userInfo.GetId())
+	sysLoggerLogin.Ua = null.StringFrom(cast.ToString(newCtx.Request.Header.UserAgent()))
+	sysLoggerLogin.LoginTime = null.DateTimeFrom(nowTime)
+	sysLoggerLogin.Channel = null.StringFrom(newCtx.GetString("channel"))
+	sysLoggerLogin.Ip = null.StringFrom(newCtx.ClientIP())
+	sysLoggerLogin.Deleted = proto.Int32(0)
+	sysLoggerLogin.TenantId = proto.Int64(userInfo.GetTenantId())
+	sysLoggerLogin.Creator = null.StringFrom(userInfo.GetName()) //创建者
+	sysLoggerLogin.CreateTime = null.DateTimeFrom(nowTime)       //创建时间
+	sysLoggerLogin.Updater = null.StringFrom(userInfo.GetName()) //更新者
+	sysLoggerLogin.UpdateTime = null.DateTimeFrom(nowTime)       //更新时间
+
+	// 将这些数据需要全部存储在消息列队中,然后后台去执行消息列队
+	key := util.NewReplacer(initial.Core.Config.String("Cache.SysLoggerLogin.Queue"))
+	bytes, _ := json.Marshal(sysLoggerLogin)
+	redisHandler.LPush(ctx, key, cast.ToString(bytes))
 	return userTokenItem, nil
 }
