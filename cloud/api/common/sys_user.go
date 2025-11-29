@@ -4,12 +4,15 @@ import (
 	"cloud/code"
 	"cloud/dao"
 	"cloud/initial"
+	"cloud/internal/token"
 	"cloud/service/sys/menu"
 	"cloud/service/sys/role"
 	"cloud/service/sys/tenant"
 	"cloud/service/sys/user"
 	"context"
 	"encoding/json"
+	"errors"
+	"time"
 
 	globalLogger "github.com/abulo/ratel/v3/core/logger"
 	"github.com/abulo/ratel/v3/util"
@@ -181,4 +184,97 @@ func SysUserTree(ctx context.Context, sysUserId, tenantId int64) (list []*dao.Sy
 		currentMenuIds = otherRole
 	}
 	return list, currentMenuIds, nil
+}
+
+func SysUserLogin(ctx context.Context, req dao.SysUserLogin, verifyPassword bool) (userTokenItem dao.UserToken, err error) {
+	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()
+	if err != nil {
+		globalLogger.Logger.WithFields(logrus.Fields{
+			"err": err,
+		}).Error("Grpc:用户信息表:sys_user:SysUserLogin")
+
+		return userTokenItem, err
+	}
+	clientSysUser := user.NewSysUserServiceClient(grpcClient)
+	requestSysUser := &user.SysUserLoginRequest{}
+	requestSysUser.Username = proto.String(req.Username)
+	// 执行服务
+	res, err := clientSysUser.SysUserLogin(ctx, requestSysUser)
+	if err != nil {
+		globalLogger.Logger.WithFields(logrus.Fields{
+			"req": requestSysUser,
+			"err": err,
+		}).Error("GrpcCall:用户信息表:sys_user:SysUserLogin")
+		return userTokenItem, err
+	}
+
+	userInfo := res.GetData()
+	if userInfo.Id == nil {
+		return userTokenItem, errors.New("用户不存在")
+	}
+	if verifyPassword {
+		// 比对密码
+		if req.Password != userInfo.GetPassword() {
+			return userTokenItem, errors.New("密码错误")
+		}
+	}
+
+	// 用户信息
+	userItem := user.SysUserDao(userInfo)
+	// 去判断这个用户有没有绑定租户
+	userTenantClient := user.NewSysUserTenantServiceClient(grpcClient)
+	requestUserTenant := &user.SysUserTenantBindRequest{}
+	requestUserTenant.UserId = userItem.Id
+	requestUserTenant.TenantId = userItem.TenantId
+	resUserTenant, err := userTenantClient.SysUserTenantBind(ctx, requestUserTenant)
+	if err != nil {
+		globalLogger.Logger.WithFields(logrus.Fields{
+			"req": requestUserTenant,
+			"err": err,
+		}).Error("GrpcCall:用户信息表:sys_user:SysUserLogin")
+		return userTokenItem, err
+	}
+	userTenantInfo := resUserTenant.GetData()
+	if userTenantInfo.Id == nil {
+		return userTokenItem, errors.New("租户不存在")
+	}
+	if cast.ToInt64(userInfo.TenantId) != cast.ToInt64(userTenantInfo.TenantId) {
+		return userTokenItem, errors.New("用户租户获取失败")
+	}
+	userVerifyItem := dao.UserVerify{}
+	userVerifyItem.UserId = cast.ToInt64(userItem.Id)                       // 用户ID
+	userVerifyItem.UserName = cast.ToString(userItem.Username)              // 用户名
+	userVerifyItem.TenantId = cast.ToInt64(userItem.TenantId)               // 租户ID
+	userVerifyItem.Name = cast.ToString(userItem.Name.Ptr())                // 用户姓名
+	userTokenItem.UserName = proto.String(cast.ToString(userItem.Username)) // 用户名
+	dateTime := util.Now().Add(time.Duration(86000*30) * time.Second)
+	accessToken, err := token.GenerateToken(userVerifyItem, "user", 86400*30)
+	if err != nil {
+		return userTokenItem, err
+	}
+	userTokenItem.AccessToken = proto.String(accessToken)
+	refreshToken, err := token.GenerateToken(userVerifyItem, "user", 86400*31)
+	if err != nil {
+		return userTokenItem, err
+	}
+	userTokenItem.RefreshToken = proto.String(refreshToken)
+	userTokenItem.Expires = proto.String(util.Date("Y-m-d H:i:s", dateTime))
+	list, currentMenuIds, err := SysUserTree(ctx, cast.ToInt64(userItem.Id), cast.ToInt64(userItem.TenantId))
+	if err != nil {
+		return userTokenItem, err
+	}
+
+	var permissionList []string
+	for _, item := range list {
+		if util.InArray(item.Id, currentMenuIds) {
+			if !util.Empty(item.Code) {
+				permissionList = append(permissionList, item.Code)
+			}
+		}
+	}
+	redisHandler := initial.Core.Store.LoadRedis("redis")
+	keyMenu := util.NewReplacer(initial.Core.Config.String("Cache.SysUser.Code"), ":UserId", userInfo.GetId())
+	permission, _ := json.Marshal(permissionList)
+	redisHandler.Set(ctx, keyMenu, cast.ToString(permission), time.Duration(time.Duration(86000*30))*time.Second)
+	return userTokenItem, nil
 }
