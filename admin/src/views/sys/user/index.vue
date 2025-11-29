@@ -26,6 +26,9 @@
         <el-button v-auth="'user.SysUser'" type="primary" link :icon="View" @click="handleItem(scope.row)">
           查看
         </el-button>
+        <el-button v-auth="'user.SysUserLogin'" type="primary" link :icon="Connection" @click="handleLogin(scope.row)">
+          登录
+        </el-button>
         <el-dropdown trigger="click">
           <el-button
             v-auth="['user.SysUserUpdate', 'user.SysUserDelete', 'user.SysUserRecover', 'user.SysUserDrop']"
@@ -165,9 +168,18 @@
 </template>
 <script setup lang="tsx">
 defineOptions({ name: 'SysUser' })
-import type { ResSysUser } from '@/api/interface/sysUser'
-import type { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
-import { EditPen, CirclePlus, Delete, Refresh, DeleteFilled, View, DArrowRight } from '@element-plus/icons-vue'
+import { ResSysUser } from '@/api/interface/sysUser'
+import { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
+import {
+  EditPen,
+  CirclePlus,
+  Delete,
+  Refresh,
+  DeleteFilled,
+  View,
+  DArrowRight,
+  Connection,
+} from '@element-plus/icons-vue'
 import {
   getSysUserListApi,
   deleteSysUserApi,
@@ -176,8 +188,9 @@ import {
   getSysUserApi,
   addSysUserApi,
   updateSysUserApi,
+  postSysUserLogin,
 } from '@/api/modules/sysUser'
-import type { FormInstance, FormRules, ElTree } from 'element-plus'
+import { FormInstance, FormRules, ElTree, ElNotification, ElMessage } from 'element-plus'
 import { getIntDictOptions } from '@/utils/dict'
 import { DictTag } from '@/components/DictTag'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
@@ -194,7 +207,17 @@ import { ResSysPost } from '@/api/interface/sysPost'
 import { ResSysRole } from '@/api/interface/sysRole'
 import { useTimeoutFn } from '@vueuse/core'
 import Node from 'element-plus/es/components/tree/src/model/node'
-import { encryptPassword } from '@/utils'
+import { encryptPassword, getTimeState, parseRedirect } from '@/utils'
+import { useUserStore } from '@/stores/modules/user'
+import { useTabsStore } from '@/stores/modules/tabs'
+import { useKeepAliveStore } from '@/stores/modules/keepAlive'
+import { initDynamicRouter } from '@/routers/modules/dynamicRouter'
+import { useRoute, useRouter } from 'vue-router'
+const router = useRouter()
+const route = useRoute()
+const userStore = useUserStore()
+const tabsStore = useTabsStore()
+const keepAliveStore = useKeepAliveStore()
 // 获取loading状态
 const { loading } = storeToRefs(useLoadingStore())
 //禁用
@@ -428,6 +451,30 @@ const submitForm = (formEl: FormInstance | undefined) => {
     proTable.value?.getTableList()
   })
 }
+
+// 登录
+const handleLogin = async (row: ResSysUser) => {
+  try {
+    const { data } = await postSysUserLogin(Number(row.id))
+    userStore.setUser(data)
+    // 2.添加动态路由
+    await initDynamicRouter()
+    // 3.清空 tabs、keepAlive 数据
+    tabsStore.setTabs([])
+    keepAliveStore.setKeepAliveName([])
+    // 4.跳转到首页
+    const { path, queryParams } = parseRedirect(route.query)
+    router.push({ path, query: queryParams })
+    ElNotification({
+      title: getTimeState(),
+      message: '欢迎登录',
+      type: 'success',
+      duration: 3000,
+    })
+  } catch {
+    ElMessage.error({ message: '登录失败' })
+  }
+}
 //删除状态
 const deletedEnum = getIntDictOptions('deleted')
 // 表格配置项
@@ -465,7 +512,8 @@ const columns: ColumnProps<ResSysUser>[] = [
       'user.SysUserDelete',
       'user.SysUserDrop',
       'user.SysUserRecover',
-      'user.SysUser'
+      'user.SysUser',
+      'user.SysUserLogin'
     ),
   },
 ]

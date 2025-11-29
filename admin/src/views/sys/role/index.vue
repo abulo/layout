@@ -187,8 +187,8 @@
 </template>
 <script setup lang="tsx">
 defineOptions({ name: 'SysRole' })
-import type { ResSysRole } from '@/api/interface/sysRole'
-import type { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
+import { ResSysRole } from '@/api/interface/sysRole'
+import { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
 import { EditPen, CirclePlus, Delete, Refresh, DeleteFilled, View, DArrowRight } from '@element-plus/icons-vue'
 import {
   getSysRoleListApi,
@@ -199,7 +199,7 @@ import {
   addSysRoleApi,
   updateSysRoleApi,
 } from '@/api/modules/sysRole'
-import type { FormInstance, FormRules, ElTree } from 'element-plus'
+import { FormInstance, FormRules, ElTree } from 'element-plus'
 import { getIntDictOptions } from '@/utils/dict'
 import { DictTag } from '@/components/DictTag'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'

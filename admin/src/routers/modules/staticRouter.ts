@@ -1,4 +1,4 @@
-import type { RouteRecordRaw } from 'vue-router'
+import { RouteRecordRaw } from 'vue-router'
 import { HOME_URL, LOGIN_URL } from '@/config'
 
 /**

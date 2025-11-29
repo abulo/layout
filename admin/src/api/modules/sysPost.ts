@@ -1,6 +1,6 @@
 // sys_post 职位
 import http from '@/utils/request'
-import type { ResSysPost, ReqSysPostParams } from '@/api/interface/sysPost'
+import { ResSysPost, ReqSysPostParams } from '@/api/interface/sysPost'
 // 职位创建数据
 export const addSysPostApi = (params: ResSysPost) => {
   return http.post(`/v1/sys/post`, params)

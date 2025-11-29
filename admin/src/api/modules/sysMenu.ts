@@ -1,6 +1,6 @@
 // sys_menu 菜单
 import http from '@/utils/request'
-import type { ResSysMenu, ReqSysMenuParams } from '@/api/interface/sysMenu'
+import { ResSysMenu, ReqSysMenuParams } from '@/api/interface/sysMenu'
 // 菜单创建数据
 export const addSysMenuApi = (params: ResSysMenu) => {
   return http.post(`/v1/sys/menu`, params)

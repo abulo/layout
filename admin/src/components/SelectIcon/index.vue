@@ -83,7 +83,7 @@
 defineOptions({ name: 'SelectIcon' })
 import { reactive, ref, onMounted, onUnmounted, nextTick, watch, computed } from 'vue'
 import { useEventListener } from '@vueuse/core'
-import type { Placement } from 'element-plus'
+import { Placement } from 'element-plus'
 import { IconJson } from '@/components/Icon/data'
 import { cloneDeep } from 'lodash-es'
 import Icon from '@/components/Icon/index.vue'

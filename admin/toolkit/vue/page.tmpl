@@ -129,8 +129,8 @@
 </template>
 <script setup lang="tsx">
 defineOptions({ name: '{{CamelStr .Table.TableName}}' })
-import type { Res{{CamelStr .Table.TableName}} } from '@/api/interface/{{Helper .Table.TableName}}'
-import type { ProTableInstance, ColumnProps
+import { Res{{CamelStr .Table.TableName}} } from '@/api/interface/{{Helper .Table.TableName}}'
+import { ProTableInstance, ColumnProps
 {{- if .SoftDelete}}
 , SearchProps
 {{- end}}
@@ -179,7 +179,7 @@ import {
   update{{CamelStr .Table.TableName}}Api,
   {{- end}}
 } from "@/api/modules/{{Helper .Table.TableName}}";
-import type { FormInstance, FormRules } from 'element-plus'
+import { FormInstance, FormRules } from 'element-plus'
 {{- if .SoftDelete}}
 import { getIntDictOptions } from "@/utils/dict";
 import { DictTag } from "@/components/DictTag";

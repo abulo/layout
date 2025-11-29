@@ -239,8 +239,8 @@
 </template>
 <script setup lang="tsx">
 defineOptions({ name: 'SysMenu' })
-import type { ResSysMenu } from '@/api/interface/sysMenu'
-import type { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
+import { ResSysMenu } from '@/api/interface/sysMenu'
+import { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
 import { EditPen, CirclePlus, Delete, View, DArrowRight, Sort } from '@element-plus/icons-vue'
 import {
   getSysMenuListApi,
@@ -250,7 +250,7 @@ import {
   updateSysMenuApi,
   getSysMenuListSimpleApi,
 } from '@/api/modules/sysMenu'
-import type { FormInstance, FormRules } from 'element-plus'
+import { FormInstance, FormRules } from 'element-plus'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
 import { HasAuth } from '@/utils/auth'
 import { handleTree } from '@pureadmin/utils'

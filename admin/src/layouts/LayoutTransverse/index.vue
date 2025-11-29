@@ -51,7 +51,7 @@ import { useRoute, useRouter } from 'vue-router'
 import MainContainer from '@/layouts/components/Main/index.vue'
 import ToolBarRight from '@/layouts/components/Header/ToolBarRight.vue'
 import SubMenu from '@/layouts/components/Menu/SubMenu.vue'
-// import type { MenuOptions } from '@/api/system/menu'
+// import { MenuOptions } from '@/api/system/menu'
 
 const title = import.meta.env.VITE_GLOB_APP_TITLE
 

@@ -50,7 +50,7 @@ defineOptions({ name: 'ImportExcel' })
 import { ref } from 'vue'
 import { useDownload } from '@/hooks/useDownload'
 import { Download } from '@element-plus/icons-vue'
-import type { UploadRequestOptions, UploadRawFile } from 'element-plus'
+import { UploadRequestOptions, UploadRawFile } from 'element-plus'
 import { ElNotification } from 'element-plus'
 
 export interface ExcelParameterProps {

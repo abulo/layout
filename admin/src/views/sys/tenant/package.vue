@@ -136,8 +136,8 @@
 </template>
 <script setup lang="tsx">
 defineOptions({ name: 'SysTenantPackage' })
-import type { ResSysTenantPackage } from '@/api/interface/sysTenantPackage'
-import type { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
+import { ResSysTenantPackage } from '@/api/interface/sysTenantPackage'
+import { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
 import { EditPen, CirclePlus, Delete, View, DArrowRight } from '@element-plus/icons-vue'
 import {
   getSysTenantPackageListApi,
@@ -146,14 +146,14 @@ import {
   addSysTenantPackageApi,
   updateSysTenantPackageApi,
 } from '@/api/modules/sysTenantPackage'
-import type { FormInstance, FormRules, ElTree } from 'element-plus'
+import { FormInstance, FormRules, ElTree } from 'element-plus'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
 import { HasAuth } from '@/utils/auth'
 import { getIntDictOptions } from '@/utils/dict'
-import type { ResSysMenu } from '@/api/interface/sysMenu'
+import { ResSysMenu } from '@/api/interface/sysMenu'
 import { getSysMenuListSimpleApi } from '@/api/modules/sysMenu'
 import { handleTree } from '@pureadmin/utils'
-import type Node from 'element-plus/es/components/tree/src/model/node'
+import Node from 'element-plus/es/components/tree/src/model/node'
 import { useTimeoutFn } from '@vueuse/core'
 import { useLoadingStore } from '@/stores/modules/loading'
 import { storeToRefs } from 'pinia'

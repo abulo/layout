@@ -1,6 +1,6 @@
 // {{.Table.TableName}} {{.Table.TableComment}}
 import http from '@/utils/request/sys'
-import type { Res{{CamelStr .Table.TableName}}, Req{{CamelStr .Table.TableName}}Params } from '@/api/interface/{{Helper .Table.TableName}}'
+import { Res{{CamelStr .Table.TableName}}, Req{{CamelStr .Table.TableName}}Params } from '@/api/interface/{{Helper .Table.TableName}}'
 
 {{- range .Method}}
 {{- if eq .Type "Create"}}

@@ -38,12 +38,12 @@ defineOptions({
   name: 'SearchMenu',
 })
 import { ref, computed, nextTick, watch } from 'vue'
-import type { InputInstance } from 'element-plus'
+import { InputInstance } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/modules/auth'
 import { useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
-// import type { MenuOptions } from '@/api/system/menu'
+// import { MenuOptions } from '@/api/system/menu'
 import HugeiconsSearch01 from '~icons/hugeicons/search-01?width=20px&height=20px'
 import MiEnter from '~icons/mi/enter?width=20px&height=20px'
 import { findParents } from '@/utils/index'

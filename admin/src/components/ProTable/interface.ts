@@ -1,12 +1,12 @@
-import type { VNode, ComponentPublicInstance, Ref, VNodeChild } from 'vue'
-import type { BreakPoint, Responsive } from '@/components/Grid/interface'
-import type { TableColumnCtx } from 'element-plus/es/components/table/src/table-column/defaults'
-import type ProTable from '@/components/ProTable/index.vue'
-import type { ColProps, DialogProps, DrawerProps, ButtonProps, FormItemRule, FormProps } from 'element-plus'
-import type { MaybeRef } from 'vue'
-import type { DefaultRow } from 'element-plus/es/components/table/src/table/defaults.mjs'
-import type { ProTablePaginationEnum } from '@/enums'
-import type { JSX } from 'vue/jsx-runtime'
+import { VNode, ComponentPublicInstance, Ref, VNodeChild } from 'vue'
+import { BreakPoint, Responsive } from '@/components/Grid/interface'
+import { TableColumnCtx } from 'element-plus/es/components/table/src/table-column/defaults'
+import ProTable from '@/components/ProTable/index.vue'
+import { ColProps, DialogProps, DrawerProps, ButtonProps, FormItemRule, FormProps } from 'element-plus'
+import { MaybeRef } from 'vue'
+import { DefaultRow } from 'element-plus/es/components/table/src/table/defaults.mjs'
+import { ProTablePaginationEnum } from '@/enums'
+import { JSX } from 'vue/jsx-runtime'
 
 export interface EnumProps {
   label?: string // 选项框显示的文字

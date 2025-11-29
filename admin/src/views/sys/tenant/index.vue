@@ -28,6 +28,15 @@
         <el-button v-auth="'tenant.SysTenant'" type="primary" link :icon="View" @click="handleItem(scope.row)">
           查看
         </el-button>
+        <el-button
+          v-auth="'user.SysTenantUserLogin'"
+          type="primary"
+          link
+          :icon="Connection"
+          @click="handleLogin(scope.row)"
+        >
+          登录
+        </el-button>
         <el-dropdown trigger="click">
           <el-button
             v-auth="[
@@ -170,9 +179,18 @@
 </template>
 <script setup lang="tsx">
 defineOptions({ name: 'SysTenant' })
-import type { ResSysTenant } from '@/api/interface/sysTenant'
-import type { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
-import { EditPen, CirclePlus, Delete, Refresh, DeleteFilled, View, DArrowRight } from '@element-plus/icons-vue'
+import { ResSysTenant } from '@/api/interface/sysTenant'
+import { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
+import {
+  EditPen,
+  CirclePlus,
+  Delete,
+  Refresh,
+  DeleteFilled,
+  View,
+  DArrowRight,
+  Connection,
+} from '@element-plus/icons-vue'
 import {
   getSysTenantListApi,
   deleteSysTenantApi,
@@ -182,20 +200,32 @@ import {
   addSysTenantApi,
   updateSysTenantApi,
   getSysTenantUserListApi,
+  postSysTenantUserLoginApi,
 } from '@/api/modules/sysTenant'
-import type { FormInstance, FormRules } from 'element-plus'
+import { FormInstance, FormRules, ElNotification, ElMessage } from 'element-plus'
 import { ElDatePicker } from 'element-plus'
 import { getIntDictOptions } from '@/utils/dict'
 import { DictTag } from '@/components/DictTag'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
 import { HasAuth } from '@/utils/auth'
-import type { ResSysTenantPackage } from '@/api/interface/sysTenantPackage'
+import { ResSysTenantPackage } from '@/api/interface/sysTenantPackage'
 import { getSysTenantPackageListSimpleApi } from '@/api/modules/sysTenantPackage'
 import { useLoadingStore } from '@/stores/modules/loading'
 import { storeToRefs } from 'pinia'
-import type { ResSysUser } from '@/api/interface/sysUser'
+import { ResSysUser } from '@/api/interface/sysUser'
 import { getSysUserApi } from '@/api/modules/sysUser'
 import { ProTablePaginationEnum } from '@/enums'
+import { encryptPassword, getTimeState, parseRedirect } from '@/utils'
+import { useUserStore } from '@/stores/modules/user'
+import { useTabsStore } from '@/stores/modules/tabs'
+import { useKeepAliveStore } from '@/stores/modules/keepAlive'
+import { initDynamicRouter } from '@/routers/modules/dynamicRouter'
+import { useRoute, useRouter } from 'vue-router'
+const router = useRouter()
+const route = useRoute()
+const userStore = useUserStore()
+const tabsStore = useTabsStore()
+const keepAliveStore = useKeepAliveStore()
 // 获取loading状态
 const { loading } = storeToRefs(useLoadingStore())
 //禁用
@@ -393,6 +423,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
     if (data.id !== 0) {
       await useHandleSet(updateSysTenantApi, data.id, data, '修改租户')
     } else {
+      data.password = encryptPassword(data?.password)
       await useHandleData(addSysTenantApi, data, '添加租户')
     }
     resetForm(formEl)
@@ -416,6 +447,30 @@ const handleUser = (row: ResSysUser) => {
   userItem.value = row.name as string
   sysTenantForm.value.userId = Number(row.id)
   isUserOpen.value = false
+}
+
+// 登录
+const handleLogin = async (row: ResSysTenant) => {
+  try {
+    const { data } = await postSysTenantUserLoginApi(Number(row.id))
+    userStore.setUser(data)
+    // 2.添加动态路由
+    await initDynamicRouter()
+    // 3.清空 tabs、keepAlive 数据
+    tabsStore.setTabs([])
+    keepAliveStore.setKeepAliveName([])
+    // 4.跳转到首页
+    const { path, queryParams } = parseRedirect(route.query)
+    router.push({ path, query: queryParams })
+    ElNotification({
+      title: getTimeState(),
+      message: '欢迎登录',
+      type: 'success',
+      duration: 3000,
+    })
+  } catch {
+    ElMessage.error({ message: '登录失败' })
+  }
 }
 
 // 用户列表数据接口
@@ -496,7 +551,8 @@ const columns: ColumnProps<ResSysTenant>[] = [
       'tenant.SysTenantDelete',
       'tenant.SysTenantDrop',
       'tenant.SysTenantRecover',
-      'tenant.SysTenant'
+      'tenant.SysTenant',
+      'tenant.SysTenantUserLogin'
     ),
   },
 ]

@@ -1,4 +1,4 @@
-import type { ColumnProps, RenderScope, HeaderRenderScope } from '../interface'
+import { ColumnProps, RenderScope, HeaderRenderScope } from '../interface'
 import { filterEnum, formatValue, handleProp, handleRowAccordingToProp } from '@/utils'
 import { ElTableColumn, ElTag, ElText } from 'element-plus'
 import { TABLE_COLUMN_OPERATIONS_NAME } from '@/constants/proTable'

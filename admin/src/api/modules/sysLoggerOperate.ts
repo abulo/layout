@@ -1,6 +1,6 @@
 // sys_logger_operate 操作日志
 import http from '@/utils/request'
-import type { ResSysLoggerOperate, ReqSysLoggerOperateParams } from '@/api/interface/sysLoggerOperate'
+import { ResSysLoggerOperate, ReqSysLoggerOperateParams } from '@/api/interface/sysLoggerOperate'
 // 操作日志删除数据
 export const deleteSysLoggerOperateApi = (id: number) => {
   return http.delete(`/v1/sys/logger/operate/${id}/delete`)

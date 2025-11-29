@@ -1,6 +1,6 @@
 // sys_dept 部门
 import http from '@/utils/request'
-import type { ResSysDept, ReqSysDeptParams } from '@/api/interface/sysDept'
+import { ResSysDept, ReqSysDeptParams } from '@/api/interface/sysDept'
 // 部门创建数据
 export const addSysDeptApi = (params: ResSysDept) => {
   return http.post(`/v1/sys/dept`, params)

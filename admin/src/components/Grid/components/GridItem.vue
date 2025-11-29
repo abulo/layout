@@ -5,9 +5,9 @@
 </template>
 <script setup lang="ts">
 defineOptions({ name: 'GridItem' })
-import type { Ref } from 'vue'
+import { Ref } from 'vue'
 import { computed, inject, ref, useAttrs, watch } from 'vue'
-import type { BreakPoint, Responsive } from '../interface/index'
+import { BreakPoint, Responsive } from '../interface/index'
 
 type Props = {
   offset?: number

@@ -1,4 +1,4 @@
-import type { ThemeType } from '@/hooks/useTheme'
+import { ThemeType } from '@/hooks/useTheme'
 
 export const headerTheme: Record<ThemeType, { [key: string]: string }> = {
   light: {

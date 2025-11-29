@@ -5,8 +5,8 @@
 <script setup lang="ts">
 defineOptions({ name: 'ECharts' })
 import { ref, onMounted, onBeforeUnmount, watch, computed, markRaw, nextTick, onActivated } from 'vue'
-import type { EChartsType, ECElementEvent } from 'echarts/core'
-import type { ECOption } from './config'
+import { EChartsType, ECElementEvent } from 'echarts/core'
+import { ECOption } from './config'
 import echarts from './config'
 import { useDebounceFn, useEventListener } from '@vueuse/core'
 import { useGlobalStore } from '@/stores/modules/global'

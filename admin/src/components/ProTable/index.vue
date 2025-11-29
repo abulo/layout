@@ -141,7 +141,7 @@ defineOptions({ name: 'ProTable' })
 import { ElTable, ElMessage } from 'element-plus'
 import { useTable } from '@/hooks/useTable'
 import { useSelection } from '@/hooks/useSelection'
-import type { ColumnProps, TypeProps, ProTableProps } from './interface'
+import { ColumnProps, TypeProps, ProTableProps } from './interface'
 import { handleProp } from '@/utils'
 import SearchForm from '@/components/SearchForm/index.vue'
 import Pagination from './components/Pagination.vue'

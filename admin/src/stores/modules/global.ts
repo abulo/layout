@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { GlobalState } from '@/stores/interface'
+import { GlobalState } from '@/stores/interface'
 import { DEFAULT_PRIMARY } from '@/config'
 import piniaPersistConfig from '@/stores/helper/persist'
 

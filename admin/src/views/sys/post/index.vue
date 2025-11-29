@@ -103,8 +103,8 @@
 </template>
 <script setup lang="tsx">
 defineOptions({ name: 'SysPost' })
-import type { ResSysPost } from '@/api/interface/sysPost'
-import type { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
+import { ResSysPost } from '@/api/interface/sysPost'
+import { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
 import { EditPen, CirclePlus, Delete, Refresh, DeleteFilled, View, DArrowRight } from '@element-plus/icons-vue'
 import {
   getSysPostListApi,
@@ -115,7 +115,7 @@ import {
   addSysPostApi,
   updateSysPostApi,
 } from '@/api/modules/sysPost'
-import type { FormInstance, FormRules } from 'element-plus'
+import { FormInstance, FormRules } from 'element-plus'
 import { getIntDictOptions } from '@/utils/dict'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
 import { HasAuth } from '@/utils/auth'

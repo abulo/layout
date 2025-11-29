@@ -1,6 +1,6 @@
 // sys_logger_dev 开发日志
 import http from '@/utils/request'
-import type { ResSysLoggerDev, ReqSysLoggerDevParams } from '@/api/interface/sysLoggerDev'
+import { ResSysLoggerDev, ReqSysLoggerDevParams } from '@/api/interface/sysLoggerDev'
 // 开发日志删除数据
 export const deleteSysLoggerDevApi = (id: number) => {
   return http.delete(`/v1/sys/logger/dev/${id}/delete`)

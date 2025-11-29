@@ -1,6 +1,6 @@
 // sys_user 用户
 import http from '@/utils/request'
-import type { ResSysUser, ReqSysUserParams, ReqSysUserLogin, ResSysUserToken } from '@/api/interface/sysUser'
+import { ResSysUser, ReqSysUserParams, ReqSysUserLogin, ResSysUserToken } from '@/api/interface/sysUser'
 import { type ResSysMenuButtons } from '@/api/interface/sysMenu'
 // 用户创建数据
 export const addSysUserApi = (params: ResSysUser) => {
@@ -36,7 +36,7 @@ export const getSysUserListSimpleApi = (params?: ReqSysUserParams) => {
   return http.get<ResultPage<ResSysUser>>(`/v1/sys/user/simple`, params)
 }
 
-export const postSysUserLogin = (params: ReqSysUserLogin) => {
+export const postLogin = (params: ReqSysUserLogin) => {
   return http.post<ResSysUserToken>(`/v1/sys/user/login`, params, { loading: true })
 }
 
@@ -48,4 +48,8 @@ export const getSysUserMenuApi = () => {
 // 获取用户按钮
 export const getSysUserBtnApi = () => {
   return http.get<ResSysMenuButtons>(`/v1/sys/user/code`, {}, { loading: false })
+}
+
+export const postSysUserLogin = (id: number) => {
+  return http.post<ResSysUserToken>(`/v1/sys/user/${id}/login`)
 }

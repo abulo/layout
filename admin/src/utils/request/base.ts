@@ -1,4 +1,4 @@
-import type { AxiosInstance, AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosResponse } from 'axios'
+import { AxiosInstance, AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosResponse } from 'axios'
 import axios from 'axios'
 import { showFullScreenLoading, tryHideFullScreenLoading } from '@/components/Loading/fullScreen'
 import { LOGIN_URL } from '@/config'

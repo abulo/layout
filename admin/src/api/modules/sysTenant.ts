@@ -1,7 +1,7 @@
 // sys_tenant 租户
 import http from '@/utils/request'
-import type { ResSysTenant, ReqSysTenantParams } from '@/api/interface/sysTenant'
-import type { ResSysUser, ReqSysUserParams } from '@/api/interface/sysUser'
+import { ResSysTenant, ReqSysTenantParams } from '@/api/interface/sysTenant'
+import { ResSysUser, ReqSysUserParams, ResSysUserToken } from '@/api/interface/sysUser'
 // 租户创建数据
 export const addSysTenantApi = (params: ResSysTenant) => {
   return http.post(`/v1/sys/tenant`, params)
@@ -39,4 +39,8 @@ export const getSysTenantListSimpleApi = (params?: ReqSysTenantParams) => {
 // 租户用户列表数据
 export const getSysTenantUserListApi = (id: number, params?: ReqSysUserParams) => {
   return http.get<ResultPage<ResSysUser>>(`/v1/sys/tenant/${id}/user`, params)
+}
+
+export const postSysTenantUserLoginApi = (id: number) => {
+  return http.post<ResSysUserToken>(`/v1/sys/tenant/${id}/login`)
 }

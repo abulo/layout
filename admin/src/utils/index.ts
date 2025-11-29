@@ -1,8 +1,8 @@
 // import { MenuOptions } from './../api/system/menu'
 import { isArray } from '@/utils/is'
-import type { FieldNamesProps } from '@/components/ProTable/interface'
+import { FieldNamesProps } from '@/components/ProTable/interface'
 import md5 from 'md5'
-import type { LocationQuery, RouteLocationNormalized } from 'vue-router'
+import { LocationQuery, RouteLocationNormalized } from 'vue-router'
 import router from '@/routers'
 import { HOME_URL, LOGIN_URL } from '@/config'
 

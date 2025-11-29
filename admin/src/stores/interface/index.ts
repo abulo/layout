@@ -1,6 +1,6 @@
-// import type { MenuOptions } from '@/api/system/menu'
+// import { MenuOptions } from '@/api/system/menu'
 
-import type { Dict } from '@/api/interface/sysDict'
+import { Dict } from '@/api/interface/sysDict'
 export type LayoutType = 'vertical' | 'classic' | 'transverse' | 'columns' | 'mixed'
 
 export type AssemblySizeType = 'large' | 'default' | 'small'

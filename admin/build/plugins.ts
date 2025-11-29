@@ -1,4 +1,4 @@
-import type { PluginOption } from 'vite'
+import { PluginOption } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import { createHtmlPlugin } from 'vite-plugin-html'
 import { visualizer } from 'rollup-plugin-visualizer'

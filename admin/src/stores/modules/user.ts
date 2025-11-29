@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { UserState } from '@/stores/interface'
+import { UserState } from '@/stores/interface'
 import piniaPersistConfig from '@/stores/helper/persist'
 import { type ResSysUserToken } from '@/api/interface/sysUser'
 

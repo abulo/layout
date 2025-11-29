@@ -29,7 +29,7 @@ defineOptions({
   name: 'ColSetting',
 })
 import { ref } from 'vue'
-import type { ColumnProps } from '@/components/ProTable/interface'
+import { ColumnProps } from '@/components/ProTable/interface'
 
 defineProps<{ colSetting: ColumnProps[] }>()
 

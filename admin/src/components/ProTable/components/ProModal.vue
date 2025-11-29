@@ -161,7 +161,7 @@ import {
   type FormInstance,
   type FormRules,
 } from 'element-plus'
-import type { IComponentType, IModalConfig } from '../interface'
+import { IComponentType, IModalConfig } from '../interface'
 import InputTag from './InputTag.vue'
 import IconSelect from './IconSelect.vue'
 import { markRaw, onMounted, reactive, ref } from 'vue'

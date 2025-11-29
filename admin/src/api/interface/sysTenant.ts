@@ -23,6 +23,6 @@ export interface ResSysTenant {
   createTime: string | undefined // 创建时间
   updater: string | undefined // 更新人
   updateTime: string | undefined // 更新时间
-  username?: string
-  password?: string
+  username: string
+  password: string
 }

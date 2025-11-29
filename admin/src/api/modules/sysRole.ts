@@ -1,6 +1,6 @@
 // sys_role 角色
 import http from '@/utils/request'
-import type { ResSysRole, ReqSysRoleParams } from '@/api/interface/sysRole'
+import { ResSysRole, ReqSysRoleParams } from '@/api/interface/sysRole'
 // 角色创建数据
 export const addSysRoleApi = (params: ResSysRole) => {
   return http.post(`/v1/sys/role`, params)

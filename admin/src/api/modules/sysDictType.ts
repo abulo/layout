@@ -1,6 +1,6 @@
 // sys_dict_type 字典类型
 import http from '@/utils/request'
-import type { ResSysDictType, ReqSysDictTypeParams } from '@/api/interface/sysDictType'
+import { ResSysDictType, ReqSysDictTypeParams } from '@/api/interface/sysDictType'
 // 字典类型创建数据
 export const addSysDictTypeApi = (params: ResSysDictType) => {
   return http.post(`/v1/sys/dict/type`, params)

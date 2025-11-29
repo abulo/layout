@@ -26,7 +26,7 @@
   </el-scrollbar>
 </template>
 <script setup lang="ts">
-import type { InputInstance } from 'element-plus'
+import { InputInstance } from 'element-plus'
 import { nextTick, ref } from 'vue'
 
 const inputValue = ref('')

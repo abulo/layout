@@ -56,13 +56,13 @@ import { useTabsStore } from '@/stores/modules/tabs'
 import { useKeepAliveStore } from '@/stores/modules/keepAlive'
 import { initDynamicRouter } from '@/routers/modules/dynamicRouter'
 import { CircleClose, UserFilled } from '@element-plus/icons-vue'
-import type { ElForm } from 'element-plus'
+import { ElForm } from 'element-plus'
 import { useLoadingStore } from '@/stores/modules/loading'
 import { storeToRefs } from 'pinia'
-import type { ResCaptcha } from '@/api/interface/captcha'
+import { ResCaptcha } from '@/api/interface/captcha'
 import { getCaptchaApi } from '@/api/modules/captcha'
 import { type ReqSysUserLogin } from '@/api/interface/sysUser'
-import { postSysUserLogin } from '@/api/modules/sysUser'
+import { postLogin } from '@/api/modules/sysUser'
 import { HOME_URL } from '@/config'
 
 //验证码
@@ -118,7 +118,7 @@ const login = (formEl: FormInstance | undefined) => {
     try {
       // 1.执行登录接口
       const hashedPassword = encryptPassword(loginForm.password)
-      const { data } = await postSysUserLogin({ ...loginForm, password: hashedPassword })
+      const { data } = await postLogin({ ...loginForm, password: hashedPassword })
       userStore.setUser(data)
       // 2.添加动态路由
       await initDynamicRouter()

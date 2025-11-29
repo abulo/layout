@@ -1,4 +1,4 @@
-import type { ButtonProps } from 'element-plus'
+import { ButtonProps } from 'element-plus'
 
 /**
  * @description 表格工具栏按钮配置

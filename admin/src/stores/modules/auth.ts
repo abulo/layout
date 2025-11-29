@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { AuthState } from '@/stores/interface'
+import { AuthState } from '@/stores/interface'
 import { getFlatMenuList, getShowMenuList, getAllBreadcrumbList } from '@/utils'
 import { useRoute } from 'vue-router'
 import { computed, reactive, toRefs } from 'vue'

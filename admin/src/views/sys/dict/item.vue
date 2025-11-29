@@ -102,8 +102,8 @@
 </template>
 <script setup lang="tsx">
 defineOptions({ name: 'SysDict' })
-import type { ResSysDict } from '@/api/interface/sysDict'
-import type { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
+import { ResSysDict } from '@/api/interface/sysDict'
+import { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
 import { EditPen, CirclePlus, Delete, View, DArrowRight, Remove } from '@element-plus/icons-vue'
 import {
   getSysDictListApi,
@@ -112,7 +112,7 @@ import {
   addSysDictApi,
   updateSysDictApi,
 } from '@/api/modules/sysDict'
-import type { FormInstance, FormRules } from 'element-plus'
+import { FormInstance, FormRules } from 'element-plus'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
 import { HasAuth } from '@/utils/auth'
 import { useRoute } from 'vue-router'
@@ -120,7 +120,7 @@ import { useTabsStore } from '@/stores/modules/tabs'
 import { useKeepAliveStore } from '@/stores/modules/keepAlive'
 import { getSysDictTypeListSimpleApi } from '@/api/modules/sysDictType'
 import { getIntDictOptions } from '@/utils/dict'
-import type { ResSysDictType } from '@/api/interface/sysDictType'
+import { ResSysDictType } from '@/api/interface/sysDictType'
 import { useLoadingStore } from '@/stores/modules/loading'
 import { storeToRefs } from 'pinia'
 import { ProTablePaginationEnum } from '@/enums'

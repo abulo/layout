@@ -54,8 +54,8 @@
 </template>
 <script setup lang="tsx">
 defineOptions({ name: 'SysLoggerDev' })
-import type { ResSysLoggerDev } from '@/api/interface/sysLoggerDev'
-import type { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
+import { ResSysLoggerDev } from '@/api/interface/sysLoggerDev'
+import { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
 import { Delete, View } from '@element-plus/icons-vue'
 import { getSysLoggerDevListApi, deleteSysLoggerDevApi, getSysLoggerDevApi } from '@/api/modules/sysLoggerDev'
 import { useHandleData } from '@/hooks/useHandleData'

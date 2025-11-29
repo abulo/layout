@@ -38,8 +38,8 @@
 </template>
 <script setup lang="ts">
 defineOptions({ name: 'SearchForm' })
-import type { ColumnProps } from '@/components/ProTable/interface'
-import type { BreakPoint } from '@/components/Grid/interface'
+import { ColumnProps } from '@/components/ProTable/interface'
+import { BreakPoint } from '@/components/Grid/interface'
 import { Delete, Search, ArrowDown, ArrowUp } from '@element-plus/icons-vue'
 import SearchFormItem from './components/SearchFormItem.vue'
 import Grid from '@/components/Grid/index.vue'

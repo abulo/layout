@@ -1,6 +1,6 @@
 // sys_tenant_package 租户套餐
 import http from '@/utils/request'
-import type { ResSysTenantPackage, ReqSysTenantPackageParams } from '@/api/interface/sysTenantPackage'
+import { ResSysTenantPackage, ReqSysTenantPackageParams } from '@/api/interface/sysTenantPackage'
 // 租户套餐创建数据
 export const addSysTenantPackageApi = (params: ResSysTenantPackage) => {
   return http.post(`/v1/sys/tenant/package`, params)

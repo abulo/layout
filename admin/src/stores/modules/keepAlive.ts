@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { KeepAliveState } from '@/stores/interface'
+import { KeepAliveState } from '@/stores/interface'
 
 export const useKeepAliveStore = defineStore('admin-keepAlive', {
   state: (): KeepAliveState => ({

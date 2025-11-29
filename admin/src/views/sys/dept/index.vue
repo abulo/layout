@@ -162,8 +162,8 @@
 </template>
 <script setup lang="tsx">
 defineOptions({ name: 'SysDept' })
-import type { ResSysDept } from '@/api/interface/sysDept'
-import type { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
+import { ResSysDept } from '@/api/interface/sysDept'
+import { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
 import { EditPen, CirclePlus, Delete, Refresh, DeleteFilled, View, DArrowRight, Sort } from '@element-plus/icons-vue'
 import {
   getSysDeptListApi,
@@ -175,7 +175,7 @@ import {
   updateSysDeptApi,
   getSysDeptListSimpleApi,
 } from '@/api/modules/sysDept'
-import type { FormInstance, FormRules } from 'element-plus'
+import { FormInstance, FormRules } from 'element-plus'
 import { getIntDictOptions } from '@/utils/dict'
 import { DictTag } from '@/components/DictTag'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
@@ -183,7 +183,7 @@ import { HasAuth } from '@/utils/auth'
 import { useLoadingStore } from '@/stores/modules/loading'
 import { storeToRefs } from 'pinia'
 import { handleTree } from '@pureadmin/utils'
-import type { ResSysUser } from '@/api/interface/sysUser'
+import { ResSysUser } from '@/api/interface/sysUser'
 import { getSysUserApi, getSysUserListSimpleApi } from '@/api/modules/sysUser'
 import { ProTablePaginationEnum } from '@/enums'
 // 获取loading状态

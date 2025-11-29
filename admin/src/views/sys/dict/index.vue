@@ -95,8 +95,8 @@
 </template>
 <script setup lang="tsx">
 defineOptions({ name: 'SysDictType' })
-import type { ResSysDictType } from '@/api/interface/sysDictType'
-import type { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
+import { ResSysDictType } from '@/api/interface/sysDictType'
+import { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
 import { EditPen, CirclePlus, Delete, View, DArrowRight, DataBoard } from '@element-plus/icons-vue'
 import {
   getSysDictTypeListApi,
@@ -105,7 +105,7 @@ import {
   addSysDictTypeApi,
   updateSysDictTypeApi,
 } from '@/api/modules/sysDictType'
-import type { FormInstance, FormRules } from 'element-plus'
+import { FormInstance, FormRules } from 'element-plus'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
 import { HasAuth } from '@/utils/auth'
 import { useRouter } from 'vue-router'

@@ -14,7 +14,7 @@ import {
 } from 'echarts/components'
 import { LabelLayout, UniversalTransition } from 'echarts/features'
 import { CanvasRenderer } from 'echarts/renderers'
-import type {
+import {
   BarSeriesOption,
   LineSeriesOption,
   LinesSeriesOption,
@@ -23,13 +23,13 @@ import type {
   RadarSeriesOption,
   GaugeSeriesOption,
 } from 'echarts/charts'
-import type {
+import {
   TitleComponentOption,
   TooltipComponentOption,
   GridComponentOption,
   DatasetComponentOption,
 } from 'echarts/components'
-import type { ComposeOption } from 'echarts/core'
+import { ComposeOption } from 'echarts/core'
 import 'echarts-liquidfill'
 
 export type ECOption = ComposeOption<

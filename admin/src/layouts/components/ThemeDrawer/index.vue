@@ -163,7 +163,7 @@ import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTheme } from '@/hooks/useTheme'
 import { useGlobalStore } from '@/stores/modules/global'
-import type { LayoutType } from '@/stores/interface'
+import { LayoutType } from '@/stores/interface'
 import { DEFAULT_PRIMARY } from '@/config'
 import SwitchDark from '@/components/SwitchDark/index.vue'
 

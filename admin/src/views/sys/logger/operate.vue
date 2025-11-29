@@ -90,8 +90,8 @@
 </template>
 <script setup lang="tsx">
 defineOptions({ name: 'SysLoggerOperate' })
-import type { ResSysLoggerOperate } from '@/api/interface/sysLoggerOperate'
-import type { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
+import { ResSysLoggerOperate } from '@/api/interface/sysLoggerOperate'
+import { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
 import { Delete, Refresh, DeleteFilled, View, DArrowRight } from '@element-plus/icons-vue'
 import {
   getSysLoggerOperateListApi,

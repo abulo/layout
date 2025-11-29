@@ -25,7 +25,7 @@
 <script setup lang="ts">
 defineOptions({ name: 'SearchFormItem' })
 import { handleProp } from '@/utils'
-import type { ColumnProps } from '@/components/ProTable/interface'
+import { ColumnProps } from '@/components/ProTable/interface'
 
 interface SearchFormItem {
   column: ColumnProps

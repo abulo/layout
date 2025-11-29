@@ -6,10 +6,10 @@
 
 <script setup lang="ts">
 defineOptions({ name: 'Grid' })
-import type { VNodeArrayChildren, VNode } from 'vue'
+import { VNodeArrayChildren, VNode } from 'vue'
 import { ref, watch, useSlots, computed, provide, onBeforeMount, onMounted, onActivated } from 'vue'
 import { useEventListener } from '@vueuse/core'
-import type { BreakPoint } from './interface/index'
+import { BreakPoint } from './interface/index'
 
 type Props = {
   cols?: number | Record<BreakPoint, number>
