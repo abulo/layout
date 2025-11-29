@@ -134,7 +134,7 @@ func SysInitRoute(handle *xhertz.Server) {
 		// sys_tenant->租户->用户列表
 		route.GET("/sys/tenant/:id/user", tenant.SysTenantUserList)
 		// sys_tenant->租户->用户登录
-		route.GET("/sys/tenant/:id/login", tenant.SysTenantUserLogin)
+		route.POST("/sys/tenant/:id/login", tenant.SysTenantUserLogin)
 
 		// sys_tenant_package->租户套餐->创建
 		route.POST("/sys/tenant/package", tenant.SysTenantPackageCreate)
@@ -171,7 +171,7 @@ func SysInitRoute(handle *xhertz.Server) {
 		// sys_user->用户->列表
 		route.GET("/sys/user", user.SysUserList)
 		// sys_user->用户->登录
-		route.GET("/sys/user/:id/login", user.SysUserLogin)
+		route.POST("/sys/user/:id/login", user.SysUserLogin)
 
 		// sys_role->角色->创建
 		route.POST("/sys/role", role.SysRoleCreate)
