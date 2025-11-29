@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
+	"cloud/api/common"
 	"cloud/code"
 	"cloud/dao"
 	"cloud/initial"
@@ -23,33 +24,6 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 )
-
-// sys_user 用户
-// SysUserItem 查询单条数据
-func SysUserItem(ctx context.Context, newCtx *app.RequestContext, id int64) (*user.SysUserResponse, error) {
-	//判断这个服务能不能链接
-	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()
-	if err != nil {
-		globalLogger.Logger.WithFields(logrus.Fields{
-			"err": err,
-		}).Error("Grpc:用户:sys_user:SysUserItem")
-		return nil, status.Error(code.ConvertToGrpc(code.RPCError), code.StatusText(code.RPCError))
-	}
-	//链接服务
-	client := user.NewSysUserServiceClient(grpcClient)
-	request := &user.SysUserRequest{}
-	request.Id = id
-	// 执行服务
-	res, err := client.SysUser(ctx, request)
-	if err != nil {
-		globalLogger.Logger.WithFields(logrus.Fields{
-			"req": request,
-			"err": err,
-		}).Error("GrpcCall:用户:sys_user:SysUserItem")
-		return nil, err
-	}
-	return res, nil
-}
 
 // SysUserCreate 创建数据
 func SysUserCreate(ctx context.Context, newCtx *app.RequestContext) {
@@ -105,7 +79,7 @@ func SysUserCreate(ctx context.Context, newCtx *app.RequestContext) {
 // SysUserUpdate 更新数据
 func SysUserUpdate(ctx context.Context, newCtx *app.RequestContext) {
 	id := cast.ToInt64(newCtx.Param("id"))
-	if _, err := SysUserItem(ctx, newCtx, id); err != nil {
+	if _, err := common.SysUserItem(ctx, newCtx, id); err != nil {
 		fromError := status.Convert(err)
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
@@ -168,7 +142,7 @@ func SysUserUpdate(ctx context.Context, newCtx *app.RequestContext) {
 // SysUserDelete 删除数据
 func SysUserDelete(ctx context.Context, newCtx *app.RequestContext) {
 	id := cast.ToInt64(newCtx.Param("id"))
-	if _, err := SysUserItem(ctx, newCtx, id); err != nil {
+	if _, err := common.SysUserItem(ctx, newCtx, id); err != nil {
 		fromError := status.Convert(err)
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
@@ -215,7 +189,7 @@ func SysUserDelete(ctx context.Context, newCtx *app.RequestContext) {
 func SysUser(ctx context.Context, newCtx *app.RequestContext) {
 	id := cast.ToInt64(newCtx.Param("id"))
 	// 执行服务
-	res, err := SysUserItem(ctx, newCtx, id)
+	res, err := common.SysUserItem(ctx, newCtx, id)
 	if err != nil {
 		fromError := status.Convert(err)
 		response.JSON(newCtx, consts.StatusOK, utils.H{
@@ -236,7 +210,7 @@ func SysUser(ctx context.Context, newCtx *app.RequestContext) {
 // SysUserRecover 恢复数据
 func SysUserRecover(ctx context.Context, newCtx *app.RequestContext) {
 	id := cast.ToInt64(newCtx.Param("id"))
-	if _, err := SysUserItem(ctx, newCtx, id); err != nil {
+	if _, err := common.SysUserItem(ctx, newCtx, id); err != nil {
 		fromError := status.Convert(err)
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),
@@ -282,7 +256,7 @@ func SysUserRecover(ctx context.Context, newCtx *app.RequestContext) {
 // SysUserDrop 清理数据
 func SysUserDrop(ctx context.Context, newCtx *app.RequestContext) {
 	id := cast.ToInt64(newCtx.Param("id"))
-	if _, err := SysUserItem(ctx, newCtx, id); err != nil {
+	if _, err := common.SysUserItem(ctx, newCtx, id); err != nil {
 		fromError := status.Convert(err)
 		response.JSON(newCtx, consts.StatusOK, utils.H{
 			"code": code.ConvertToHttp(fromError.Code()),

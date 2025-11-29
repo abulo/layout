@@ -21,7 +21,35 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
+	"google.golang.org/grpc/status"
 )
+
+// sys_user 用户
+// SysUserItem 查询单条数据
+func SysUserItem(ctx context.Context, newCtx *app.RequestContext, id int64) (*user.SysUserResponse, error) {
+	//判断这个服务能不能链接
+	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()
+	if err != nil {
+		globalLogger.Logger.WithFields(logrus.Fields{
+			"err": err,
+		}).Error("Grpc:用户:sys_user:SysUserItem")
+		return nil, status.Error(code.ConvertToGrpc(code.RPCError), code.StatusText(code.RPCError))
+	}
+	//链接服务
+	client := user.NewSysUserServiceClient(grpcClient)
+	request := &user.SysUserRequest{}
+	request.Id = id
+	// 执行服务
+	res, err := client.SysUser(ctx, request)
+	if err != nil {
+		globalLogger.Logger.WithFields(logrus.Fields{
+			"req": request,
+			"err": err,
+		}).Error("GrpcCall:用户:sys_user:SysUserItem")
+		return nil, err
+	}
+	return res, nil
+}
 
 // SysUserMenuDao 数据转换
 func SysUserMenuDao(item *menu.SysMenuObject) *dao.SysMenuTree {
