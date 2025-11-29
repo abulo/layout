@@ -4,6 +4,7 @@ import (
 	"cloud/code"
 	"cloud/module/sys/logger"
 	"context"
+	"encoding/json"
 
 	globalLogger "github.com/abulo/ratel/v3/core/logger"
 	"github.com/abulo/ratel/v3/server/xgrpc"
@@ -160,14 +161,28 @@ func (srv SrvSysLoggerOperateServiceServer) SysLoggerOperateList(ctx context.Con
 	if request.Method != nil {
 		condition["method"] = request.GetMethod()
 	}
-	if request.StartTime != nil {
-		condition["startTime"] = request.GetStartTime()
+	if request.BeginStartTime != nil {
+		condition["beginStartTime"] = request.GetBeginStartTime()
+	}
+	if request.FinishStartTime != nil {
+		condition["finishStartTime"] = request.GetFinishStartTime()
 	}
 	if request.UserId != nil {
 		condition["userId"] = request.GetUserId()
 	}
 	if request.Username != nil {
 		condition["username"] = request.GetUsername()
+	}
+	if request.Scope != nil {
+		condition["scope"] = request.GetScope()
+	}
+	if request.ScopeDept != nil {
+		var deptIds []int64
+		json.Unmarshal(request.GetScopeDept(), &deptIds)
+		condition["scopeDept"] = deptIds
+	}
+	if request.DeptId != nil {
+		condition["deptId"] = request.GetDeptId()
 	}
 
 	paginationRequest := request.GetPagination()
@@ -230,14 +245,28 @@ func (srv SrvSysLoggerOperateServiceServer) SysLoggerOperateListTotal(ctx contex
 	if request.Method != nil {
 		condition["method"] = request.GetMethod()
 	}
-	if request.StartTime != nil {
-		condition["startTime"] = request.GetStartTime()
+	if request.BeginStartTime != nil {
+		condition["beginStartTime"] = request.GetBeginStartTime()
+	}
+	if request.FinishStartTime != nil {
+		condition["finishStartTime"] = request.GetFinishStartTime()
 	}
 	if request.UserId != nil {
 		condition["userId"] = request.GetUserId()
 	}
 	if request.Username != nil {
 		condition["username"] = request.GetUsername()
+	}
+	if request.Scope != nil {
+		condition["scope"] = request.GetScope()
+	}
+	if request.ScopeDept != nil {
+		var deptIds []int64
+		json.Unmarshal(request.GetScopeDept(), &deptIds)
+		condition["scopeDept"] = deptIds
+	}
+	if request.DeptId != nil {
+		condition["deptId"] = request.GetDeptId()
 	}
 
 	// 获取数据集合

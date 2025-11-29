@@ -72,6 +72,9 @@ func SysInitRoute(handle *xhertz.Server) {
 
 		// sys_logger_dev->开发日志->单条数据信息查看
 		route.GET("/sys/logger/dev/:id/item", logger.SysLoggerDev)
+
+		// sys_logger_operate->操作日志->单条数据信息查看
+		route.GET("/sys/logger/operate/:id/item", logger.SysLoggerOperate)
 	}
 
 	route = handle.Group("/v1").Use(middleware.TokenMiddleware(), middleware.AuthMiddleware())
@@ -183,6 +186,15 @@ func SysInitRoute(handle *xhertz.Server) {
 		route.DELETE("/sys/logger/dev/:id/delete", logger.SysLoggerDevDelete)
 		// sys_logger_dev->开发日志->列表
 		route.GET("/sys/logger/dev", logger.SysLoggerDevList)
+
+		// sys_logger_operate->操作日志->删除
+		route.DELETE("/sys/logger/operate/:id/delete", logger.SysLoggerOperateDelete)
+		// sys_logger_operate->操作日志->恢复
+		route.PUT("/sys/logger/operate/:id/recover", logger.SysLoggerOperateRecover)
+		// sys_logger_operate->操作日志->清理
+		route.DELETE("/sys/logger/operate/:id/drop", logger.SysLoggerOperateDrop)
+		// sys_logger_operate->操作日志->列表
+		route.GET("/sys/logger/operate", logger.SysLoggerOperateList)
 
 	}
 }
