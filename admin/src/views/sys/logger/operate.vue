@@ -100,7 +100,7 @@ import {
   recoverSysLoggerOperateApi,
   getSysLoggerOperateApi,
 } from '@/api/modules/sysLoggerOperate'
-import { getIntDictOptions } from '@/utils/dict'
+import { getIntDictOptions, getStrDictOptions } from '@/utils/dict'
 import { DictTag } from '@/components/DictTag'
 import { useHandleData } from '@/hooks/useHandleData'
 import { HasAuth } from '@/utils/auth'
@@ -235,6 +235,10 @@ const handleRecover = async (row: ResSysLoggerOperate) => {
 
 //删除状态
 const deletedEnum = getIntDictOptions('deleted')
+// 结果
+const resultEnum = getIntDictOptions('operate.result')
+// 请求方法
+const methodEnum = getStrDictOptions('operate.method')
 // 表格配置项
 const deleteSearch = reactive<SearchProps>(
   HasAuth('logger.SysLoggerOperateDelete')
@@ -253,7 +257,7 @@ const columns: ColumnProps<ResSysLoggerOperate>[] = [
   { prop: 'id', label: '编号' },
   { prop: 'username', label: '用户名', search: { el: 'input', span: 2 } },
   { prop: 'module', label: '模块名称' },
-  { prop: 'method', label: '请求方法', search: { el: 'input', span: 2 } },
+  { prop: 'method', label: '请求方法', tag: true, enum: methodEnum, search: { el: 'select', span: 2 } },
   { prop: 'url', label: '请求地址' },
   { prop: 'ip', label: 'IP' },
   {
@@ -267,7 +271,7 @@ const columns: ColumnProps<ResSysLoggerOperate>[] = [
   },
   { prop: 'duration', label: '执行时长' },
   { prop: 'channel', label: '渠道', search: { el: 'input', span: 2 } },
-  { prop: 'result', label: '结果', search: { el: 'input', span: 2 } },
+  { prop: 'result', label: '结果', tag: true, enum: resultEnum, search: { el: 'select', span: 2 } },
   { prop: 'deleted', label: '删除', tag: true, enum: deletedEnum, search: deleteSearch },
 
   {
