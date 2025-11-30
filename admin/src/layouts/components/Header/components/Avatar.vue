@@ -1,9 +1,8 @@
 <template>
   <el-dropdown trigger="click">
     <div class="avatar">
-      <span class="username">
-        <AuthorImage :name="username" :size="23"></AuthorImage>
-      </span>
+      <span class="username">{{ username }}</span>
+      <img src="@/assets/images/avatar.gif" alt="avatar" />
     </div>
     <template #dropdown>
       <el-dropdown-menu>
@@ -69,8 +68,14 @@ const openDialog = (ref: string) => {
   overflow: hidden;
   cursor: pointer;
   .username {
-    margin-left: 20px;
+    margin: 0 20px;
+    font-size: 15px;
     color: var(--el-header-text-color);
+  }
+  img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
   }
 }
 </style>

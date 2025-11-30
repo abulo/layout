@@ -132,6 +132,9 @@ const sysLoggerLoginForm = ref<ResSysLoggerLogin>({
 const getTableList = (params: any) => {
   // 深拷贝参数对象，避免修改原始参数
   let newParams = JSON.parse(JSON.stringify(params))
+  newParams.loginTime && (newParams.beginLoginTime = newParams.loginTime[0])
+  newParams.loginTime && (newParams.finishLoginTime = newParams.loginTime[1])
+  delete newParams.loginTime
   return getSysLoggerLoginListApi(newParams)
 }
 

@@ -14,7 +14,6 @@ declare module 'vue' {
     403: typeof import('./../components/ErrorMessage/403.vue')['default']
     404: typeof import('./../components/ErrorMessage/404.vue')['default']
     500: typeof import('./../components/ErrorMessage/500.vue')['default']
-    AuthorImage: typeof import('./../components/AuthorImage/index.vue')['default']
     ColSetting: typeof import('./../components/ProTable/components/ColSetting.vue')['default']
     DictTag: typeof import('./../components/DictTag/DictTag.vue')['default']
     ECharts: typeof import('./../components/ECharts/index.vue')['default']
