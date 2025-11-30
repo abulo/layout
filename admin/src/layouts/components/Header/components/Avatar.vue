@@ -1,13 +1,12 @@
 <template>
   <el-dropdown trigger="click">
     <div class="avatar">
-      <span class="username"><img src="@/assets/images/avatar.gif" :alt="username" /></span>
+      <span class="username">
+        <AuthorImage :name="username" :size="23"></AuthorImage>
+      </span>
     </div>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item @click="openDialog('infoRef')">
-          <el-icon><User /></el-icon>{{ $t('header.personalData') }}
-        </el-dropdown-item>
         <el-dropdown-item @click="openDialog('passwordRef')">
           <el-icon><Edit /></el-icon>{{ $t('header.changePassword') }}
         </el-dropdown-item>
@@ -17,8 +16,6 @@
       </el-dropdown-menu>
     </template>
   </el-dropdown>
-  <!-- infoDialog -->
-  <info-dialog ref="infoRef" />
   <!-- passwordDialog -->
   <password-dialog ref="passwordRef" />
 </template>
@@ -33,7 +30,6 @@ import { useRouter } from 'vue-router'
 // import { AuthApi } from '@/api/auth'
 import { useUserStore } from '@/stores/modules/user'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import InfoDialog from './InfoDialog.vue'
 import PasswordDialog from './PasswordDialog.vue'
 
 const router = useRouter()
@@ -47,9 +43,6 @@ const logout = () => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    // 1.执行退出登录接口
-    // await AuthApi.logout()
-
     // 2.清除 Token
     userStore.clearUserState()
 
@@ -60,12 +53,8 @@ const logout = () => {
 }
 
 // 打开修改密码和个人信息弹窗
-const infoRef = ref<InstanceType<typeof InfoDialog> | null>(null)
 const passwordRef = ref<InstanceType<typeof PasswordDialog> | null>(null)
 const openDialog = (ref: string) => {
-  if (ref == 'infoRef') {
-    infoRef.value?.openDialog()
-  }
   if (ref == 'passwordRef') {
     passwordRef.value?.openDialog()
   }
@@ -82,11 +71,6 @@ const openDialog = (ref: string) => {
   .username {
     margin-left: 20px;
     color: var(--el-header-text-color);
-  }
-  img {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
   }
 }
 </style>

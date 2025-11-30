@@ -1,6 +1,5 @@
 // sys_logger_operate 操作日志
 export interface ReqSysLoggerOperateParams extends RequestPage {
-  tenantId?: number // 租户
   deleted?: number // 删除:0否/1是
   result?: number // 结果:0 成功/1 失败
   channel?: string // 渠道

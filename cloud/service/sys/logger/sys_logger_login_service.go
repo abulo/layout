@@ -4,6 +4,7 @@ import (
 	"cloud/code"
 	"cloud/module/sys/logger"
 	"context"
+	"encoding/json"
 
 	globalLogger "github.com/abulo/ratel/v3/core/logger"
 	"github.com/abulo/ratel/v3/server/xgrpc"
@@ -154,14 +155,28 @@ func (srv SrvSysLoggerLoginServiceServer) SysLoggerLoginList(ctx context.Context
 	if request.Channel != nil {
 		condition["channel"] = request.GetChannel()
 	}
-	if request.LoginTime != nil {
-		condition["loginTime"] = request.GetLoginTime()
+	if request.BeginLoginTime != nil {
+		condition["beginLoginTime"] = request.GetBeginLoginTime()
+	}
+	if request.FinishLoginTime != nil {
+		condition["finishLoginTime"] = request.GetFinishLoginTime()
 	}
 	if request.UserId != nil {
 		condition["userId"] = request.GetUserId()
 	}
 	if request.Username != nil {
 		condition["username"] = request.GetUsername()
+	}
+	if request.Scope != nil {
+		condition["scope"] = request.GetScope()
+	}
+	if request.ScopeDept != nil {
+		var deptIds []int64
+		json.Unmarshal(request.GetScopeDept(), &deptIds)
+		condition["scopeDept"] = deptIds
+	}
+	if request.DeptId != nil {
+		condition["deptId"] = request.GetDeptId()
 	}
 
 	paginationRequest := request.GetPagination()
@@ -208,7 +223,6 @@ func (srv SrvSysLoggerLoginServiceServer) SysLoggerLoginList(ctx context.Context
 func (srv SrvSysLoggerLoginServiceServer) SysLoggerLoginListTotal(ctx context.Context, request *SysLoggerLoginListTotalRequest) (*SysLoggerLoginTotalResponse, error) {
 	// 数据库查询条件
 	condition := make(map[string]any)
-	// 构造查询条件
 	if request.TenantId != nil {
 		condition["tenantId"] = request.GetTenantId()
 	}
@@ -218,14 +232,28 @@ func (srv SrvSysLoggerLoginServiceServer) SysLoggerLoginListTotal(ctx context.Co
 	if request.Channel != nil {
 		condition["channel"] = request.GetChannel()
 	}
-	if request.LoginTime != nil {
-		condition["loginTime"] = request.GetLoginTime()
+	if request.BeginLoginTime != nil {
+		condition["beginLoginTime"] = request.GetBeginLoginTime()
+	}
+	if request.FinishLoginTime != nil {
+		condition["finishLoginTime"] = request.GetFinishLoginTime()
 	}
 	if request.UserId != nil {
 		condition["userId"] = request.GetUserId()
 	}
 	if request.Username != nil {
 		condition["username"] = request.GetUsername()
+	}
+	if request.Scope != nil {
+		condition["scope"] = request.GetScope()
+	}
+	if request.ScopeDept != nil {
+		var deptIds []int64
+		json.Unmarshal(request.GetScopeDept(), &deptIds)
+		condition["scopeDept"] = deptIds
+	}
+	if request.DeptId != nil {
+		condition["deptId"] = request.GetDeptId()
 	}
 
 	// 获取数据集合

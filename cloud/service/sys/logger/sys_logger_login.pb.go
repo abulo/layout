@@ -875,14 +875,22 @@ type SysLoggerLoginListRequest struct {
 	Deleted *int32 `protobuf:"varint,2,opt,name=deleted,proto3,oneof" json:"deleted" db:"deleted"` // 删除:0否/1是
 	// @inject_tag: db:"channel" json:"channel"
 	Channel *string `protobuf:"bytes,3,opt,name=channel,proto3,oneof" json:"channel" db:"channel"` // 渠道
-	// @inject_tag: db:"login_time" json:"loginTime"
-	LoginTime *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=login_time,json=loginTime,proto3" json:"loginTime" db:"login_time"` // 登录时间
+	// @inject_tag: db:"begin_login_time" json:"beginLoginTime"
+	BeginLoginTime *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=begin_login_time,json=beginLoginTime,proto3" json:"beginLoginTime" db:"begin_login_time"` // 登录时间
+	// @inject_tag: db:"finish_login_time" json:"finishLoginTime"
+	FinishLoginTime *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=finish_login_time,json=finishLoginTime,proto3" json:"finishLoginTime" db:"finish_login_time"`
 	// @inject_tag: db:"user_id" json:"userId"
-	UserId *int64 `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof" json:"userId" db:"user_id"` // 用户编号
+	UserId *int64 `protobuf:"varint,6,opt,name=user_id,json=userId,proto3,oneof" json:"userId" db:"user_id"` // 用户编号
 	// @inject_tag: db:"username" json:"username"
-	Username *string `protobuf:"bytes,6,opt,name=username,proto3,oneof" json:"username" db:"username"` // 用户名
+	Username *string `protobuf:"bytes,7,opt,name=username,proto3,oneof" json:"username" db:"username"` // 用户名
+	// @inject_tag: gorm:"column:scope" json:"scope"
+	Scope *int32 `protobuf:"varint,8,opt,name=scope,proto3,oneof" json:"scope" gorm:"column:scope"` //数据范围:1:全部数据权限/2:自定数据权限/3:本部门数据权限/4:本部门及以下数据权限
+	// @inject_tag: gorm:"column:scope_dept" json:"scopeDept"
+	ScopeDept []byte `protobuf:"bytes,9,opt,name=scope_dept,json=scopeDept,proto3,oneof" json:"scopeDept" gorm:"column:scope_dept"` //数据范围(指定部门数组)
+	// @inject_tag: db:"dept_id" json:"deptId"
+	DeptId *int64 `protobuf:"varint,10,opt,name=dept_id,json=deptId,proto3,oneof" json:"deptId" db:"dept_id"` // 租户ID
 	// @inject_tag: json:"pagination"
-	Pagination    *pagination.PaginationRequest `protobuf:"bytes,7,opt,name=pagination,proto3,oneof" json:"pagination"` // 分页
+	Pagination    *pagination.PaginationRequest `protobuf:"bytes,11,opt,name=pagination,proto3,oneof" json:"pagination"` // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -938,9 +946,16 @@ func (x *SysLoggerLoginListRequest) GetChannel() string {
 	return ""
 }
 
-func (x *SysLoggerLoginListRequest) GetLoginTime() *timestamppb.Timestamp {
+func (x *SysLoggerLoginListRequest) GetBeginLoginTime() *timestamppb.Timestamp {
 	if x != nil {
-		return x.LoginTime
+		return x.BeginLoginTime
+	}
+	return nil
+}
+
+func (x *SysLoggerLoginListRequest) GetFinishLoginTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.FinishLoginTime
 	}
 	return nil
 }
@@ -957,6 +972,27 @@ func (x *SysLoggerLoginListRequest) GetUsername() string {
 		return *x.Username
 	}
 	return ""
+}
+
+func (x *SysLoggerLoginListRequest) GetScope() int32 {
+	if x != nil && x.Scope != nil {
+		return *x.Scope
+	}
+	return 0
+}
+
+func (x *SysLoggerLoginListRequest) GetScopeDept() []byte {
+	if x != nil {
+		return x.ScopeDept
+	}
+	return nil
+}
+
+func (x *SysLoggerLoginListRequest) GetDeptId() int64 {
+	if x != nil && x.DeptId != nil {
+		return *x.DeptId
+	}
+	return 0
 }
 
 func (x *SysLoggerLoginListRequest) GetPagination() *pagination.PaginationRequest {
@@ -1036,12 +1072,20 @@ type SysLoggerLoginListTotalRequest struct {
 	Deleted *int32 `protobuf:"varint,2,opt,name=deleted,proto3,oneof" json:"deleted" db:"deleted"` // 删除:0否/1是
 	// @inject_tag: db:"channel" json:"channel"
 	Channel *string `protobuf:"bytes,3,opt,name=channel,proto3,oneof" json:"channel" db:"channel"` // 渠道
-	// @inject_tag: db:"login_time" json:"loginTime"
-	LoginTime *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=login_time,json=loginTime,proto3" json:"loginTime" db:"login_time"` // 登录时间
+	// @inject_tag: db:"begin_login_time" json:"beginLoginTime"
+	BeginLoginTime *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=begin_login_time,json=beginLoginTime,proto3" json:"beginLoginTime" db:"begin_login_time"` // 登录时间
+	// @inject_tag: db:"finish_login_time" json:"finishLoginTime"
+	FinishLoginTime *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=finish_login_time,json=finishLoginTime,proto3" json:"finishLoginTime" db:"finish_login_time"`
 	// @inject_tag: db:"user_id" json:"userId"
-	UserId *int64 `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof" json:"userId" db:"user_id"` // 用户编号
+	UserId *int64 `protobuf:"varint,6,opt,name=user_id,json=userId,proto3,oneof" json:"userId" db:"user_id"` // 用户编号
 	// @inject_tag: db:"username" json:"username"
-	Username      *string `protobuf:"bytes,6,opt,name=username,proto3,oneof" json:"username" db:"username"` // 用户名
+	Username *string `protobuf:"bytes,7,opt,name=username,proto3,oneof" json:"username" db:"username"` // 用户名
+	// @inject_tag: gorm:"column:scope" json:"scope"
+	Scope *int32 `protobuf:"varint,8,opt,name=scope,proto3,oneof" json:"scope" gorm:"column:scope"` //数据范围:1:全部数据权限/2:自定数据权限/3:本部门数据权限/4:本部门及以下数据权限
+	// @inject_tag: gorm:"column:scope_dept" json:"scopeDept"
+	ScopeDept []byte `protobuf:"bytes,9,opt,name=scope_dept,json=scopeDept,proto3,oneof" json:"scopeDept" gorm:"column:scope_dept"` //数据范围(指定部门数组)
+	// @inject_tag: db:"dept_id" json:"deptId"
+	DeptId        *int64 `protobuf:"varint,10,opt,name=dept_id,json=deptId,proto3,oneof" json:"deptId" db:"dept_id"` // 租户ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1097,9 +1141,16 @@ func (x *SysLoggerLoginListTotalRequest) GetChannel() string {
 	return ""
 }
 
-func (x *SysLoggerLoginListTotalRequest) GetLoginTime() *timestamppb.Timestamp {
+func (x *SysLoggerLoginListTotalRequest) GetBeginLoginTime() *timestamppb.Timestamp {
 	if x != nil {
-		return x.LoginTime
+		return x.BeginLoginTime
+	}
+	return nil
+}
+
+func (x *SysLoggerLoginListTotalRequest) GetFinishLoginTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.FinishLoginTime
 	}
 	return nil
 }
@@ -1116,6 +1167,27 @@ func (x *SysLoggerLoginListTotalRequest) GetUsername() string {
 		return *x.Username
 	}
 	return ""
+}
+
+func (x *SysLoggerLoginListTotalRequest) GetScope() int32 {
+	if x != nil && x.Scope != nil {
+		return *x.Scope
+	}
+	return 0
+}
+
+func (x *SysLoggerLoginListTotalRequest) GetScopeDept() []byte {
+	if x != nil {
+		return x.ScopeDept
+	}
+	return nil
+}
+
+func (x *SysLoggerLoginListTotalRequest) GetDeptId() int64 {
+	if x != nil && x.DeptId != nil {
+		return *x.DeptId
+	}
+	return 0
 }
 
 var File_sys_logger_login_proto protoreflect.FileDescriptor
@@ -1196,17 +1268,22 @@ const file_sys_logger_login_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"B\n" +
 	"\x1aSysLoggerLoginDropResponse\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x03R\x04code\x12\x10\n" +
-	"\x03msg\x18\x02 \x01(\tR\x03msg\"\x87\x03\n" +
+	"\x03msg\x18\x02 \x01(\tR\x03msg\"\xdc\x04\n" +
 	"\x19SysLoggerLoginListRequest\x12 \n" +
 	"\ttenant_id\x18\x01 \x01(\x03H\x00R\btenantId\x88\x01\x01\x12\x1d\n" +
 	"\adeleted\x18\x02 \x01(\x05H\x01R\adeleted\x88\x01\x01\x12\x1d\n" +
-	"\achannel\x18\x03 \x01(\tH\x02R\achannel\x88\x01\x01\x129\n" +
+	"\achannel\x18\x03 \x01(\tH\x02R\achannel\x88\x01\x01\x12D\n" +
+	"\x10begin_login_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x0ebeginLoginTime\x12F\n" +
+	"\x11finish_login_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x0ffinishLoginTime\x12\x1c\n" +
+	"\auser_id\x18\x06 \x01(\x03H\x03R\x06userId\x88\x01\x01\x12\x1f\n" +
+	"\busername\x18\a \x01(\tH\x04R\busername\x88\x01\x01\x12\x19\n" +
+	"\x05scope\x18\b \x01(\x05H\x05R\x05scope\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"login_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tloginTime\x12\x1c\n" +
-	"\auser_id\x18\x05 \x01(\x03H\x03R\x06userId\x88\x01\x01\x12\x1f\n" +
-	"\busername\x18\x06 \x01(\tH\x04R\busername\x88\x01\x01\x12B\n" +
+	"scope_dept\x18\t \x01(\fH\x06R\tscopeDept\x88\x01\x01\x12\x1c\n" +
+	"\adept_id\x18\n" +
+	" \x01(\x03H\aR\x06deptId\x88\x01\x01\x12B\n" +
 	"\n" +
-	"pagination\x18\a \x01(\v2\x1d.pagination.PaginationRequestH\x05R\n" +
+	"pagination\x18\v \x01(\v2\x1d.pagination.PaginationRequestH\bR\n" +
 	"pagination\x88\x01\x01B\f\n" +
 	"\n" +
 	"_tenant_idB\n" +
@@ -1216,20 +1293,29 @@ const file_sys_logger_login_proto_rawDesc = "" +
 	"\b_channelB\n" +
 	"\n" +
 	"\b_user_idB\v\n" +
-	"\t_usernameB\r\n" +
+	"\t_usernameB\b\n" +
+	"\x06_scopeB\r\n" +
+	"\v_scope_deptB\n" +
+	"\n" +
+	"\b_dept_idB\r\n" +
 	"\v_pagination\"t\n" +
 	"\x1aSysLoggerLoginListResponse\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x03R\x04code\x12\x10\n" +
 	"\x03msg\x18\x02 \x01(\tR\x03msg\x120\n" +
-	"\x04data\x18\x03 \x03(\v2\x1c.logger.SysLoggerLoginObjectR\x04data\"\xb9\x02\n" +
+	"\x04data\x18\x03 \x03(\v2\x1c.logger.SysLoggerLoginObjectR\x04data\"\x8e\x04\n" +
 	"\x1eSysLoggerLoginListTotalRequest\x12 \n" +
 	"\ttenant_id\x18\x01 \x01(\x03H\x00R\btenantId\x88\x01\x01\x12\x1d\n" +
 	"\adeleted\x18\x02 \x01(\x05H\x01R\adeleted\x88\x01\x01\x12\x1d\n" +
-	"\achannel\x18\x03 \x01(\tH\x02R\achannel\x88\x01\x01\x129\n" +
+	"\achannel\x18\x03 \x01(\tH\x02R\achannel\x88\x01\x01\x12D\n" +
+	"\x10begin_login_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x0ebeginLoginTime\x12F\n" +
+	"\x11finish_login_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x0ffinishLoginTime\x12\x1c\n" +
+	"\auser_id\x18\x06 \x01(\x03H\x03R\x06userId\x88\x01\x01\x12\x1f\n" +
+	"\busername\x18\a \x01(\tH\x04R\busername\x88\x01\x01\x12\x19\n" +
+	"\x05scope\x18\b \x01(\x05H\x05R\x05scope\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"login_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tloginTime\x12\x1c\n" +
-	"\auser_id\x18\x05 \x01(\x03H\x03R\x06userId\x88\x01\x01\x12\x1f\n" +
-	"\busername\x18\x06 \x01(\tH\x04R\busername\x88\x01\x01B\f\n" +
+	"scope_dept\x18\t \x01(\fH\x06R\tscopeDept\x88\x01\x01\x12\x1c\n" +
+	"\adept_id\x18\n" +
+	" \x01(\x03H\aR\x06deptId\x88\x01\x01B\f\n" +
 	"\n" +
 	"_tenant_idB\n" +
 	"\n" +
@@ -1238,7 +1324,11 @@ const file_sys_logger_login_proto_rawDesc = "" +
 	"\b_channelB\n" +
 	"\n" +
 	"\b_user_idB\v\n" +
-	"\t_username2\x99\x06\n" +
+	"\t_usernameB\b\n" +
+	"\x06_scopeB\r\n" +
+	"\v_scope_deptB\n" +
+	"\n" +
+	"\b_dept_id2\x99\x06\n" +
 	"\x15SysLoggerLoginService\x12a\n" +
 	"\x14SysLoggerLoginCreate\x12#.logger.SysLoggerLoginCreateRequest\x1a$.logger.SysLoggerLoginCreateResponse\x12a\n" +
 	"\x14SysLoggerLoginUpdate\x12#.logger.SysLoggerLoginUpdateRequest\x1a$.logger.SysLoggerLoginUpdateResponse\x12a\n" +
@@ -1290,31 +1380,33 @@ var file_sys_logger_login_proto_depIdxs = []int32{
 	0,  // 3: logger.SysLoggerLoginCreateRequest.data:type_name -> logger.SysLoggerLoginObject
 	0,  // 4: logger.SysLoggerLoginUpdateRequest.data:type_name -> logger.SysLoggerLoginObject
 	0,  // 5: logger.SysLoggerLoginResponse.data:type_name -> logger.SysLoggerLoginObject
-	17, // 6: logger.SysLoggerLoginListRequest.login_time:type_name -> google.protobuf.Timestamp
-	18, // 7: logger.SysLoggerLoginListRequest.pagination:type_name -> pagination.PaginationRequest
-	0,  // 8: logger.SysLoggerLoginListResponse.data:type_name -> logger.SysLoggerLoginObject
-	17, // 9: logger.SysLoggerLoginListTotalRequest.login_time:type_name -> google.protobuf.Timestamp
-	2,  // 10: logger.SysLoggerLoginService.SysLoggerLoginCreate:input_type -> logger.SysLoggerLoginCreateRequest
-	4,  // 11: logger.SysLoggerLoginService.SysLoggerLoginUpdate:input_type -> logger.SysLoggerLoginUpdateRequest
-	6,  // 12: logger.SysLoggerLoginService.SysLoggerLoginDelete:input_type -> logger.SysLoggerLoginDeleteRequest
-	8,  // 13: logger.SysLoggerLoginService.SysLoggerLogin:input_type -> logger.SysLoggerLoginRequest
-	10, // 14: logger.SysLoggerLoginService.SysLoggerLoginRecover:input_type -> logger.SysLoggerLoginRecoverRequest
-	12, // 15: logger.SysLoggerLoginService.SysLoggerLoginDrop:input_type -> logger.SysLoggerLoginDropRequest
-	14, // 16: logger.SysLoggerLoginService.SysLoggerLoginList:input_type -> logger.SysLoggerLoginListRequest
-	16, // 17: logger.SysLoggerLoginService.SysLoggerLoginListTotal:input_type -> logger.SysLoggerLoginListTotalRequest
-	3,  // 18: logger.SysLoggerLoginService.SysLoggerLoginCreate:output_type -> logger.SysLoggerLoginCreateResponse
-	5,  // 19: logger.SysLoggerLoginService.SysLoggerLoginUpdate:output_type -> logger.SysLoggerLoginUpdateResponse
-	7,  // 20: logger.SysLoggerLoginService.SysLoggerLoginDelete:output_type -> logger.SysLoggerLoginDeleteResponse
-	9,  // 21: logger.SysLoggerLoginService.SysLoggerLogin:output_type -> logger.SysLoggerLoginResponse
-	11, // 22: logger.SysLoggerLoginService.SysLoggerLoginRecover:output_type -> logger.SysLoggerLoginRecoverResponse
-	13, // 23: logger.SysLoggerLoginService.SysLoggerLoginDrop:output_type -> logger.SysLoggerLoginDropResponse
-	15, // 24: logger.SysLoggerLoginService.SysLoggerLoginList:output_type -> logger.SysLoggerLoginListResponse
-	1,  // 25: logger.SysLoggerLoginService.SysLoggerLoginListTotal:output_type -> logger.SysLoggerLoginTotalResponse
-	18, // [18:26] is the sub-list for method output_type
-	10, // [10:18] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	17, // 6: logger.SysLoggerLoginListRequest.begin_login_time:type_name -> google.protobuf.Timestamp
+	17, // 7: logger.SysLoggerLoginListRequest.finish_login_time:type_name -> google.protobuf.Timestamp
+	18, // 8: logger.SysLoggerLoginListRequest.pagination:type_name -> pagination.PaginationRequest
+	0,  // 9: logger.SysLoggerLoginListResponse.data:type_name -> logger.SysLoggerLoginObject
+	17, // 10: logger.SysLoggerLoginListTotalRequest.begin_login_time:type_name -> google.protobuf.Timestamp
+	17, // 11: logger.SysLoggerLoginListTotalRequest.finish_login_time:type_name -> google.protobuf.Timestamp
+	2,  // 12: logger.SysLoggerLoginService.SysLoggerLoginCreate:input_type -> logger.SysLoggerLoginCreateRequest
+	4,  // 13: logger.SysLoggerLoginService.SysLoggerLoginUpdate:input_type -> logger.SysLoggerLoginUpdateRequest
+	6,  // 14: logger.SysLoggerLoginService.SysLoggerLoginDelete:input_type -> logger.SysLoggerLoginDeleteRequest
+	8,  // 15: logger.SysLoggerLoginService.SysLoggerLogin:input_type -> logger.SysLoggerLoginRequest
+	10, // 16: logger.SysLoggerLoginService.SysLoggerLoginRecover:input_type -> logger.SysLoggerLoginRecoverRequest
+	12, // 17: logger.SysLoggerLoginService.SysLoggerLoginDrop:input_type -> logger.SysLoggerLoginDropRequest
+	14, // 18: logger.SysLoggerLoginService.SysLoggerLoginList:input_type -> logger.SysLoggerLoginListRequest
+	16, // 19: logger.SysLoggerLoginService.SysLoggerLoginListTotal:input_type -> logger.SysLoggerLoginListTotalRequest
+	3,  // 20: logger.SysLoggerLoginService.SysLoggerLoginCreate:output_type -> logger.SysLoggerLoginCreateResponse
+	5,  // 21: logger.SysLoggerLoginService.SysLoggerLoginUpdate:output_type -> logger.SysLoggerLoginUpdateResponse
+	7,  // 22: logger.SysLoggerLoginService.SysLoggerLoginDelete:output_type -> logger.SysLoggerLoginDeleteResponse
+	9,  // 23: logger.SysLoggerLoginService.SysLoggerLogin:output_type -> logger.SysLoggerLoginResponse
+	11, // 24: logger.SysLoggerLoginService.SysLoggerLoginRecover:output_type -> logger.SysLoggerLoginRecoverResponse
+	13, // 25: logger.SysLoggerLoginService.SysLoggerLoginDrop:output_type -> logger.SysLoggerLoginDropResponse
+	15, // 26: logger.SysLoggerLoginService.SysLoggerLoginList:output_type -> logger.SysLoggerLoginListResponse
+	1,  // 27: logger.SysLoggerLoginService.SysLoggerLoginListTotal:output_type -> logger.SysLoggerLoginTotalResponse
+	20, // [20:28] is the sub-list for method output_type
+	12, // [12:20] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_sys_logger_login_proto_init() }
