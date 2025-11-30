@@ -15,6 +15,11 @@ export interface ReqSysUserLogin {
   verifyCodeId: string // 验证码id
 }
 
+export interface ReqSysUserPassword {
+  password: string // 密码
+  confirmPassword: string // 确认密码
+}
+
 export interface ResSysUserToken {
   accessToken: string // 令牌
   refreshToken: string // 刷新令牌

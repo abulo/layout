@@ -615,3 +615,49 @@ func SysUserListSimple(ctx context.Context, newCtx *app.RequestContext) {
 		},
 	})
 }
+
+func SysUserPassword(ctx context.Context, newCtx *app.RequestContext) {
+	grpcClient, err := initial.Core.Client.LoadGrpc("grpc").Singleton()
+	if err != nil {
+		globalLogger.Logger.WithFields(logrus.Fields{
+			"err": err,
+		}).Error("Grpc:用户:sys_user:SysUserPassword")
+		response.JSON(newCtx, consts.StatusOK, utils.H{
+			"code": code.RPCError,
+			"msg":  code.StatusText(code.RPCError),
+		})
+		return
+	}
+	//链接服务
+	client := user.NewSysUserServiceClient(grpcClient)
+	request := &user.SysUserPasswordRequest{}
+
+	var reqInfo dao.SysUserPassword
+	if err := newCtx.BindAndValidate(&reqInfo); err != nil {
+		response.JSON(newCtx, consts.StatusOK, utils.H{
+			"code": code.ParamInvalid,
+			"msg":  code.StatusText(code.ParamInvalid),
+		})
+		return
+	}
+	request.Id = newCtx.GetInt64("userId")
+	request.Password = reqInfo.Password
+	// 执行服务
+	res, err := client.SysUserPassword(ctx, request)
+	if err != nil {
+		globalLogger.Logger.WithFields(logrus.Fields{
+			"req": request,
+			"err": err,
+		}).Error("GrpcCall:用户:sys_user:SysUserPassword")
+		fromError := status.Convert(err)
+		response.JSON(newCtx, consts.StatusOK, utils.H{
+			"code": code.ConvertToHttp(fromError.Code()),
+			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
+		})
+		return
+	}
+	response.JSON(newCtx, consts.StatusOK, utils.H{
+		"code": res.GetCode(),
+		"msg":  res.GetMsg(),
+	})
+}

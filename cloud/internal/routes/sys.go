@@ -64,6 +64,8 @@ func SysInitRoute(handle *xhertz.Server) {
 		route.GET("/sys/user/:id/item", user.SysUser)
 		// sys_user->用户->列表(精简)
 		route.GET("/sys/user/simple", user.SysUserListSimple)
+		// sys_user->用户->创建
+		route.POST("/sys/user/password", user.SysUserPassword)
 
 		// sys_role->角色->单条数据信息查看
 		route.GET("/sys/role/:id/item", role.SysRole)

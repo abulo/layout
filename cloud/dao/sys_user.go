@@ -61,7 +61,7 @@ type RefreshUserToken struct {
 
 // 用户密码
 type SysUserPassword struct {
-	Password string `json:"password,required"` // 密码
+	Password *string `json:"password,required"` // 密码
 }
 
 func (SysUser) TableName() string {
