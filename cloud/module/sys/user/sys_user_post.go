@@ -33,7 +33,7 @@ func SysUserPostUpdate(ctx context.Context, id int64, data dao.SysUserPost) (res
 func SysUserPostDelete(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
 	var data dao.SysUserPost
-	result := db.WithContext(ctx).Where("id = ?", id).First(&data).Delete(&data)
+	result := db.WithContext(ctx).Model(&dao.SysUserPost{}).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
 }
 

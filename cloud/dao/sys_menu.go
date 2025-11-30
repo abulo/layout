@@ -1,6 +1,12 @@
 package dao
 
-import "github.com/abulo/ratel/v3/stores/null"
+import (
+	"context"
+
+	"github.com/abulo/ratel/v3/stores/null"
+	"github.com/spf13/cast"
+	"gorm.io/gorm"
+)
 
 // SysMenu 菜单 sys_menu
 type SysMenu struct {
@@ -56,4 +62,12 @@ type SysMenuTree struct {
 
 func (SysMenu) TableName() string {
 	return "sys_menu"
+}
+
+func (r *SysMenu) AfterDelete(tx *gorm.DB) (err error) {
+	id := cast.ToInt64(r.Id)
+	var data []SysRoleMenu
+	ctx := context.Background()
+	result := tx.WithContext(ctx).Model(&SysRoleMenu{}).Where("menu_id = ?", id).Find(&data).Delete(&data)
+	return result.Error
 }

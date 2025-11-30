@@ -1,6 +1,12 @@
 package dao
 
-import "github.com/abulo/ratel/v3/stores/null"
+import (
+	"context"
+
+	"github.com/abulo/ratel/v3/stores/null"
+	"github.com/spf13/cast"
+	"gorm.io/gorm"
+)
 
 // SysRole 角色 sys_role
 type SysRole struct {
@@ -22,4 +28,14 @@ type SysRole struct {
 
 func (SysRole) TableName() string {
 	return "sys_role"
+}
+
+func (r *SysRole) AfterDelete(tx *gorm.DB) (err error) {
+	id := cast.ToInt64(r.Id)
+	var data []SysUserRole
+	var list []SysRoleMenu
+	ctx := context.Background()
+	result := tx.WithContext(ctx).Model(&SysUserRole{}).Where("role_id = ?", id).Find(&data).Delete(&data)
+	tx.WithContext(ctx).Model(&SysRoleMenu{}).Where("role_id = ?", id).Find(&list).Delete(&list)
+	return result.Error
 }

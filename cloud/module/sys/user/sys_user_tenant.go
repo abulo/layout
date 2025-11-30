@@ -33,7 +33,7 @@ func SysUserTenantUpdate(ctx context.Context, id int64, data dao.SysUserTenant) 
 func SysUserTenantDelete(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
 	var data dao.SysUserTenant
-	result := db.WithContext(ctx).Where("id = ?", id).First(&data).Delete(&data)
+	result := db.WithContext(ctx).Model(&dao.SysUserTenant{}).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
 }
 

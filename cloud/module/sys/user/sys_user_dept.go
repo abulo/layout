@@ -33,7 +33,7 @@ func SysUserDeptUpdate(ctx context.Context, id int64, data dao.SysUserDept) (res
 func SysUserDeptDelete(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
 	var data dao.SysUserDept
-	result := db.WithContext(ctx).Where("id = ?", id).First(&data).Delete(&data)
+	result := db.WithContext(ctx).Model(&dao.SysUserDept{}).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
 }
 

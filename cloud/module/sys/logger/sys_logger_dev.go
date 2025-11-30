@@ -32,7 +32,7 @@ func SysLoggerDevUpdate(ctx context.Context, id int64, data dao.SysLoggerDev) (r
 func SysLoggerDevDelete(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
 	var data dao.SysLoggerDev
-	result := db.WithContext(ctx).Where("id = ?", id).First(&data).Delete(&data)
+	result := db.WithContext(ctx).Model(&dao.SysLoggerDev{}).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
 }
 

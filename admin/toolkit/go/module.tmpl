@@ -44,7 +44,7 @@ func {{.Name}}(ctx context.Context,{{Helper .Primary.AlisaColumnName}} {{.Primar
 func {{.Name}}(ctx context.Context,{{Helper .Primary.AlisaColumnName}} {{.Primary.DataTypeMap.Default}})(res int64,err error){
 	db := initial.Core.Store.LoadSQL("mysql").Write()
 	var data dao.{{CamelStr .Table.TableName}}
-	result := db.WithContext(ctx).Where("{{.Primary.ColumnName}} = ?", {{Helper .Primary.AlisaColumnName}}).First(&data).Delete(&data)
+	result := db.WithContext(ctx).Model(&dao.{{CamelStr .Table.TableName}}{}).Where("{{.Primary.ColumnName}} = ?", {{Helper .Primary.AlisaColumnName}}).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
 }
 {{- else if eq .Type "Delete"}}
@@ -57,7 +57,7 @@ func {{.Name}}(ctx context.Context,{{Helper .Primary.AlisaColumnName}} {{.Primar
 	data.Deleted = proto.Int32(1)
 	result := db.WithContext(ctx).Model(&dao.{{CamelStr .Table.TableName}}{}).Where("{{.Primary.ColumnName}} = ?", {{Helper .Primary.AlisaColumnName}}).Updates(data)
 	{{- else}}
-	result := db.WithContext(ctx).Where("{{.Primary.ColumnName}} = ?", {{Helper .Primary.AlisaColumnName}}).First(&data).Delete(&data)
+	result := db.WithContext(ctx).Model(&dao.{{CamelStr .Table.TableName}}{}).Where("{{.Primary.ColumnName}} = ?", {{Helper .Primary.AlisaColumnName}}).First(&data).Delete(&data)
 	{{- end}}
 	return result.RowsAffected, result.Error
 }

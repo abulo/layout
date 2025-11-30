@@ -59,7 +59,7 @@ func SysDeptRecover(ctx context.Context, id int64) (res int64, err error) {
 func SysDeptDrop(ctx context.Context, id int64) (res int64, err error) {
 	db := initial.Core.Store.LoadSQL("mysql").Write()
 	var data dao.SysDept
-	result := db.WithContext(ctx).Where("id = ?", id).First(&data).Delete(&data)
+	result := db.WithContext(ctx).Model(&dao.SysDept{}).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
 }
 

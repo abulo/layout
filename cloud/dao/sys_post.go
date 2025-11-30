@@ -1,6 +1,12 @@
 package dao
 
-import "github.com/abulo/ratel/v3/stores/null"
+import (
+	"context"
+
+	"github.com/abulo/ratel/v3/stores/null"
+	"github.com/spf13/cast"
+	"gorm.io/gorm"
+)
 
 // SysPost 职位 sys_post
 type SysPost struct {
@@ -18,4 +24,12 @@ type SysPost struct {
 
 func (SysPost) TableName() string {
 	return "sys_post"
+}
+
+func (r *SysPost) AfterDelete(tx *gorm.DB) (err error) {
+	id := cast.ToInt64(r.Id)
+	var data []SysUserPost
+	ctx := context.Background()
+	result := tx.WithContext(ctx).Model(&SysUserPost{}).Where("post_id = ?", id).Find(&data).Delete(&data)
+	return result.Error
 }
