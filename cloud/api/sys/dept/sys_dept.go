@@ -8,6 +8,7 @@ import (
 	"cloud/initial"
 	"cloud/internal/response"
 	"cloud/service/sys/dept"
+	"cloud/service/sys/user"
 
 	globalLogger "github.com/abulo/ratel/v3/core/logger"
 	"github.com/abulo/ratel/v3/stores/null"
@@ -425,11 +426,40 @@ func SysDeptListSimple(ctx context.Context, newCtx *app.RequestContext) {
 		})
 		return
 	}
+
+	clientUser := user.NewSysUserServiceClient(grpcClient)
+	scopeReq := &user.SysUserScopeRequest{}
+	scopeReq.UserId = newCtx.GetInt64("userId")
+	scopeReq.TenantId = newCtx.GetInt64("tenantId")
+	userRes, err := clientUser.SysUserScope(ctx, scopeReq)
+	if err != nil {
+		globalLogger.Logger.WithFields(logrus.Fields{
+			"req": request,
+			"err": err,
+		}).Error("GrpcCall:部门:sys_dept:SysDeptListSimple")
+		fromError := status.Convert(err)
+		response.JSON(newCtx, consts.StatusOK, utils.H{
+			"code": code.ConvertToHttp(fromError.Code()),
+			"msg":  code.StatusText(code.ConvertToHttp(fromError.Code())),
+		})
+		return
+	}
+	userScope := user.SysUserScopeDao(userRes.GetData())
+	if len(userScope.ScopeDept) < 1 {
+		response.JSON(newCtx, consts.StatusOK, utils.H{
+			"code": code.DeptError,
+			"msg":  code.StatusText(code.DeptError),
+		})
+		return
+	}
+
 	var list []*dao.SysDept
 	if res.GetCode() == code.Success {
 		rpcList := res.GetData()
 		for _, item := range rpcList {
-			list = append(list, dept.SysDeptDao(item))
+			if util.InArray(*item.Id, userScope.ScopeDept) {
+				list = append(list, dept.SysDeptDao(item))
+			}
 		}
 	}
 	response.JSON(newCtx, consts.StatusOK, utils.H{

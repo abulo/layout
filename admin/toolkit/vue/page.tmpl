@@ -5,7 +5,7 @@
 	  title="{{.Table.TableComment}}列表"
 	  row-key="id"
     :columns="columns"
-    :toolbar-right="['search', 'refresh', 'export', 'layout']"
+    :toolbar-right="['search', 'refresh']"
     :request-api="getTableList"
     :request-auto="true"
     {{- if .Page}}

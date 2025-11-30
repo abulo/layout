@@ -6,7 +6,7 @@
       title="部门列表"
       row-key="id"
       :columns="columns"
-      :toolbar-right="['search', 'refresh', 'export', 'layout']"
+      :toolbar-right="['search', 'refresh']"
       :request-api="getTableList"
       :default-expand-all="isExpandAll"
       :data-callback="deptHandleTree"

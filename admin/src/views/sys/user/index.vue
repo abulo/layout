@@ -1,169 +1,180 @@
 <template>
-  <div class="table-box">
-    <ProTable
-      ref="proTable"
-      title="用户列表"
-      row-key="id"
-      :columns="columns"
-      :toolbar-right="['search', 'refresh', 'export', 'layout']"
-      :request-api="getTableList"
-      :request-auto="true"
-      :pagination="ProTablePaginationEnum.BE"
-      :search-col="12"
-    >
-      <template #toolbarLeft>
-        <el-button v-auth="'user.SysUserCreate'" type="primary" :icon="CirclePlus" @click="handleAdd">新增</el-button>
-      </template>
-      <!-- 删除状态 -->
-      <template #deleted="scope">
-        <DictTag type="deleted" :value="scope.row.deleted" />
-      </template>
-      <template #status="scope">
-        <DictTag type="status" :value="scope.row.status" />
-      </template>
-      <!-- 菜单操作 -->
-      <template #operation="scope">
-        <el-button v-auth="'user.SysUser'" type="primary" link :icon="View" @click="handleItem(scope.row)">
-          查看
-        </el-button>
-        <el-button v-auth="'user.SysUserLogin'" type="primary" link :icon="Connection" @click="handleLogin(scope.row)">
-          登录
-        </el-button>
-        <el-dropdown trigger="click">
+  <div class="main-box">
+    <TreeFilter label="name" :data="deptOptions" :default-value="initParam.deptId" @change="changeTreeFilter" />
+    <div class="table-box">
+      <ProTable
+        ref="proTable"
+        title="用户列表"
+        row-key="id"
+        :columns="columns"
+        :toolbar-right="['search', 'refresh']"
+        :request-api="getTableList"
+        :request-auto="true"
+        :init-param="initParam"
+        :pagination="ProTablePaginationEnum.BE"
+        :search-col="12"
+      >
+        <template #toolbarLeft>
+          <el-button v-auth="'user.SysUserCreate'" type="primary" :icon="CirclePlus" @click="handleAdd">新增</el-button>
+        </template>
+        <!-- 删除状态 -->
+        <template #deleted="scope">
+          <DictTag type="deleted" :value="scope.row.deleted" />
+        </template>
+        <template #status="scope">
+          <DictTag type="status" :value="scope.row.status" />
+        </template>
+        <!-- 菜单操作 -->
+        <template #operation="scope">
+          <el-button v-auth="'user.SysUser'" type="primary" link :icon="View" @click="handleItem(scope.row)">
+            查看
+          </el-button>
           <el-button
-            v-auth="['user.SysUserUpdate', 'user.SysUserDelete', 'user.SysUserRecover', 'user.SysUserDrop']"
+            v-auth="'user.SysUserLogin'"
             type="primary"
             link
-            :icon="DArrowRight"
+            :icon="Connection"
+            @click="handleLogin(scope.row)"
           >
-            更多
+            登录
           </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <div v-auth="'user.SysUserUpdate'">
-                <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>
-              </div>
-              <div v-auth="'user.SysUserDelete'">
-                <el-dropdown-item v-if="scope.row.deleted === 0" :icon="Delete" @click="handleDelete(scope.row)">
-                  删除
-                </el-dropdown-item>
-              </div>
-              <div v-auth="'user.SysUserRecover'">
-                <el-dropdown-item v-if="scope.row.deleted === 1" :icon="Refresh" @click="handleRecover(scope.row)">
-                  恢复
-                </el-dropdown-item>
-              </div>
-              <div v-auth="'user.SysUserDrop'">
-                <el-dropdown-item v-if="scope.row.deleted === 1" :icon="DeleteFilled" @click="handleDrop(scope.row)">
-                  清理
-                </el-dropdown-item>
-              </div>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </template>
-    </ProTable>
-    <el-dialog
-      v-model="dialogVisible"
-      :title="title"
-      width="60%"
-      destroy-on-close
-      align-center
-      center
-      append-to-body
-      draggable
-      :lock-scroll="false"
-      class="dialog-settings"
-    >
-      <el-form ref="refSysUserForm" :model="sysUserForm" :rules="rulesSysUserForm" label-width="100px">
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model="sysUserForm.name" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="手机号码" prop="mobile">
-          <el-input v-model="sysUserForm.mobile" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item v-if="sysUserForm.id === 0" label="用户名" prop="username">
-          <el-input v-model="sysUserForm.username" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item v-if="sysUserForm.id === 0" label="密码" prop="password">
-          <el-input v-model="sysUserForm.password" show-password type="password" :disabled="disabled" />
-        </el-form-item>
-        <el-form-item label="角色" prop="roleIds">
-          <el-select v-model="sysUserForm.roleIds" multiple placeholder="请选择角色" :disabled="disabled">
-            <el-option
-              v-for="item in roleOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-              :disabled="disabled"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="职位" prop="postIds">
-          <el-select v-model="sysUserForm.postIds" multiple placeholder="请选择职位" :disabled="disabled">
-            <el-option
-              v-for="item in postOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-              :disabled="disabled"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="部门" prop="deptIds">
-          <el-card class="cardHeight">
-            <template #header>
-              全选/不选:
-              <el-switch
-                v-model="deptSelect"
-                active-text="是"
-                inactive-text="否"
-                inline-prompt
-                @change="handleDeptSelect"
-              />
-              展开/折叠:
-              <el-switch
-                v-model="deptExpand"
-                active-text="展开"
-                inactive-text="折叠"
-                inline-prompt
-                @change="handleDeptExpand"
-              />
-            </template>
-            <el-tree
-              ref="deptRef"
-              :data="deptOptions"
-              :props="{
-                children: 'children',
-                label: 'name',
-              }"
-              :list="sysUserForm.deptIds"
-              empty-text="加载中，请稍候"
-              node-key="id"
-              show-checkbox
-            />
-          </el-card>
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-radio-group v-model="sysUserForm.status">
-            <el-radio-button
-              v-for="dict in statusEnum"
-              :key="Number(dict.value)"
-              :value="dict.value"
-              :disabled="disabled"
+          <el-dropdown trigger="click">
+            <el-button
+              v-auth="['user.SysUserUpdate', 'user.SysUserDelete', 'user.SysUserRecover', 'user.SysUserDrop']"
+              type="primary"
+              link
+              :icon="DArrowRight"
             >
-              {{ dict.label }}
-            </el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-      </el-form>
-      <template v-if="!disabled" #footer>
-        <span class="dialog-footer">
-          <el-button @click="resetForm(refSysUserForm)">取消</el-button>
-          <el-button type="primary" :loading="loading" @click="submitForm(refSysUserForm)">确定</el-button>
-        </span>
-      </template>
-    </el-dialog>
+              更多
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <div v-auth="'user.SysUserUpdate'">
+                  <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>
+                </div>
+                <div v-auth="'user.SysUserDelete'">
+                  <el-dropdown-item v-if="scope.row.deleted === 0" :icon="Delete" @click="handleDelete(scope.row)">
+                    删除
+                  </el-dropdown-item>
+                </div>
+                <div v-auth="'user.SysUserRecover'">
+                  <el-dropdown-item v-if="scope.row.deleted === 1" :icon="Refresh" @click="handleRecover(scope.row)">
+                    恢复
+                  </el-dropdown-item>
+                </div>
+                <div v-auth="'user.SysUserDrop'">
+                  <el-dropdown-item v-if="scope.row.deleted === 1" :icon="DeleteFilled" @click="handleDrop(scope.row)">
+                    清理
+                  </el-dropdown-item>
+                </div>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+      </ProTable>
+      <el-dialog
+        v-model="dialogVisible"
+        :title="title"
+        width="60%"
+        destroy-on-close
+        align-center
+        center
+        append-to-body
+        draggable
+        :lock-scroll="false"
+        class="dialog-settings"
+      >
+        <el-form ref="refSysUserForm" :model="sysUserForm" :rules="rulesSysUserForm" label-width="100px">
+          <el-form-item label="姓名" prop="name">
+            <el-input v-model="sysUserForm.name" :disabled="disabled" />
+          </el-form-item>
+          <el-form-item label="手机号码" prop="mobile">
+            <el-input v-model="sysUserForm.mobile" :disabled="disabled" />
+          </el-form-item>
+          <el-form-item v-if="sysUserForm.id === 0" label="用户名" prop="username">
+            <el-input v-model="sysUserForm.username" :disabled="disabled" />
+          </el-form-item>
+          <el-form-item v-if="sysUserForm.id === 0" label="密码" prop="password">
+            <el-input v-model="sysUserForm.password" show-password type="password" :disabled="disabled" />
+          </el-form-item>
+          <el-form-item label="角色" prop="roleIds">
+            <el-select v-model="sysUserForm.roleIds" multiple placeholder="请选择角色" :disabled="disabled">
+              <el-option
+                v-for="item in roleOptions"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+                :disabled="disabled"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="职位" prop="postIds">
+            <el-select v-model="sysUserForm.postIds" multiple placeholder="请选择职位" :disabled="disabled">
+              <el-option
+                v-for="item in postOptions"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+                :disabled="disabled"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="部门" prop="deptIds">
+            <el-card class="cardHeight">
+              <template #header>
+                全选/不选:
+                <el-switch
+                  v-model="deptSelect"
+                  active-text="是"
+                  inactive-text="否"
+                  inline-prompt
+                  @change="handleDeptSelect"
+                />
+                展开/折叠:
+                <el-switch
+                  v-model="deptExpand"
+                  active-text="展开"
+                  inactive-text="折叠"
+                  inline-prompt
+                  @change="handleDeptExpand"
+                />
+              </template>
+              <el-tree
+                ref="deptRef"
+                :data="deptOptions"
+                :props="{
+                  children: 'children',
+                  label: 'name',
+                }"
+                :list="sysUserForm.deptIds"
+                empty-text="加载中，请稍候"
+                node-key="id"
+                check-strictly
+                show-checkbox
+              />
+            </el-card>
+          </el-form-item>
+          <el-form-item label="状态" prop="status">
+            <el-radio-group v-model="sysUserForm.status">
+              <el-radio-button
+                v-for="dict in statusEnum"
+                :key="Number(dict.value)"
+                :value="dict.value"
+                :disabled="disabled"
+              >
+                {{ dict.label }}
+              </el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+        </el-form>
+        <template v-if="!disabled" #footer>
+          <span class="dialog-footer">
+            <el-button @click="resetForm(refSysUserForm)">取消</el-button>
+            <el-button type="primary" :loading="loading" @click="submitForm(refSysUserForm)">确定</el-button>
+          </span>
+        </template>
+      </el-dialog>
+    </div>
   </div>
 </template>
 <script setup lang="tsx">
@@ -218,6 +229,8 @@ const route = useRoute()
 const userStore = useUserStore()
 const tabsStore = useTabsStore()
 const keepAliveStore = useKeepAliveStore()
+
+const initParam = reactive({ deptId: '' })
 // 获取loading状态
 const { loading } = storeToRefs(useLoadingStore())
 //禁用
@@ -475,6 +488,13 @@ const handleLogin = async (row: ResSysUser) => {
     ElMessage.error({ message: '登录失败' })
   }
 }
+
+// 树形筛选切换
+const changeTreeFilter = (val: string) => {
+  proTable.value!.pageable.pageNum = 1
+  initParam.deptId = val
+}
+
 //删除状态
 const deletedEnum = getIntDictOptions('deleted')
 // 表格配置项
@@ -517,6 +537,10 @@ const columns: ColumnProps<ResSysUser>[] = [
     ),
   },
 ]
+
+onMounted(() => {
+  getOptions()
+})
 </script>
 <style scoped lang="scss">
 @use '@/styles/custom';

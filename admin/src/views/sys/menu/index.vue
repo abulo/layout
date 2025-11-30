@@ -6,7 +6,7 @@
       title="菜单列表"
       row-key="id"
       :columns="columns"
-      :toolbar-right="['search', 'refresh', 'export', 'layout']"
+      :toolbar-right="['search', 'refresh']"
       :request-api="getTableList"
       :data-callback="menuHandleTree"
       :default-expand-all="isExpandAll"
