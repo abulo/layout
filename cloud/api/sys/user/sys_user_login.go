@@ -48,7 +48,7 @@ func Login(ctx context.Context, newCtx *app.RequestContext) {
 	requestCaptcha.VerifyCode = req.VerifyCode
 	requestCaptcha.VerifyCodeId = req.VerifyCodeId
 	// 执行服务
-	_, err = clientCaptcha.Verify(ctx, requestCaptcha)
+	resCaptcha, err := clientCaptcha.Verify(ctx, requestCaptcha)
 	if err != nil {
 		globalLogger.Logger.WithFields(logrus.Fields{
 			"req": requestCaptcha,
@@ -61,20 +61,20 @@ func Login(ctx context.Context, newCtx *app.RequestContext) {
 		})
 		return
 	}
-	// if resCaptcha.GetCode() != code.Success {
-	// 	response.JSON(newCtx, consts.StatusOK, utils.H{
-	// 		"code": resCaptcha.GetCode(),
-	// 		"msg":  resCaptcha.GetMsg(),
-	// 	})
-	// 	return
-	// }
-	// if !resCaptcha.GetData().GetResult() {
-	// 	response.JSON(newCtx, consts.StatusOK, utils.H{
-	// 		"code": code.VerifyCodeError,
-	// 		"msg":  code.StatusText(code.VerifyCodeError),
-	// 	})
-	// 	return
-	// }
+	if resCaptcha.GetCode() != code.Success {
+		response.JSON(newCtx, consts.StatusOK, utils.H{
+			"code": resCaptcha.GetCode(),
+			"msg":  resCaptcha.GetMsg(),
+		})
+		return
+	}
+	if !resCaptcha.GetData().GetResult() {
+		response.JSON(newCtx, consts.StatusOK, utils.H{
+			"code": code.VerifyCodeError,
+			"msg":  code.StatusText(code.VerifyCodeError),
+		})
+		return
+	}
 
 	userTokenItem, err := common.SysUserLogin(ctx, newCtx, req, true)
 	if err != nil {
