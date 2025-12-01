@@ -32,6 +32,10 @@ import { FormInstance, FormRules } from 'element-plus'
 import { useHandleData } from '@/hooks/useHandleData'
 import { encryptPassword } from '@/utils'
 import { resetSysUserPasswordApi } from '@/api/modules/sysUser'
+import { useLoadingStore } from '@/stores/modules/loading'
+import { storeToRefs } from 'pinia'
+// 获取loading状态
+const { loading } = storeToRefs(useLoadingStore())
 
 const dialogVisible = ref(false)
 
