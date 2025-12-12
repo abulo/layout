@@ -14,7 +14,7 @@
               <!-- <el-icon>
                 <component :is="subItem.meta.icon" />
               </el-icon> -->
-              <Icon :icon="subItem.meta.icon" />
+              <Icon :icon="subItem.meta.icon" class="el-icon" />
               <span>{{ subItem.meta.title }}</span>
             </template>
             <sub-menu :menu-list="subItem.children" />
@@ -28,7 +28,7 @@
             <!-- <el-icon>
               <component :is="subItem.meta.icon" />
             </el-icon> -->
-            <Icon :icon="subItem.meta.icon" />
+            <Icon :icon="subItem.meta.icon" class="el-icon" />
             <template #title>
               <span>{{ subItem.meta.title }}</span>
             </template>

@@ -28,7 +28,7 @@
             <!-- <el-icon>
               <component :is="item.meta.icon"></component>
             </el-icon> -->
-            <Icon :icon="item.meta.icon" />
+            <Icon :icon="item.meta.icon" class="el-icon" />
             <template #title>
               <span>{{ item.meta.title }}</span>
             </template>

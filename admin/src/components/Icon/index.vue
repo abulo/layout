@@ -13,7 +13,7 @@
 </template>
 <script lang="ts" setup>
 defineOptions({ name: 'Icon' })
-import { IconSpace } from '@icon-space/vue-next/es/all'
+import { IconSpace } from '@abulo-space/vue-next/es/all'
 import { toPascalCase } from '@/utils'
 import { computed } from 'vue'
 interface IconProps {

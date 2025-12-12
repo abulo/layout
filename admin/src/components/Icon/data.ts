@@ -1,4 +1,4 @@
-import * as IconSpace from '@icon-space/vue-next/es'
+import * as IconSpace from '@abulo-space/vue-next/es'
 import * as EpIcons from '@element-plus/icons-vue'
 import { toKebabCase } from '@/utils'
 

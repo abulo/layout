@@ -73,8 +73,9 @@ export type HeaderRenderScope<T extends DefaultRow> = {
   [key: string]: any
 }
 
-export interface ColumnProps<T extends DefaultRow = any>
-  extends Partial<Omit<TableColumnCtx<T>, 'type' | 'children' | 'renderCell' | 'renderHeader' | 'label'>> {
+export interface ColumnProps<T extends DefaultRow = any> extends Partial<
+  Omit<TableColumnCtx<T>, 'type' | 'children' | 'renderCell' | 'renderHeader' | 'label'>
+> {
   type?: TypeProps // 列类型
   tag?: MaybeRef<boolean> // 是否是标签展示
   isShow?: MaybeRef<boolean> // 是否显示在表格当中，默认值为 true
