@@ -1,139 +1,105 @@
 <template>
   <div class="table-box">
-	<ProVxeTable
+	<ProTable
 	  ref="proTable"
 	  title="{{.Table.TableComment}}列表"
+	  row-key="id"
     :columns="columns"
     :toolbar-right="['search', 'refresh']"
     :request-api="getTableList"
     :request-auto="true"
-    :show-number="3"
-    :border="true"
-    :column-config="{ resizable: true, isCurrent: true, isHover: true }"
-    :row-config="{ isCurrent: true, isHover: true }"
     {{- if .Page}}
     :pagination="ProTablePaginationEnum.BE"
     {{- else}}
 	  :pagination="ProTablePaginationEnum.NONE"
     {{- end}}
-    >
+	  :search-col="12">
 	    <template #toolbarLeft>
 	  	{{- if InMethod .Method "Create"}}
         <el-button v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}Create'" type="primary" :icon="CirclePlus" @click="handleAdd">新增</el-button>
 		  {{- end}}
       </template>
-      {{- range .TableColumn}}
-      <vxe-column field="{{Helper .ColumnName}}" title="{{.ColumnComment}}"
-        {{$newVariable := Helper .ColumnName}}
-        {{- if eq $newVariable "id"}} fixed="left" width="auto"> {{- else}} > {{- end}}
-        {{- if $.SoftDelete}}
-        {{- if eq $newVariable "deleted"}}
-        <template #default="{ row }">
-          <DictTag type="deleted" :value="row.deleted" />
-        </template>
-        {{- end}}
-        {{- end}}
-        {{- if eq $newVariable "status"}}
-        <template #default="{ row }">
-          <DictTag type="status" :value="row.status" />
-        </template>
-        {{- end}}
-      </vxe-column>
+	    {{- if .SoftDelete}}
+	    <!-- 删除状态 -->
+      <template #deleted="scope">
+        <DictTag type="deleted" :value="scope.row.deleted" />
+      </template>
+      <template #status="scope">
+        <DictTag type="status" :value="scope.row.status" />
+      </template>
+	    {{- end}}
+	  <!-- 菜单操作 -->
+	  <template #operation="scope">
+      {{- if InMethod .Method "Show"}}
+      <el-button v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}'" type="primary" link :icon="View" @click="handleItem(scope.row)">
+        查看
+      </el-button>
       {{- end}}
-      <vxe-column
-        v-auth="[
-          {{- if InMethod .Method "Update"}}
-          '{{.Pkg}}.{{CamelStr .Table.TableName}}Update',
-          {{- end}}
-          {{- if InMethod .Method "Delete"}}
-          '{{.Pkg}}.{{CamelStr .Table.TableName}}Delete',
-          {{- end}}
-          {{- if InMethod .Method "Drop"}}
-          '{{.Pkg}}.{{CamelStr .Table.TableName}}Drop',
-          {{- end}}
-          {{- if InMethod .Method "Recover"}}
-          '{{.Pkg}}.{{CamelStr .Table.TableName}}Recover',
-          {{- end}}
-          {{- if InMethod .Method "Show"}}
-          '{{.Pkg}}.{{CamelStr .Table.TableName}}',
-          {{- end}}
-        ]"
-        fixed="right"
-        width="auto"
-        field="operation" title="操作">
-          <template #default="{ row }">
-          <!-- 菜单操作 -->
-          {{- if InMethod .Method "Show"}}
-          <el-button v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}'" type="primary" link :icon="View" @click="handleItem(row)">
-            查看
-          </el-button>
-          {{- end}}
-          <el-dropdown trigger="click">
-            <el-button
-                  v-auth="[
-                    {{- if InMethod .Method "Update"}}
-                    '{{.Pkg}}.{{CamelStr .Table.TableName}}Update',
-                    {{- end}}
-                    {{- if InMethod .Method "Delete"}}
-                    '{{.Pkg}}.{{CamelStr .Table.TableName}}Delete',
-                    {{- end}}
-                    {{- if InMethod .Method "Recover"}}
-                    '{{.Pkg}}.{{CamelStr .Table.TableName}}Recover',
-                    {{- end}}
-                    {{- if InMethod .Method "Drop"}}
-                    '{{.Pkg}}.{{CamelStr .Table.TableName}}Drop',
-                    {{- end}}
-                  ]"
-                  type="primary"
-                  link
-                  :icon="DArrowRight">
-                  更多
-            </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
+      <el-dropdown trigger="click">
+        <el-button
+              v-auth="[
                 {{- if InMethod .Method "Update"}}
-                <div v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}Update'">
-                <el-dropdown-item  :icon="EditPen" @click="handleUpdate(row)">
-                  编辑
-                </el-dropdown-item>
-                </div>
+                '{{.Pkg}}.{{CamelStr .Table.TableName}}Update',
                 {{- end}}
                 {{- if InMethod .Method "Delete"}}
-                <div v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}Delete'">
-                <el-dropdown-item
-                  v-if="row.deleted === 0"
-                  :icon="Delete"
-                  @click="handleDelete(row)">
-                  删除
-                </el-dropdown-item>
-                </div>
+                '{{.Pkg}}.{{CamelStr .Table.TableName}}Delete',
                 {{- end}}
                 {{- if InMethod .Method "Recover"}}
-                <div v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}Recover'">
-                <el-dropdown-item
-                  v-if="row.deleted === 1"
-                  :icon="Refresh"
-                  @click="handleRecover(row)">
-                  恢复
-                </el-dropdown-item>
-                </div>
+                '{{.Pkg}}.{{CamelStr .Table.TableName}}Recover',
                 {{- end}}
                 {{- if InMethod .Method "Drop"}}
-                <div v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}Drop'">
-                <el-dropdown-item
-                  v-if="row.deleted === 1"
-                  :icon="DeleteFilled"
-                  @click="handleDrop(row)">
-                  清理
-                </el-dropdown-item>
-                </div>
+                '{{.Pkg}}.{{CamelStr .Table.TableName}}Drop',
                 {{- end}}
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+              ]"
+              type="primary"
+              link
+              :icon="DArrowRight">
+              更多
+        </el-button>
+        <template #dropdown>
+          <el-dropdown-menu>
+            {{- if InMethod .Method "Update"}}
+            <div v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}Update'">
+            <el-dropdown-item  :icon="EditPen" @click="handleUpdate(scope.row)">
+              编辑
+            </el-dropdown-item>
+            </div>
+            {{- end}}
+            {{- if InMethod .Method "Delete"}}
+            <div v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}Delete'">
+            <el-dropdown-item
+              v-if="scope.row.deleted === 0"
+              :icon="Delete"
+              @click="handleDelete(scope.row)">
+              删除
+            </el-dropdown-item>
+            </div>
+            {{- end}}
+            {{- if InMethod .Method "Recover"}}
+            <div v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}Recover'">
+            <el-dropdown-item
+              v-if="scope.row.deleted === 1"
+              :icon="Refresh"
+              @click="handleRecover(scope.row)">
+              恢复
+            </el-dropdown-item>
+            </div>
+            {{- end}}
+            {{- if InMethod .Method "Drop"}}
+            <div v-auth="'{{.Pkg}}.{{CamelStr .Table.TableName}}Drop'">
+            <el-dropdown-item
+              v-if="scope.row.deleted === 1"
+              :icon="DeleteFilled"
+              @click="handleDrop(scope.row)">
+              清理
+            </el-dropdown-item>
+            </div>
+            {{- end}}
+          </el-dropdown-menu>
         </template>
-      </vxe-column>
-	</ProVxeTable>
+      </el-dropdown>
+    </template>
+	</ProTable>
 	<el-dialog
       v-model="dialogVisible"
       :title="title"
@@ -164,7 +130,11 @@
 <script setup lang="tsx">
 defineOptions({ name: '{{CamelStr .Table.TableName}}' })
 import { Res{{CamelStr .Table.TableName}} } from '@/api/interface/{{Helper .Table.TableName}}'
-import { ProVxeTableInstance, ProVxeColumnProps } from '@/components/ProVxeTable/interface'
+import { ProTableInstance, ColumnProps
+{{- if .SoftDelete}}
+, SearchProps
+{{- end}}
+} from '@/components/ProTable/interface'
 import {
 	{{- if InMethod .Method "Update"}}
 	EditPen,
@@ -215,10 +185,10 @@ import { getIntDictOptions } from "@/utils/dict";
 import { DictTag } from "@/components/DictTag";
 {{- end}}
 import { useHandleData, useHandleSet } from "@/hooks/useHandleData";
+import { HasAuth } from "@/utils/auth";
 import { useLoadingStore } from '@/stores/modules/loading'
 import { storeToRefs } from 'pinia'
 import { ProTablePaginationEnum } from '@/enums'
-import { HasAuth } from '@/utils/auth'
 // 获取loading状态
 const { loading } = storeToRefs(useLoadingStore())
 //禁用
@@ -226,7 +196,7 @@ const disabled = ref(true)
 //弹出层标题
 const title = ref('')
 //列表数据
-const proTable = ref<ProVxeTableInstance>()
+const proTable = ref<ProTableInstance>()
 //显示弹出层
 const dialogVisible = ref(false)
 //数据接口
@@ -239,6 +209,8 @@ const ref{{CamelStr .Table.TableName}}Form = ref<FormInstance>()
 const rules{{CamelStr .Table.TableName}}Form = reactive<FormRules>({
   {{Rule .TableColumn}}
 });
+
+
 
 /**
  * 获取表格数据列表
@@ -378,21 +350,49 @@ const submitForm = (formEl: FormInstance | undefined) => {
   })
 }
 
-const columns: ProVxeColumnProps[] = [
-	  {{PropsSearch .TableColumn .Condition}}
-    {{- if .SoftDelete}}
-    {
-      prop: 'deleted',
-      label: '删除',
-      valueType: 'switch',
-      fieldProps: {
-        activeValue: 1,
-        inactiveValue: 0,
-      },
-      hideInSearch: !HasAuth('{{.Pkg}}.{{CamelStr .Table.TableName}}Delete'),
-    },
-    {{- end}}
-]
+{{- if .SoftDelete}}
+//删除状态
+const deletedEnum = getIntDictOptions("deleted");
+// 表格配置项
+const deleteSearch = reactive<SearchProps>(
+  HasAuth("{{.Pkg}}.{{CamelStr .Table.TableName}}Delete")
+    ? {
+        el: "switch",
+        span: 2,
+        attrs: {
+          activeValue: 1,
+          inactiveValue: 0,
+        },
+      }
+    : {}
+);
+{{- end}}
+
+const columns: ColumnProps<Res{{CamelStr .Table.TableName}}>[] = [
+	  {{Props .TableColumn .Condition}}
+	  {
+		prop: "operation",
+		label: "操作",
+		width: 150,
+		fixed: "right",
+		isShow: HasAuth(
+      {{- if InMethod .Method "Update"}}
+      "{{.Pkg}}.{{CamelStr .Table.TableName}}Update",
+      {{- end}}
+      {{- if InMethod .Method "Delete"}}
+      "{{.Pkg}}.{{CamelStr .Table.TableName}}Delete",
+      {{- end}}
+      {{- if InMethod .Method "Drop"}}
+      "{{.Pkg}}.{{CamelStr .Table.TableName}}Drop",
+      {{- end}}
+      {{- if InMethod .Method "Recover"}}
+      "{{.Pkg}}.{{CamelStr .Table.TableName}}Recover",
+      {{- end}}
+      {{- if InMethod .Method "Show"}}
+      "{{.Pkg}}.{{CamelStr .Table.TableName}}",
+      {{- end}}
+    )}
+];
 </script>
 <style scoped lang="scss">
 @use '@/styles/custom';
