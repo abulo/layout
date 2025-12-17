@@ -346,6 +346,38 @@ export function handleProp(prop: string) {
   }
   return propArr[propArr.length - 1]
 }
+/**
+ * @description 使用传递的数组将数组转换成 枚举数组,  label 和 value 的 key值，会自动识别格式化
+ * @param {Array} data 列表
+ * @param {Array} fieldNames label && value && children 的 key 值
+ * @returns {Array}
+ * */
+export function HandleEnumList(
+  data: any,
+  fieldNames?: FieldNamesProps
+): Array<{
+  label: any
+  value: any
+  children?: any
+}> {
+  if (!Array.isArray(data)) {
+    return []
+  }
+  const value = fieldNames?.value ?? 'value'
+  const label = fieldNames?.label ?? 'label'
+  const children = fieldNames?.children ?? 'children'
+
+  return data.map(item => {
+    const newItem: { label: any; value: any; children?: any } = {
+      label: item[label],
+      value: item[value],
+    }
+    if (item[children] && item[children].length) {
+      newItem.children = HandleEnumList(item[children], fieldNames)
+    }
+    return newItem
+  })
+}
 
 /**
  * @description 根据枚举列表查询当需要的数据（如果指定了 label 和 value 的 key值，会自动识别格式化）
