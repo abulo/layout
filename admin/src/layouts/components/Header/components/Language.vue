@@ -20,6 +20,7 @@ import { useGlobalStore } from '@/stores/modules/global'
 import { LanguageType } from '@/stores/interface'
 import MeteorIconsLanguage from '~icons/meteor-icons/language?width=20px&height=20px'
 import { localeMapping } from '@/locales'
+import { VxeUI } from 'vxe-table'
 
 const { locale, availableLocales } = useI18n({ useScope: 'global' })
 
@@ -28,5 +29,11 @@ const globalStore = useGlobalStore()
 const changeLanguage = (lang: string) => {
   locale.value = lang
   globalStore.language = lang as LanguageType
+
+  if (lang == 'zh') {
+    VxeUI.setLanguage('zh-CN')
+  } else {
+    VxeUI.setLanguage('en-US')
+  }
 }
 </script>

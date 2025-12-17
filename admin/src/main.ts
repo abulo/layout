@@ -26,6 +26,14 @@ import pinia from '@/stores'
 // errorHandler
 import errorHandler from '@/utils/errorHandler'
 
+import VxeUIBase from 'vxe-pc-ui'
+import 'vxe-pc-ui/es/style.css'
+
+import VxeUITable from 'vxe-table'
+import 'vxe-table/es/style.css'
+import PlusProComponents from 'plus-pro-components'
+import 'plus-pro-components/index.css'
+
 const app = createApp(App)
 
 app.config.errorHandler = errorHandler
@@ -36,4 +44,13 @@ Object.keys(Icons).forEach(key => {
   app.component(key, Icons[key as keyof typeof Icons])
 })
 
-app.use(ElementPlus).use(directives).use(router).use(I18n).use(pinia).mount('#app')
+app
+  .use(ElementPlus)
+  .use(VxeUIBase)
+  .use(VxeUITable)
+  .use(PlusProComponents)
+  .use(directives)
+  .use(router)
+  .use(I18n)
+  .use(pinia)
+  .mount('#app')

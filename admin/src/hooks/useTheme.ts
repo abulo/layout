@@ -22,8 +22,10 @@ export const useTheme = () => {
     const html = document.documentElement as HTMLElement
     if (isDark.value) {
       html.setAttribute('class', 'dark')
+      html.setAttribute('data-vxe-ui-theme', 'dark')
     } else {
       html.setAttribute('class', '')
+      html.setAttribute('data-vxe-ui-theme', 'light')
     }
     changePrimary(primary.value)
     setAsideTheme()
