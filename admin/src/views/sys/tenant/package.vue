@@ -1,51 +1,69 @@
 <template>
   <div class="table-box">
-    <ProTable
+    <ProVxeTable
       ref="proTable"
       title="租户套餐列表"
-      row-key="id"
       :columns="columns"
       :toolbar-right="['search', 'refresh']"
       :request-api="getTableList"
       :request-auto="true"
+      :show-number="3"
+      :border="true"
+      :column-config="{ resizable: true, isCurrent: true, isHover: true }"
+      :row-config="{ isCurrent: true, isHover: true }"
       :pagination="ProTablePaginationEnum.BE"
-      :search-col="12"
     >
       <template #toolbarLeft>
         <el-button v-auth="'tenant.SysTenantPackageCreate'" type="primary" :icon="CirclePlus" @click="handleAdd">
           新增
         </el-button>
       </template>
-      <template #status="scope">
-        <DictTag type="status" :value="scope.row.status" />
-      </template>
-      <!-- 菜单操作 -->
-      <template #operation="scope">
-        <el-button v-auth="'tenant.SysTenantPackage'" type="primary" link :icon="View" @click="handleItem(scope.row)">
-          查看
-        </el-button>
-        <el-dropdown trigger="click">
-          <el-button
-            v-auth="['tenant.SysTenantPackageUpdate', 'tenant.SysTenantPackageDelete']"
-            type="primary"
-            link
-            :icon="DArrowRight"
-          >
-            更多
+      <vxe-column field="id" title="编号" fixed="left" width="auto"> </vxe-column>
+      <vxe-column field="name" title="名称"> </vxe-column>
+      <vxe-column field="sort" title="排序"> </vxe-column>
+      <vxe-column field="status" title="状态">
+        <template #default="{ row }">
+          <DictTag type="status" :value="row.status" />
+        </template>
+      </vxe-column>
+      <vxe-column field="creator" title="创建人"> </vxe-column>
+      <vxe-column field="createTime" title="创建时间"> </vxe-column>
+      <vxe-column field="updater" title="更新人"> </vxe-column>
+      <vxe-column field="updateTime" title="更新时间"> </vxe-column>
+      <vxe-column
+        v-auth="['tenant.SysTenantPackageUpdate', 'tenant.SysTenantPackageDelete', 'tenant.SysTenantPackage']"
+        field="operation"
+        fixed="right"
+        title="操作"
+        width="auto"
+      >
+        <template #default="{ row }">
+          <el-button v-auth="'tenant.SysTenantPackage'" type="primary" link :icon="View" @click="handleItem(row)">
+            查看
           </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <div v-auth="'tenant.SysTenantPackageUpdate'">
-                <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>
-              </div>
-              <div v-auth="'tenant.SysTenantPackageDelete'">
-                <el-dropdown-item :icon="Delete" @click="handleDelete(scope.row)"> 删除 </el-dropdown-item>
-              </div>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </template>
-    </ProTable>
+          <el-dropdown trigger="click">
+            <el-button
+              v-auth="['tenant.SysTenantPackageUpdate', 'tenant.SysTenantPackageDelete']"
+              type="primary"
+              link
+              :icon="DArrowRight"
+            >
+              更多
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <div v-auth="'tenant.SysTenantPackageUpdate'">
+                  <el-dropdown-item :icon="EditPen" @click="handleUpdate(row)"> 编辑 </el-dropdown-item>
+                </div>
+                <div v-auth="'tenant.SysTenantPackageDelete'">
+                  <el-dropdown-item :icon="Delete" @click="handleDelete(row)"> 删除 </el-dropdown-item>
+                </div>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+      </vxe-column>
+    </ProVxeTable>
     <el-dialog
       v-model="dialogVisible"
       :title="title"
@@ -137,7 +155,7 @@
 <script setup lang="tsx">
 defineOptions({ name: 'SysTenantPackage' })
 import { ResSysTenantPackage } from '@/api/interface/sysTenantPackage'
-import { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
+import { ProVxeTableInstance, ProVxeColumnProps } from '@/components/ProVxeTable/interface'
 import { EditPen, CirclePlus, Delete, View, DArrowRight } from '@element-plus/icons-vue'
 import {
   getSysTenantPackageListApi,
@@ -148,7 +166,7 @@ import {
 } from '@/api/modules/sysTenantPackage'
 import { FormInstance, FormRules, ElTree } from 'element-plus'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
-import { HasAuth } from '@/utils/auth'
+// import { HasAuth } from '@/utils/auth'
 import { getIntDictOptions } from '@/utils/dict'
 import { ResSysMenu } from '@/api/interface/sysMenu'
 import { getSysMenuListSimpleApi } from '@/api/modules/sysMenu'
@@ -165,7 +183,7 @@ const disabled = ref(true)
 //弹出层标题
 const title = ref('')
 //列表数据
-const proTable = ref<ProTableInstance>()
+const proTable = ref<ProVxeTableInstance>()
 //显示弹出层
 const dialogVisible = ref(false)
 // 获取选择
@@ -353,24 +371,9 @@ const handleMenuExpand = () => {
   }
 }
 
-const columns: ColumnProps<ResSysTenantPackage>[] = [
-  { prop: 'id', label: '编号' },
-  { prop: 'name', label: '名称', search: { el: 'input', span: 2 } },
-  { prop: 'sort', label: '排序' },
-  { prop: 'status', label: '状态', tag: true, enum: statusEnum, search: { el: 'select', span: 2 } },
-  { prop: 'remark', label: '备注' },
-  { prop: 'creator', label: '创建人' },
-  { prop: 'createTime', label: '创建时间' },
-  { prop: 'updater', label: '更新人' },
-  { prop: 'updateTime', label: '更新时间' },
-
-  {
-    prop: 'operation',
-    label: '操作',
-    width: 150,
-    fixed: 'right',
-    isShow: HasAuth('tenant.SysTenantPackageUpdate', 'tenant.SysTenantPackageDelete', 'tenant.SysTenantPackage'),
-  },
+const columns: ProVxeColumnProps[] = [
+  { prop: 'name', label: '名称', valueType: 'input' },
+  { prop: 'status', label: '状态', valueType: 'select', options: statusEnum },
 ]
 </script>
 <style scoped lang="scss">

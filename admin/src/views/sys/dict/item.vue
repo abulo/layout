@@ -1,45 +1,70 @@
 <template>
   <div class="table-box">
-    <ProTable
+    <ProVxeTable
       ref="proTable"
       title="字典列表"
-      row-key="id"
       :columns="columns"
       :toolbar-right="['search', 'refresh']"
       :request-api="getTableList"
       :request-auto="true"
+      :show-number="3"
+      :border="true"
+      :column-config="{ resizable: true, isCurrent: true, isHover: true }"
+      :row-config="{ isCurrent: true, isHover: true }"
       :pagination="ProTablePaginationEnum.BE"
-      :search-col="12"
     >
       <template #toolbarLeft>
         <el-button v-auth="'dict.SysDictCreate'" type="primary" :icon="CirclePlus" @click="handleAdd">新增</el-button>
         <el-button type="primary" :icon="Remove" @click="closeTab">关闭</el-button>
       </template>
-      <template #status="scope">
-        <DictTag type="status" :value="scope.row.status" />
-      </template>
-      <!-- 菜单操作 -->
-      <template #operation="scope">
-        <el-button v-auth="'dict.SysDict'" type="primary" link :icon="View" @click="handleItem(scope.row)">
-          查看
-        </el-button>
-        <el-dropdown trigger="click">
-          <el-button v-auth="['dict.SysDictUpdate', 'dict.SysDictDelete']" type="primary" link :icon="DArrowRight">
-            更多
+      <vxe-column field="id" title="编号" fixed="left" width="auto"> </vxe-column>
+      <vxe-column field="label" title="标签"> </vxe-column>
+      <vxe-column field="value" title="键值"> </vxe-column>
+      <vxe-column field="sort" title="排序"> </vxe-column>
+      <vxe-column field="dictTypeId" title="字典类型">
+        <template #default="{ row }">
+          <ElTag>
+            {{ filterEnum(row.dictTypeId, sysDictTypeListEnum) }}
+          </ElTag>
+        </template>
+      </vxe-column>
+      <vxe-column field="colorType" title="颜色类型"> </vxe-column>
+      <vxe-column field="cssClass" title="CSS样式"> </vxe-column>
+      <vxe-column field="status" title="状态"> </vxe-column>
+      <vxe-column field="remark" title="备注"> </vxe-column>
+      <vxe-column field="creator" title="创建人"> </vxe-column>
+      <vxe-column field="createTime" title="创建时间"> </vxe-column>
+      <vxe-column field="updater" title="更新人"> </vxe-column>
+      <vxe-column field="updateTime" title="更新时间"> </vxe-column>
+      <vxe-column
+        v-auth="['dict.SysDictUpdate', 'dict.SysDictDelete', 'dict.SysDict']"
+        field="operation"
+        fixed="right"
+        title="操作"
+        width="auto"
+      >
+        <template #default="{ row }">
+          <el-button v-auth="'dict.SysDict'" type="primary" link :icon="View" @click="handleItem(row)">
+            查看
           </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <div v-auth="'dict.SysDictUpdate'">
-                <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>
-              </div>
-              <div v-auth="'dict.SysDictDelete'">
-                <el-dropdown-item :icon="Delete" @click="handleDelete(scope.row)"> 删除 </el-dropdown-item>
-              </div>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </template>
-    </ProTable>
+          <el-dropdown trigger="click">
+            <el-button v-auth="['dict.SysDictUpdate', 'dict.SysDictDelete']" type="primary" link :icon="DArrowRight">
+              更多
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <div v-auth="'dict.SysDictUpdate'">
+                  <el-dropdown-item :icon="EditPen" @click="handleUpdate(row)"> 编辑 </el-dropdown-item>
+                </div>
+                <div v-auth="'dict.SysDictDelete'">
+                  <el-dropdown-item :icon="Delete" @click="handleDelete(row)"> 删除 </el-dropdown-item>
+                </div>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+      </vxe-column>
+    </ProVxeTable>
     <el-dialog
       v-model="dialogVisible"
       :title="title"
@@ -103,7 +128,7 @@
 <script setup lang="tsx">
 defineOptions({ name: 'SysDict' })
 import { ResSysDict } from '@/api/interface/sysDict'
-import { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
+import { ProVxeTableInstance, ProVxeColumnProps } from '@/components/ProVxeTable/interface'
 import { EditPen, CirclePlus, Delete, View, DArrowRight, Remove } from '@element-plus/icons-vue'
 import {
   getSysDictListApi,
@@ -112,9 +137,9 @@ import {
   addSysDictApi,
   updateSysDictApi,
 } from '@/api/modules/sysDict'
+import { getSysDictTypeApi } from '@/api/modules/sysDictType'
 import { FormInstance, FormRules } from 'element-plus'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
-import { HasAuth } from '@/utils/auth'
 import { useRoute } from 'vue-router'
 import { useTabsStore } from '@/stores/modules/tabs'
 import { useKeepAliveStore } from '@/stores/modules/keepAlive'
@@ -124,6 +149,7 @@ import { ResSysDictType } from '@/api/interface/sysDictType'
 import { useLoadingStore } from '@/stores/modules/loading'
 import { storeToRefs } from 'pinia'
 import { ProTablePaginationEnum } from '@/enums'
+import { HandleEnumList, filterEnum } from '@/utils'
 // 获取loading状态
 const { loading } = storeToRefs(useLoadingStore())
 // 获取当前路由信息
@@ -139,7 +165,7 @@ const disabled = ref(true)
 //弹出层标题
 const title = ref('')
 //列表数据
-const proTable = ref<ProTableInstance>()
+const proTable = ref<ProVxeTableInstance>()
 //显示弹出层
 const dialogVisible = ref(false)
 // 状态枚举
@@ -180,10 +206,13 @@ const rulesSysDictForm = reactive<FormRules>({
 const getTableList = (params: any) => {
   // 深拷贝参数对象，避免修改原始参数
   let newParams = JSON.parse(JSON.stringify(params))
-  if (newParams.dictTypeId) {
-    dictTypeId.value = Number(newParams.dictTypeId)
-    sysDictForm.value.dictTypeId = dictTypeId.value
-  }
+  // if (newParams.dictTypeId) {
+  //   dictTypeId.value = Number(newParams.dictTypeId)
+  //   sysDictForm.value.dictTypeId = dictTypeId.value
+  // } else {
+  newParams.dictTypeId = dictTypeId.value
+  sysDictForm.value.dictTypeId = dictTypeId.value
+  // }
   return getSysDictListApi(newParams)
 }
 
@@ -327,36 +356,30 @@ const colorTypeOptions = ref([
 onMounted(async () => {
   const { data } = await getSysDictTypeListSimpleApi()
   sysDictTypeList.value = data
+
+  const { data: dict } = await getSysDictTypeApi(dictTypeId.value)
+  tabStore.setTabsTitle(dict.name)
 })
 
-const columns: ColumnProps<ResSysDict>[] = [
-  { prop: 'id', label: '编号', fixed: 'left' },
-  { prop: 'label', label: '标签' },
-  { prop: 'value', label: '键值' },
-  { prop: 'sort', label: '排序' },
-  {
-    prop: 'dictTypeId',
-    label: '字典类型',
-    enum: sysDictTypeList,
-    tag: true,
-    fieldNames: { label: 'name', value: 'id' },
-    search: { el: 'select', span: 2, defaultValue: dictTypeId.value },
-  },
-  { prop: 'colorType', label: '颜色类型' },
-  { prop: 'cssClass', label: 'CSS样式' },
-  { prop: 'status', label: '状态', tag: true, enum: statusEnum, search: { el: 'select', span: 2 } },
-  { prop: 'remark', label: '备注' },
-  { prop: 'creator', label: '创建人' },
-  { prop: 'createTime', label: '创建时间' },
-  { prop: 'updater', label: '更新人' },
-  { prop: 'updateTime', label: '更新时间' },
-  {
-    prop: 'operation',
-    label: '操作',
-    width: 150,
-    fixed: 'right',
-    isShow: HasAuth('dict.SysDictUpdate', 'dict.SysDictDelete', 'dict.SysDict'),
-  },
+// 套餐列表
+const sysDictTypeListEnum = computed(() => {
+  if (Array.isArray(sysDictTypeList.value)) {
+    return HandleEnumList(sysDictTypeList.value, {
+      label: 'name',
+      value: 'id',
+    })
+  }
+  return []
+})
+
+const columns: ProVxeColumnProps[] = [
+  // {
+  //   prop: 'dictTypeId',
+  //   label: '字典类型',
+  //   valueType: 'select',
+  //   options: sysDictTypeListEnum,
+  // },
+  { prop: 'status', label: '状态', valueType: 'select', options: statusEnum },
 ]
 </script>
 <style scoped lang="scss">

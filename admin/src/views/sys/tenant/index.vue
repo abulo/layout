@@ -1,81 +1,117 @@
 <template>
   <div class="table-box">
-    <ProTable
+    <ProVxeTable
       ref="proTable"
       title="租户列表"
-      row-key="id"
       :columns="columns"
       :toolbar-right="['search', 'refresh']"
       :request-api="getTableList"
       :request-auto="true"
+      :show-number="3"
+      :border="true"
+      :column-config="{ resizable: true, isCurrent: true, isHover: true }"
+      :row-config="{ isCurrent: true, isHover: true }"
       :pagination="ProTablePaginationEnum.BE"
-      :search-col="12"
     >
       <template #toolbarLeft>
         <el-button v-auth="'tenant.SysTenantCreate'" type="primary" :icon="CirclePlus" @click="handleAdd">
           新增
         </el-button>
       </template>
-      <!-- 删除状态 -->
-      <template #deleted="scope">
-        <DictTag type="deleted" :value="scope.row.deleted" />
-      </template>
-      <template #status="scope">
-        <DictTag type="status" :value="scope.row.status" />
-      </template>
-      <!-- 菜单操作 -->
-      <template #operation="scope">
-        <el-button v-auth="'tenant.SysTenant'" type="primary" link :icon="View" @click="handleItem(scope.row)">
-          查看
-        </el-button>
-        <el-button
-          v-auth="'user.SysTenantUserLogin'"
-          type="primary"
-          link
-          :icon="Connection"
-          @click="handleLogin(scope.row)"
-        >
-          登录
-        </el-button>
-        <el-dropdown trigger="click">
+      <vxe-column field="id" title="编号" fixed="left" width="auto"> </vxe-column>
+      <vxe-column field="name" title="名称"> </vxe-column>
+      <vxe-column field="contactName" title="联系人"> </vxe-column>
+      <vxe-column field="contactMobile" title="联系电话"> </vxe-column>
+      <vxe-column field="expireDate" title="过期时间"> </vxe-column>
+      <vxe-column field="accountTotal" title="账号数量"></vxe-column>
+      <vxe-column field="packageId" title="套餐">
+        <template #default="{ row }">
+          <ElTag>
+            {{ filterEnum(row.packageId, packageEnum) }}
+          </ElTag>
+        </template>
+      </vxe-column>
+      <vxe-column field="status" title="状态">
+        <template #default="{ row }">
+          <DictTag type="status" :value="row.status" />
+        </template>
+      </vxe-column>
+      <vxe-column v-auth="'tenant.SysTenantDelete'" field="deleted" title="删除">
+        <template #default="{ row }">
+          <DictTag type="deleted" :value="row.deleted" />
+        </template>
+      </vxe-column>
+      <vxe-column field="creator" title="创建人"> </vxe-column>
+      <vxe-column field="createTime" title="创建时间"> </vxe-column>
+      <vxe-column field="updater" title="更新人"> </vxe-column>
+      <vxe-column field="updateTime" title="更新时间"> </vxe-column>
+      <vxe-column
+        v-auth="[
+          'tenant.SysTenantUpdate',
+          'tenant.SysTenantDelete',
+          'tenant.SysTenantDrop',
+          'tenant.SysTenantRecover',
+          'tenant.SysTenant',
+          'tenant.SysTenantUserLogin',
+        ]"
+        field="operation"
+        fixed="right"
+        title="操作"
+        width="auto"
+      >
+        <template #default="{ row }">
+          <el-button v-auth="'tenant.SysTenant'" type="primary" link :icon="View" @click="handleItem(row)">
+            查看
+          </el-button>
           <el-button
-            v-auth="[
-              'tenant.SysTenantUpdate',
-              'tenant.SysTenantDelete',
-              'tenant.SysTenantRecover',
-              'tenant.SysTenantDrop',
-            ]"
+            v-auth="'user.SysTenantUserLogin'"
             type="primary"
             link
-            :icon="DArrowRight"
+            :icon="Connection"
+            @click="handleLogin(row)"
           >
-            更多
+            登录
           </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <div v-auth="'tenant.SysTenantUpdate'">
-                <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>
-              </div>
-              <div v-auth="'tenant.SysTenantDelete'">
-                <el-dropdown-item v-if="scope.row.deleted === 0" :icon="Delete" @click="handleDelete(scope.row)">
-                  删除
-                </el-dropdown-item>
-              </div>
-              <div v-auth="'tenant.SysTenantRecover'">
-                <el-dropdown-item v-if="scope.row.deleted === 1" :icon="Refresh" @click="handleRecover(scope.row)">
-                  恢复
-                </el-dropdown-item>
-              </div>
-              <div v-auth="'tenant.SysTenantDrop'">
-                <el-dropdown-item v-if="scope.row.deleted === 1" :icon="DeleteFilled" @click="handleDrop(scope.row)">
-                  清理
-                </el-dropdown-item>
-              </div>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </template>
-    </ProTable>
+          <el-dropdown trigger="click">
+            <el-button
+              v-auth="[
+                'tenant.SysTenantUpdate',
+                'tenant.SysTenantDelete',
+                'tenant.SysTenantRecover',
+                'tenant.SysTenantDrop',
+              ]"
+              type="primary"
+              link
+              :icon="DArrowRight"
+            >
+              更多
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <div v-auth="'tenant.SysTenantUpdate'">
+                  <el-dropdown-item :icon="EditPen" @click="handleUpdate(row)"> 编辑 </el-dropdown-item>
+                </div>
+                <div v-auth="'tenant.SysTenantDelete'">
+                  <el-dropdown-item v-if="row.deleted === 0" :icon="Delete" @click="handleDelete(row)">
+                    删除
+                  </el-dropdown-item>
+                </div>
+                <div v-auth="'tenant.SysTenantRecover'">
+                  <el-dropdown-item v-if="row.deleted === 1" :icon="Refresh" @click="handleRecover(row)">
+                    恢复
+                  </el-dropdown-item>
+                </div>
+                <div v-auth="'tenant.SysTenantDrop'">
+                  <el-dropdown-item v-if="row.deleted === 1" :icon="DeleteFilled" @click="handleDrop(row)">
+                    清理
+                  </el-dropdown-item>
+                </div>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+      </vxe-column>
+    </ProVxeTable>
     <el-dialog
       v-model="dialogVisible"
       :title="title"
@@ -180,7 +216,8 @@
 <script setup lang="tsx">
 defineOptions({ name: 'SysTenant' })
 import { ResSysTenant } from '@/api/interface/sysTenant'
-import { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
+import { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
+import { ProVxeTableInstance, ProVxeColumnProps } from '@/components/ProVxeTable/interface'
 import {
   EditPen,
   CirclePlus,
@@ -215,7 +252,7 @@ import { storeToRefs } from 'pinia'
 import { ResSysUser } from '@/api/interface/sysUser'
 import { getSysUserApi } from '@/api/modules/sysUser'
 import { ProTablePaginationEnum } from '@/enums'
-import { encryptPassword, getTimeState, parseRedirect } from '@/utils'
+import { encryptPassword, getTimeState, parseRedirect, HandleEnumList, filterEnum } from '@/utils'
 import { useUserStore } from '@/stores/modules/user'
 import { useTabsStore } from '@/stores/modules/tabs'
 import { useKeepAliveStore } from '@/stores/modules/keepAlive'
@@ -233,7 +270,7 @@ const disabled = ref(true)
 //弹出层标题
 const title = ref('')
 //列表数据
-const proTable = ref<ProTableInstance>()
+const proTable = ref<ProVxeTableInstance>()
 const userProTable = ref<ProTableInstance>()
 //显示弹出层
 const dialogVisible = ref(false)
@@ -495,65 +532,46 @@ onMounted(() => {
   getSysTenantPackageOptions()
 })
 
-//删除状态
-const deletedEnum = getIntDictOptions('deleted')
-// 表格配置项
-const deleteSearch = reactive<SearchProps>(
-  HasAuth('tenant.SysTenantDelete')
-    ? {
-        el: 'switch',
-        span: 2,
-        attrs: {
-          activeValue: 1,
-          inactiveValue: 0,
-        },
-      }
-    : {}
-)
+// 套餐列表
+const packageEnum = computed(() => {
+  if (Array.isArray(sysTenantPackageOptions.value)) {
+    return HandleEnumList(sysTenantPackageOptions.value, {
+      label: 'name',
+      value: 'id',
+    })
+  }
+  return []
+})
 
-const columns: ColumnProps<ResSysTenant>[] = [
-  { prop: 'id', label: '编号' },
-  { prop: 'name', label: '名称', search: { el: 'input', span: 2 } },
-  { prop: 'contactName', label: '联系人' },
-  { prop: 'contactMobile', label: '联系电话' },
+const columns: ProVxeColumnProps[] = [
+  { prop: 'name', label: '名称', valueType: 'input' },
   {
     prop: 'expireDate',
     label: '过期时间',
-    search: {
-      el: 'date-picker',
-      span: 4,
-      attrs: { type: 'daterange', valueFormat: 'YYYY-MM-DD' },
+    valueType: 'date-picker',
+    fieldProps: {
+      type: 'daterange',
+      startPlaceholder: '请选择',
+      endPlaceholder: '请选择',
+      valueFormat: 'YYYY-MM-DD',
     },
   },
-  { prop: 'accountTotal', label: '账号数量' },
   {
     prop: 'packageId',
     label: '套餐',
-    enum: sysTenantPackageOptions,
-    tag: true,
-    fieldNames: { label: 'name', value: 'id' },
-    search: { el: 'select', span: 2 },
+    options: packageEnum,
+    valueType: 'select',
   },
-  { prop: 'status', label: '状态', tag: true, enum: statusEnum, search: { el: 'select', span: 2 } },
-  { prop: 'deleted', label: '删除', tag: true, enum: deletedEnum, search: deleteSearch },
-  { prop: 'creator', label: '创建人' },
-  { prop: 'createTime', label: '创建时间' },
-  { prop: 'updater', label: '更新人' },
-  { prop: 'updateTime', label: '更新时间' },
-
+  { prop: 'status', label: '状态', options: statusEnum, valueType: 'select' },
   {
-    prop: 'operation',
-    label: '操作',
-    width: 220,
-    fixed: 'right',
-    isShow: HasAuth(
-      'tenant.SysTenantUpdate',
-      'tenant.SysTenantDelete',
-      'tenant.SysTenantDrop',
-      'tenant.SysTenantRecover',
-      'tenant.SysTenant',
-      'tenant.SysTenantUserLogin'
-    ),
+    prop: 'deleted',
+    label: '删除',
+    valueType: 'switch',
+    fieldProps: {
+      activeValue: 1,
+      inactiveValue: 0,
+    },
+    hideInSearch: !HasAuth('tenant.SysTenantDelete'),
   },
 ]
 </script>

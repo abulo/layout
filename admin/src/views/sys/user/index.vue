@@ -2,76 +2,96 @@
   <div class="main-box">
     <TreeFilter label="name" :data="deptOptions" :default-value="initParam.deptId" @change="changeTreeFilter" />
     <div class="table-box">
-      <ProTable
+      <ProVxeTable
         ref="proTable"
         title="用户列表"
-        row-key="id"
         :columns="columns"
         :toolbar-right="['search', 'refresh']"
         :request-api="getTableList"
         :request-auto="true"
         :init-param="initParam"
+        :show-number="3"
+        :border="true"
+        :column-config="{ resizable: true, isCurrent: true, isHover: true }"
+        :row-config="{ isCurrent: true, isHover: true }"
         :pagination="ProTablePaginationEnum.BE"
-        :search-col="12"
       >
         <template #toolbarLeft>
           <el-button v-auth="'user.SysUserCreate'" type="primary" :icon="CirclePlus" @click="handleAdd">新增</el-button>
         </template>
-        <!-- 删除状态 -->
-        <template #deleted="scope">
-          <DictTag type="deleted" :value="scope.row.deleted" />
-        </template>
-        <template #status="scope">
-          <DictTag type="status" :value="scope.row.status" />
-        </template>
-        <!-- 菜单操作 -->
-        <template #operation="scope">
-          <el-button v-auth="'user.SysUser'" type="primary" link :icon="View" @click="handleItem(scope.row)">
-            查看
-          </el-button>
-          <el-button
-            v-auth="'user.SysUserLogin'"
-            type="primary"
-            link
-            :icon="Connection"
-            @click="handleLogin(scope.row)"
-          >
-            登录
-          </el-button>
-          <el-dropdown trigger="click">
-            <el-button
-              v-auth="['user.SysUserUpdate', 'user.SysUserDelete', 'user.SysUserRecover', 'user.SysUserDrop']"
-              type="primary"
-              link
-              :icon="DArrowRight"
-            >
-              更多
+        <vxe-column field="id" title="编号" fixed="left" width="auto"> </vxe-column>
+        <vxe-column field="name" title="姓名"> </vxe-column>
+        <vxe-column field="mobile" title="手机号码"> </vxe-column>
+        <vxe-column field="username" title="用户名"> </vxe-column>
+        <vxe-column field="status" title="状态">
+          <template #default="{ row }">
+            <DictTag type="status" :value="row.status" />
+          </template>
+        </vxe-column>
+        <vxe-column v-auth="'user.SysUserDelete'" field="deleted" title="删除">
+          <template #default="{ row }">
+            <DictTag type="deleted" :value="row.deleted" />
+          </template>
+        </vxe-column>
+        <vxe-column field="creator" title="创建人"> </vxe-column>
+        <vxe-column field="createTime" title="创建时间"></vxe-column>
+        <vxe-column field="updater" title="更新人"> </vxe-column>
+        <vxe-column field="updateTime" title="更新时间"></vxe-column>
+        <vxe-column
+          v-auth="[
+            'user.SysUserUpdate',
+            'user.SysUserDelete',
+            'user.SysUserDrop',
+            'user.SysUserRecover',
+            'user.SysUser',
+            'user.SysUserLogin',
+          ]"
+          field="operation"
+          title="操作"
+          width="auto"
+        >
+          <template #default="{ row }">
+            <el-button v-auth="'user.SysUser'" type="primary" link :icon="View" @click="handleItem(row)">
+              查看
             </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <div v-auth="'user.SysUserUpdate'">
-                  <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>
-                </div>
-                <div v-auth="'user.SysUserDelete'">
-                  <el-dropdown-item v-if="scope.row.deleted === 0" :icon="Delete" @click="handleDelete(scope.row)">
-                    删除
-                  </el-dropdown-item>
-                </div>
-                <div v-auth="'user.SysUserRecover'">
-                  <el-dropdown-item v-if="scope.row.deleted === 1" :icon="Refresh" @click="handleRecover(scope.row)">
-                    恢复
-                  </el-dropdown-item>
-                </div>
-                <div v-auth="'user.SysUserDrop'">
-                  <el-dropdown-item v-if="scope.row.deleted === 1" :icon="DeleteFilled" @click="handleDrop(scope.row)">
-                    清理
-                  </el-dropdown-item>
-                </div>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </template>
-      </ProTable>
+            <el-button v-auth="'user.SysUserLogin'" type="primary" link :icon="Connection" @click="handleLogin(row)">
+              登录
+            </el-button>
+            <el-dropdown trigger="click">
+              <el-button
+                v-auth="['user.SysUserUpdate', 'user.SysUserDelete', 'user.SysUserRecover', 'user.SysUserDrop']"
+                type="primary"
+                link
+                :icon="DArrowRight"
+              >
+                更多
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <div v-auth="'user.SysUserUpdate'">
+                    <el-dropdown-item :icon="EditPen" @click="handleUpdate(row)"> 编辑 </el-dropdown-item>
+                  </div>
+                  <div v-auth="'user.SysUserDelete'">
+                    <el-dropdown-item v-if="row.deleted === 0" :icon="Delete" @click="handleDelete(row)">
+                      删除
+                    </el-dropdown-item>
+                  </div>
+                  <div v-auth="'user.SysUserRecover'">
+                    <el-dropdown-item v-if="row.deleted === 1" :icon="Refresh" @click="handleRecover(row)">
+                      恢复
+                    </el-dropdown-item>
+                  </div>
+                  <div v-auth="'user.SysUserDrop'">
+                    <el-dropdown-item v-if="row.deleted === 1" :icon="DeleteFilled" @click="handleDrop(row)">
+                      清理
+                    </el-dropdown-item>
+                  </div>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </template>
+        </vxe-column>
+      </ProVxeTable>
       <el-dialog
         v-model="dialogVisible"
         :title="title"
@@ -180,7 +200,7 @@
 <script setup lang="tsx">
 defineOptions({ name: 'SysUser' })
 import { ResSysUser } from '@/api/interface/sysUser'
-import { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
+import { ProVxeTableInstance, ProVxeColumnProps } from '@/components/ProVxeTable/interface'
 import {
   EditPen,
   CirclePlus,
@@ -232,13 +252,14 @@ const keepAliveStore = useKeepAliveStore()
 
 const initParam = reactive({ deptId: '' })
 // 获取loading状态
-const { loading } = storeToRefs(useLoadingStore())
+const loadingStore = useLoadingStore()
+const { loading } = storeToRefs(loadingStore)
 //禁用
 const disabled = ref(true)
 //弹出层标题
 const title = ref('')
 //列表数据
-const proTable = ref<ProTableInstance>()
+const proTable = ref<ProVxeTableInstance>()
 //显示弹出层
 const dialogVisible = ref(false)
 // 状态枚举
@@ -495,46 +516,20 @@ const changeTreeFilter = (val: string) => {
   initParam.deptId = val
 }
 
-//删除状态
-const deletedEnum = getIntDictOptions('deleted')
-// 表格配置项
-const deleteSearch = reactive<SearchProps>(
-  HasAuth('user.SysUserDelete')
-    ? {
-        el: 'switch',
-        span: 2,
-        attrs: {
-          activeValue: 1,
-          inactiveValue: 0,
-        },
-      }
-    : {}
-)
-
-const columns: ColumnProps<ResSysUser>[] = [
-  { prop: 'id', label: '编号' },
-  { prop: 'name', label: '姓名', search: { el: 'input', span: 2 } },
-  { prop: 'mobile', label: '手机号码', search: { el: 'input', span: 2 } },
-  { prop: 'username', label: '用户名', search: { el: 'input', span: 2 } },
-  { prop: 'status', label: '状态', tag: true, enum: statusEnum, search: { el: 'select', span: 2 } },
-  { prop: 'deleted', label: '删除', tag: true, enum: deletedEnum, search: deleteSearch },
-  { prop: 'creator', label: '创建人' },
-  { prop: 'createTime', label: '创建时间' },
-  { prop: 'updater', label: '更新人' },
-  { prop: 'updateTime', label: '更新时间' },
+const columns: ProVxeColumnProps[] = [
+  { prop: 'name', label: '姓名', valueType: 'input' },
+  { prop: 'mobile', label: '手机号码', valueType: 'input' },
+  { prop: 'username', label: '用户名', valueType: 'input' },
+  { prop: 'status', label: '状态', valueType: 'select', options: statusEnum },
   {
-    prop: 'operation',
-    label: '操作',
-    width: 220,
-    fixed: 'right',
-    isShow: HasAuth(
-      'user.SysUserUpdate',
-      'user.SysUserDelete',
-      'user.SysUserDrop',
-      'user.SysUserRecover',
-      'user.SysUser',
-      'user.SysUserLogin'
-    ),
+    prop: 'deleted',
+    label: '删除',
+    valueType: 'switch',
+    fieldProps: {
+      activeValue: 1,
+      inactiveValue: 0,
+    },
+    hideInSearch: !HasAuth('user.SysUserDelete'),
   },
 ]
 

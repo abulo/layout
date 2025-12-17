@@ -1,79 +1,105 @@
 <template>
   <div class="table-box">
-    <ProTable
-      v-if="refreshTable"
+    <ProVxeTable
       ref="proTable"
       title="部门列表"
-      row-key="id"
       :columns="columns"
       :toolbar-right="['search', 'refresh']"
       :request-api="getTableList"
-      :default-expand-all="isExpandAll"
       :data-callback="deptHandleTree"
       :request-auto="true"
+      :show-number="3"
+      :border="true"
+      :column-config="{ resizable: true, isCurrent: true, isHover: true }"
+      :row-config="{ isCurrent: true, isHover: true }"
+      :virtual-y-config="{ enabled: true, gt: 0 }"
+      :tree-config="{}"
       :pagination="ProTablePaginationEnum.NONE"
-      :search-col="12"
-      :indent="20"
     >
       <template #toolbarLeft>
         <el-button v-auth="'dept.SysDeptCreate'" type="primary" :icon="CirclePlus" @click="handleAdd()">新增</el-button>
-        <el-button type="primary" :icon="Sort" @click="handleExpandAll">展开/折叠</el-button>
-      </template>
-      <!-- 删除状态 -->
-      <template #deleted="scope">
-        <DictTag type="deleted" :value="scope.row.deleted" />
-      </template>
-      <template #status="scope">
-        <DictTag type="status" :value="scope.row.status" />
-      </template>
-      <!-- 菜单操作 -->
-      <template #operation="scope">
-        <el-button v-auth="'dept.SysDept'" type="primary" link :icon="View" @click="handleItem(scope.row)">
-          查看
+        <el-button type="primary" :icon="Sort" :loading="loadingStore.loading" @click="handleExpandAll">
+          展开/折叠
         </el-button>
-        <el-dropdown trigger="click">
-          <el-button
-            v-auth="[
-              'dept.SysDeptCreate',
-              'dept.SysDeptUpdate',
-              'dept.SysDeptDelete',
-              'dept.SysDeptRecover',
-              'dept.SysDeptDrop',
-            ]"
-            type="primary"
-            link
-            :icon="DArrowRight"
-          >
-            更多
-          </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <div v-auth="'dept.SysDeptCreate'">
-                <el-dropdown-item :icon="CirclePlus" @click="handleAdd(scope.row)"> 新增 </el-dropdown-item>
-              </div>
-              <div v-auth="'dept.SysDeptUpdate'">
-                <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>
-              </div>
-              <div v-auth="'dept.SysDeptDelete'">
-                <el-dropdown-item v-if="scope.row.deleted === 0" :icon="Delete" @click="handleDelete(scope.row)">
-                  删除
-                </el-dropdown-item>
-              </div>
-              <div v-auth="'dept.SysDeptRecover'">
-                <el-dropdown-item v-if="scope.row.deleted === 1" :icon="Refresh" @click="handleRecover(scope.row)">
-                  恢复
-                </el-dropdown-item>
-              </div>
-              <div v-auth="'dept.SysDeptDrop'">
-                <el-dropdown-item v-if="scope.row.deleted === 1" :icon="DeleteFilled" @click="handleDrop(scope.row)">
-                  清理
-                </el-dropdown-item>
-              </div>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
       </template>
-    </ProTable>
+      <vxe-column field="id" title="编号" fixed="left" width="auto"></vxe-column>
+      <vxe-column field="name" title="名称" tree-node></vxe-column>
+      <vxe-column field="sort" title="排序"></vxe-column>
+      <vxe-column field="phone" title="联系电话"></vxe-column>
+      <vxe-column field="email" title="邮件"></vxe-column>
+      <vxe-column field="status" title="状态">
+        <template #default="{ row }">
+          <DictTag type="status" :value="row.status" />
+        </template>
+      </vxe-column>
+      <vxe-column v-auth="'dept.SysDeptDelete'" field="deleted" title="删除">
+        <template #default="{ row }">
+          <DictTag type="deleted" :value="row.deleted" />
+        </template>
+      </vxe-column>
+      <vxe-column
+        v-auth="[
+          'dept.SysDeptCreate',
+          'dept.SysDeptUpdate',
+          'dept.SysDeptDelete',
+          'dept.SysDeptDrop',
+          'dept.SysDeptRecover',
+          'dept.SysDept',
+        ]"
+        field="operation"
+        fixed="right"
+        title="操作"
+        align="center"
+        width="auto"
+      >
+        <template #default="{ row }">
+          <el-button v-auth="'dept.SysDept'" type="primary" link :icon="View" @click="handleItem(row)">
+            查看
+          </el-button>
+          <el-dropdown trigger="click">
+            <el-button
+              v-auth="[
+                'dept.SysDeptCreate',
+                'dept.SysDeptUpdate',
+                'dept.SysDeptDelete',
+                'dept.SysDeptRecover',
+                'dept.SysDeptDrop',
+              ]"
+              type="primary"
+              link
+              :icon="DArrowRight"
+            >
+              更多
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <div v-auth="'dept.SysDeptCreate'">
+                  <el-dropdown-item :icon="CirclePlus" @click="handleAdd(row)"> 新增 </el-dropdown-item>
+                </div>
+                <div v-auth="'dept.SysDeptUpdate'">
+                  <el-dropdown-item :icon="EditPen" @click="handleUpdate(row)"> 编辑 </el-dropdown-item>
+                </div>
+                <div v-auth="'dept.SysDeptDelete'">
+                  <el-dropdown-item v-if="row.deleted === 0" :icon="Delete" @click="handleDelete(row)">
+                    删除
+                  </el-dropdown-item>
+                </div>
+                <div v-auth="'dept.SysDeptRecover'">
+                  <el-dropdown-item v-if="row.deleted === 1" :icon="Refresh" @click="handleRecover(row)">
+                    恢复
+                  </el-dropdown-item>
+                </div>
+                <div v-auth="'dept.SysDeptDrop'">
+                  <el-dropdown-item v-if="row.deleted === 1" :icon="DeleteFilled" @click="handleDrop(row)">
+                    清理
+                  </el-dropdown-item>
+                </div>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+      </vxe-column>
+    </ProVxeTable>
     <el-dialog
       v-model="dialogVisible"
       :title="title"
@@ -88,7 +114,7 @@
       @click="handleDialogClick"
     >
       <el-form ref="refSysDeptForm" :model="sysDeptForm" :rules="rulesSysDeptForm" label-width="100px">
-        <el-form-item label="上级菜单" prop="parentId">
+        <el-form-item label="上级" prop="parentId">
           <el-tree-select
             v-model="sysDeptForm.parentId"
             :data="deptOptions"
@@ -163,7 +189,8 @@
 <script setup lang="tsx">
 defineOptions({ name: 'SysDept' })
 import { ResSysDept } from '@/api/interface/sysDept'
-import { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
+import { ProVxeTableInstance, ProVxeColumnProps } from '@/components/ProVxeTable/interface'
+import { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
 import { EditPen, CirclePlus, Delete, Refresh, DeleteFilled, View, DArrowRight, Sort } from '@element-plus/icons-vue'
 import {
   getSysDeptListApi,
@@ -186,21 +213,21 @@ import { handleTree } from '@pureadmin/utils'
 import { ResSysUser } from '@/api/interface/sysUser'
 import { getSysUserApi, getSysUserListSimpleApi } from '@/api/modules/sysUser'
 import { ProTablePaginationEnum } from '@/enums'
+import { useTimeoutFn } from '@vueuse/core'
 // 获取loading状态
-const { loading } = storeToRefs(useLoadingStore())
+const loadingStore = useLoadingStore()
+const { loading } = storeToRefs(loadingStore)
 //禁用
 const disabled = ref(true)
 //弹出层标题
 const title = ref('')
 //列表数据
-const proTable = ref<ProTableInstance>()
+const proTable = ref<ProVxeTableInstance>()
 const userProTable = ref<ProTableInstance>()
 //显示弹出层
 const dialogVisible = ref(false)
 //是否展开，默认全部折叠
 const isExpandAll = ref(false)
-//重新渲染表格状态
-const refreshTable = ref(true)
 // 定义负责人
 const userItem = ref('点击选择')
 // 显示负责人
@@ -385,13 +412,18 @@ const submitForm = (formEl: FormInstance | undefined) => {
 }
 
 // 设置展开合并
+// 设置展开合并
 const handleExpandAll = () => {
-  refreshTable.value = false
+  loadingStore.setLoading(true)
   isExpandAll.value = !isExpandAll.value
-  nextTick(() => {
-    refreshTable.value = true
-    deptOptions.value = []
-  })
+  if (isExpandAll.value) {
+    proTable.value?.setAllTreeExpand(true)
+  } else {
+    proTable.value?.clearTreeExpand()
+  }
+  useTimeoutFn(() => {
+    loadingStore.setLoading(false)
+  }, 500)
 }
 
 // 获取部门列表
@@ -456,42 +488,17 @@ const userColumns: ColumnProps<ResSysUser>[] = [
   },
 ]
 
-//删除状态
-const deletedEnum = getIntDictOptions('deleted')
-// 表格配置项
-const deleteSearch = reactive<SearchProps>(
-  HasAuth('dept.SysDeptDelete')
-    ? {
-        el: 'switch',
-        span: 2,
-        attrs: {
-          activeValue: 1,
-          inactiveValue: 0,
-        },
-      }
-    : {}
-)
-
-const columns: ColumnProps<ResSysDept>[] = [
-  { prop: 'name', label: '名称', fixed: 'left', align: 'left' },
-  { prop: 'sort', label: '排序' },
-  { prop: 'phone', label: '联系电话' },
-  { prop: 'email', label: '邮件' },
-  { prop: 'status', label: '状态', tag: true, enum: statusEnum, search: { el: 'select', span: 2 } },
-  { prop: 'deleted', label: '删除', tag: true, enum: deletedEnum, search: deleteSearch },
+const columns: ProVxeColumnProps[] = [
+  { prop: 'status', label: '状态', valueType: 'select', options: statusEnum },
   {
-    prop: 'operation',
-    label: '操作',
-    width: 150,
-    fixed: 'right',
-    isShow: HasAuth(
-      'dept.SysDeptCreate',
-      'dept.SysDeptUpdate',
-      'dept.SysDeptDelete',
-      'dept.SysDeptDrop',
-      'dept.SysDeptRecover',
-      'dept.SysDept'
-    ),
+    prop: 'deleted',
+    label: '删除',
+    valueType: 'switch',
+    fieldProps: {
+      activeValue: 1,
+      inactiveValue: 0,
+    },
+    hideInSearch: !HasAuth('dept.SysDeptDelete'),
   },
 ]
 </script>

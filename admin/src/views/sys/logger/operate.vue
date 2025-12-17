@@ -1,60 +1,95 @@
 <template>
   <div class="table-box">
-    <ProTable
+    <ProVxeTable
       ref="proTable"
       title="操作日志列表"
-      row-key="id"
       :columns="columns"
       :toolbar-right="['search', 'refresh']"
       :request-api="getTableList"
       :request-auto="true"
+      :show-number="3"
+      :border="true"
+      :column-config="{ resizable: true, isCurrent: true, isHover: true }"
+      :row-config="{ isCurrent: true, isHover: true }"
       :pagination="ProTablePaginationEnum.BE"
-      :search-col="12"
     >
       <template #toolbarLeft> </template>
-      <!-- 删除状态 -->
-      <template #deleted="scope">
-        <DictTag type="deleted" :value="scope.row.deleted" />
-      </template>
-      <template #status="scope">
-        <DictTag type="status" :value="scope.row.status" />
-      </template>
-      <!-- 菜单操作 -->
-      <template #operation="scope">
-        <el-button v-auth="'logger.SysLoggerOperate'" type="primary" link :icon="View" @click="handleItem(scope.row)">
-          查看
-        </el-button>
-        <el-dropdown trigger="click">
-          <el-button
-            v-auth="['logger.SysLoggerOperateDelete', 'logger.SysLoggerOperateRecover', 'logger.SysLoggerOperateDrop']"
-            type="primary"
-            link
-            :icon="DArrowRight"
-          >
-            更多
+      <vxe-column field="id" title="编号" fixed="left" width="auto"> </vxe-column>
+      <vxe-column field="username" title="用户名"> </vxe-column>
+      <vxe-column field="module" title="模块名称" width="auto"> </vxe-column>
+      <vxe-column field="method" title="请求方法">
+        <template #default="{ row }">
+          <DictTag type="operate.method" :value="row.method" />
+        </template>
+      </vxe-column>
+      <vxe-column field="url" title="请求地址" width="auto" show-overflow> </vxe-column>
+      <vxe-column field="ip" title="IP"> </vxe-column>
+      <vxe-column field="startTime" title="开始时间"> </vxe-column>
+      <vxe-column field="duration" title="执行时长"> </vxe-column>
+      <vxe-column field="channel" title="渠道"> </vxe-column>
+      <vxe-column field="result" title="结果">
+        <template #default="{ row }">
+          <DictTag type="operate.result" :value="row.result" />
+        </template>
+      </vxe-column>
+      <vxe-column v-auth="'logger.SysLoggerOperateDelete'" field="deleted" title="删除">
+        <template #default="{ row }">
+          <DictTag type="deleted" :value="row.deleted" />
+        </template>
+      </vxe-column>
+      <vxe-column
+        v-auth="[
+          'logger.SysLoggerOperateDelete',
+          'logger.SysLoggerOperateDrop',
+          'logger.SysLoggerOperateRecover',
+          'logger.SysLoggerOperate',
+        ]"
+        fixed="right"
+        width="auto"
+        field="operation"
+        title="操作"
+      >
+        <template #default="{ row }">
+          <!-- 菜单操作 -->
+          <el-button v-auth="'logger.SysLoggerOperate'" type="primary" link :icon="View" @click="handleItem(row)">
+            查看
           </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <div v-auth="'logger.SysLoggerOperateDelete'">
-                <el-dropdown-item v-if="scope.row.deleted === 0" :icon="Delete" @click="handleDelete(scope.row)">
-                  删除
-                </el-dropdown-item>
-              </div>
-              <div v-auth="'logger.SysLoggerOperateRecover'">
-                <el-dropdown-item v-if="scope.row.deleted === 1" :icon="Refresh" @click="handleRecover(scope.row)">
-                  恢复
-                </el-dropdown-item>
-              </div>
-              <div v-auth="'logger.SysLoggerOperateDrop'">
-                <el-dropdown-item v-if="scope.row.deleted === 1" :icon="DeleteFilled" @click="handleDrop(scope.row)">
-                  清理
-                </el-dropdown-item>
-              </div>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </template>
-    </ProTable>
+          <el-dropdown trigger="click">
+            <el-button
+              v-auth="[
+                'logger.SysLoggerOperateDelete',
+                'logger.SysLoggerOperateRecover',
+                'logger.SysLoggerOperateDrop',
+              ]"
+              type="primary"
+              link
+              :icon="DArrowRight"
+            >
+              更多
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <div v-auth="'logger.SysLoggerOperateDelete'">
+                  <el-dropdown-item v-if="row.deleted === 0" :icon="Delete" @click="handleDelete(row)">
+                    删除
+                  </el-dropdown-item>
+                </div>
+                <div v-auth="'logger.SysLoggerOperateRecover'">
+                  <el-dropdown-item v-if="row.deleted === 1" :icon="Refresh" @click="handleRecover(row)">
+                    恢复
+                  </el-dropdown-item>
+                </div>
+                <div v-auth="'logger.SysLoggerOperateDrop'">
+                  <el-dropdown-item v-if="row.deleted === 1" :icon="DeleteFilled" @click="handleDrop(row)">
+                    清理
+                  </el-dropdown-item>
+                </div>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+      </vxe-column>
+    </ProVxeTable>
     <el-dialog
       v-model="dialogVisible"
       :title="title"
@@ -91,7 +126,7 @@
 <script setup lang="tsx">
 defineOptions({ name: 'SysLoggerOperate' })
 import { ResSysLoggerOperate } from '@/api/interface/sysLoggerOperate'
-import { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
+import { ProVxeTableInstance, ProVxeColumnProps } from '@/components/ProVxeTable/interface'
 import { Delete, Refresh, DeleteFilled, View, DArrowRight } from '@element-plus/icons-vue'
 import {
   getSysLoggerOperateListApi,
@@ -103,15 +138,15 @@ import {
 import { getIntDictOptions, getStrDictOptions } from '@/utils/dict'
 import { DictTag } from '@/components/DictTag'
 import { useHandleData } from '@/hooks/useHandleData'
-import { HasAuth } from '@/utils/auth'
 import { ProTablePaginationEnum } from '@/enums'
+import { HasAuth } from '@/utils/auth'
 // 获取loading状态
 //禁用
 const disabled = ref(true)
 //弹出层标题
 const title = ref('')
 //列表数据
-const proTable = ref<ProTableInstance>()
+const proTable = ref<ProVxeTableInstance>()
 //显示弹出层
 const dialogVisible = ref(false)
 //数据接口
@@ -130,16 +165,15 @@ const sysLoggerOperateForm = ref<ResSysLoggerOperate>({
   startTime: undefined, // 开始时间
   duration: undefined, // 执行时长
   channel: undefined, // 渠道
-  result: undefined, // 结果:0 成功/1 失败
+  result: undefined, // 结果
   resultMsg: undefined, // 结果信息
-  deleted: 0, // 删除:0否/1是
+  deleted: 0, // 删除
   tenantId: 0, // 租户
   creator: undefined, // 创建人
   createTime: undefined, // 创建时间
   updater: undefined, // 更新人
   updateTime: undefined, // 更新时间
 })
-
 /**
  * 获取表格数据列表
  * @param params 查询参数对象
@@ -148,9 +182,6 @@ const sysLoggerOperateForm = ref<ResSysLoggerOperate>({
 const getTableList = (params: any) => {
   // 深拷贝参数对象，避免修改原始参数
   let newParams = JSON.parse(JSON.stringify(params))
-  newParams.startTime && (newParams.beginStartTime = newParams.startTime[0])
-  newParams.startTime && (newParams.finishStartTime = newParams.startTime[1])
-  delete newParams.startTime
   return getSysLoggerOperateListApi(newParams)
 }
 
@@ -176,9 +207,9 @@ const resetSysLoggerOperate = () => {
     startTime: undefined, // 开始时间
     duration: undefined, // 执行时长
     channel: undefined, // 渠道
-    result: undefined, // 结果:0 成功/1 失败
+    result: undefined, // 结果
     resultMsg: undefined, // 结果信息
-    deleted: 0, // 删除:0否/1是
+    deleted: 0, // 删除
     tenantId: 0, // 租户
     creator: undefined, // 创建人
     createTime: undefined, // 创建时间
@@ -233,58 +264,36 @@ const handleRecover = async (row: ResSysLoggerOperate) => {
   proTable.value?.getTableList()
 }
 
-//删除状态
-const deletedEnum = getIntDictOptions('deleted')
 // 结果
 const resultEnum = getIntDictOptions('operate.result')
 // 请求方法
 const methodEnum = getStrDictOptions('operate.method')
-// 表格配置项
-const deleteSearch = reactive<SearchProps>(
-  HasAuth('logger.SysLoggerOperateDelete')
-    ? {
-        el: 'switch',
-        span: 2,
-        attrs: {
-          activeValue: 1,
-          inactiveValue: 0,
-        },
-      }
-    : {}
-)
 
-const columns: ColumnProps<ResSysLoggerOperate>[] = [
-  { prop: 'id', label: '编号' },
-  { prop: 'username', label: '用户名', search: { el: 'input', span: 2 } },
-  { prop: 'module', label: '模块名称' },
-  { prop: 'method', label: '请求方法', tag: true, enum: methodEnum, search: { el: 'select', span: 2 } },
-  { prop: 'url', label: '请求地址' },
-  { prop: 'ip', label: 'IP' },
+const columns: ProVxeColumnProps[] = [
+  { prop: 'username', label: '用户名', valueType: 'input' },
+  { prop: 'method', label: '请求方法', valueType: 'select', options: methodEnum },
   {
     prop: 'startTime',
     label: '开始时间',
-    search: {
-      el: 'date-picker',
-      span: 4,
-      attrs: { type: 'datetimerange', valueFormat: 'YYYY-MM-DD HH:mm:ss' },
+    valueType: 'date-picker',
+    fieldProps: {
+      type: 'datetimerange',
+      startPlaceholder: '请选择',
+      endPlaceholder: '请选择',
+      valueFormat: 'YYYY-MM-DD HH:mm:ss',
     },
   },
-  { prop: 'duration', label: '执行时长' },
-  { prop: 'channel', label: '渠道', search: { el: 'input', span: 2 } },
-  { prop: 'result', label: '结果', tag: true, enum: resultEnum, search: { el: 'select', span: 2 } },
-  { prop: 'deleted', label: '删除', tag: true, enum: deletedEnum, search: deleteSearch },
-
+  { prop: 'channel', label: '渠道', valueType: 'input' },
+  { prop: 'result', label: '结果', valueType: 'select', options: resultEnum },
   {
-    prop: 'operation',
-    label: '操作',
-    width: 150,
-    fixed: 'right',
-    isShow: HasAuth(
-      'logger.SysLoggerOperateDelete',
-      'logger.SysLoggerOperateDrop',
-      'logger.SysLoggerOperateRecover',
-      'logger.SysLoggerOperate'
-    ),
+    prop: 'deleted',
+    label: '删除',
+    valueType: 'switch',
+    fieldProps: {
+      activeValue: 1,
+      inactiveValue: 0,
+    },
+    hideInSearch: !HasAuth('logger.SysLoggerOperateDelete'),
   },
 ]
 </script>

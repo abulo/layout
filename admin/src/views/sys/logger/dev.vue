@@ -1,32 +1,41 @@
 <template>
   <div class="table-box">
-    <ProTable
+    <ProVxeTable
       ref="proTable"
       title="开发日志列表"
-      row-key="id"
       :columns="columns"
       :toolbar-right="['search', 'refresh']"
       :request-api="getTableList"
       :request-auto="true"
+      :show-number="3"
+      :border="true"
+      :column-config="{ resizable: true, isCurrent: true, isHover: true }"
+      :row-config="{ isCurrent: true, isHover: true }"
       :pagination="ProTablePaginationEnum.BE"
-      :search-col="12"
     >
-      <!-- 菜单操作 -->
-      <template #operation="scope">
-        <el-button v-auth="'logger.SysLoggerDev'" type="primary" link :icon="View" @click="handleItem(scope.row)">
-          查看
-        </el-button>
-        <el-button
-          v-auth="'logger.SysLoggerDevDelete'"
-          type="primary"
-          link
-          :icon="Delete"
-          @click="handleDelete(scope.row)"
-        >
-          删除
-        </el-button>
-      </template>
-    </ProTable>
+      <vxe-column field="id" title="编号" fixed="left" width="auto"></vxe-column>
+      <vxe-column field="host" title="服务名"></vxe-column>
+      <vxe-column field="timestamp" title="时间"></vxe-column>
+      <vxe-column field="file" title="文件" show-overflow></vxe-column>
+      <vxe-column field="func" title="方法名" show-overflow></vxe-column>
+      <vxe-column field="level" title="等级"></vxe-column>
+      <vxe-column
+        v-auth="['logger.SysLoggerDev', 'logger.SysLoggerDevDelete']"
+        field="operation"
+        fixed="right"
+        title="操作"
+        width="auto"
+      >
+        <template #default="{ row }">
+          <el-button v-auth="'logger.SysLoggerDev'" type="primary" link :icon="View" @click="handleItem(row)">
+            查看
+          </el-button>
+          <el-button v-auth="'logger.SysLoggerDevDelete'" type="primary" link :icon="Delete" @click="handleDelete(row)">
+            删除
+          </el-button>
+        </template>
+      </vxe-column>
+    </ProVxeTable>
     <el-dialog
       v-model="dialogVisible"
       :title="title"
@@ -55,18 +64,21 @@
 <script setup lang="tsx">
 defineOptions({ name: 'SysLoggerDev' })
 import { ResSysLoggerDev } from '@/api/interface/sysLoggerDev'
-import { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
+import { ProVxeTableInstance, ProVxeColumnProps } from '@/components/ProVxeTable/interface'
 import { Delete, View } from '@element-plus/icons-vue'
 import { getSysLoggerDevListApi, deleteSysLoggerDevApi, getSysLoggerDevApi } from '@/api/modules/sysLoggerDev'
 import { useHandleData } from '@/hooks/useHandleData'
-import { HasAuth } from '@/utils/auth'
 import { ProTablePaginationEnum } from '@/enums'
+// import { useLoadingStore } from '@/stores/modules/loading'
+// import { storeToRefs } from 'pinia'
+// 获取loading状态
+// const { loading } = storeToRefs(useLoadingStore())
 //禁用
 const disabled = ref(true)
 //弹出层标题
 const title = ref('')
 //列表数据
-const proTable = ref<ProTableInstance>()
+const proTable = ref<ProVxeTableInstance>()
 //显示弹出层
 const dialogVisible = ref(false)
 //数据接口
@@ -143,28 +155,20 @@ const handleDelete = async (row: ResSysLoggerDev) => {
   proTable.value?.getTableList()
 }
 
-const columns: ColumnProps<ResSysLoggerDev>[] = [
-  { prop: 'id', label: '编号' },
-  { prop: 'host', label: '服务名', search: { el: 'input', span: 2 } },
+const columns: ProVxeColumnProps[] = [
+  { label: '服务名', prop: 'host', valueType: 'input' },
   {
-    prop: 'timestamp',
     label: '时间',
-    search: {
-      el: 'date-picker',
-      span: 4,
-      attrs: { type: 'datetimerange', valueFormat: 'YYYY-MM-DD HH:mm:ss' },
+    prop: 'timestamp',
+    valueType: 'date-picker',
+    fieldProps: {
+      type: 'datetimerange',
+      startPlaceholder: '请选择',
+      endPlaceholder: '请选择',
+      valueFormat: 'YYYY-MM-DD HH:mm:ss',
     },
   },
-  { prop: 'file', label: '文件' },
-  { prop: 'func', label: '方法名' },
-  { prop: 'level', label: '等级', search: { el: 'input', span: 2 } },
-  {
-    prop: 'operation',
-    label: '操作',
-    width: 150,
-    fixed: 'right',
-    isShow: HasAuth('logger.SysLoggerDevDelete', 'logger.SysLoggerDev'),
-  },
+  { label: '等级', prop: 'level', valueType: 'input' },
 ]
 </script>
 <style scoped lang="scss">

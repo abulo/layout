@@ -1,60 +1,79 @@
 <template>
   <div class="table-box">
-    <ProTable
+    <ProVxeTable
       ref="proTable"
       title="登录日志列表"
-      row-key="id"
       :columns="columns"
       :toolbar-right="['search', 'refresh']"
       :request-api="getTableList"
       :request-auto="true"
+      :show-number="4"
+      :border="true"
+      :column-config="{ resizable: true, isCurrent: true, isHover: true }"
+      :row-config="{ isCurrent: true, isHover: true }"
       :pagination="ProTablePaginationEnum.BE"
-      :search-col="12"
     >
       <template #toolbarLeft> </template>
-      <!-- 删除状态 -->
-      <template #deleted="scope">
-        <DictTag type="deleted" :value="scope.row.deleted" />
-      </template>
-      <template #status="scope">
-        <DictTag type="status" :value="scope.row.status" />
-      </template>
-      <!-- 菜单操作 -->
-      <template #operation="scope">
-        <el-button v-auth="'logger.SysLoggerLogin'" type="primary" link :icon="View" @click="handleItem(scope.row)">
-          查看
-        </el-button>
-        <el-dropdown trigger="click">
-          <el-button
-            v-auth="['logger.SysLoggerLoginDelete', 'logger.SysLoggerLoginRecover', 'logger.SysLoggerLoginDrop']"
-            type="primary"
-            link
-            :icon="DArrowRight"
-          >
-            更多
+      <vxe-column field="id" title="编号" fixed="left" width="auto"> </vxe-column>
+      <vxe-column field="name" title="姓名"> </vxe-column>
+      <vxe-column field="username" title="用户名"> </vxe-column>
+      <vxe-column field="ua" title="UA" show-overflow> </vxe-column>
+      <vxe-column field="loginTime" title="登录时间"> </vxe-column>
+      <vxe-column field="channel" title="渠道"> </vxe-column>
+      <vxe-column field="ip" title="IP"> </vxe-column>
+      <vxe-column v-auth="'logger.SysLoggerLoginDelete'" field="deleted" title="删除">
+        <template #default="{ row }">
+          <DictTag type="deleted" :value="row.deleted" />
+        </template>
+      </vxe-column>
+      <vxe-column
+        v-auth="[
+          'logger.SysLoggerLoginDelete',
+          'logger.SysLoggerLoginDrop',
+          'logger.SysLoggerLoginRecover',
+          'logger.SysLoggerLogin',
+        ]"
+        fixed="right"
+        title="操作"
+        width="auto"
+      >
+        <template #default="{ row }">
+          <!-- 菜单操作 -->
+          <el-button v-auth="'logger.SysLoggerLogin'" type="primary" link :icon="View" @click="handleItem(row)">
+            查看
           </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <div v-auth="'logger.SysLoggerLoginDelete'">
-                <el-dropdown-item v-if="scope.row.deleted === 0" :icon="Delete" @click="handleDelete(scope.row)">
-                  删除
-                </el-dropdown-item>
-              </div>
-              <div v-auth="'logger.SysLoggerLoginRecover'">
-                <el-dropdown-item v-if="scope.row.deleted === 1" :icon="Refresh" @click="handleRecover(scope.row)">
-                  恢复
-                </el-dropdown-item>
-              </div>
-              <div v-auth="'logger.SysLoggerLoginDrop'">
-                <el-dropdown-item v-if="scope.row.deleted === 1" :icon="DeleteFilled" @click="handleDrop(scope.row)">
-                  清理
-                </el-dropdown-item>
-              </div>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </template>
-    </ProTable>
+          <el-dropdown trigger="click">
+            <el-button
+              v-auth="['logger.SysLoggerLoginDelete', 'logger.SysLoggerLoginRecover', 'logger.SysLoggerLoginDrop']"
+              type="primary"
+              link
+              :icon="DArrowRight"
+            >
+              更多
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <div v-auth="'logger.SysLoggerLoginDelete'">
+                  <el-dropdown-item v-if="row.deleted === 0" :icon="Delete" @click="handleDelete(row)">
+                    删除
+                  </el-dropdown-item>
+                </div>
+                <div v-auth="'logger.SysLoggerLoginRecover'">
+                  <el-dropdown-item v-if="row.deleted === 1" :icon="Refresh" @click="handleRecover(row)">
+                    恢复
+                  </el-dropdown-item>
+                </div>
+                <div v-auth="'logger.SysLoggerLoginDrop'">
+                  <el-dropdown-item v-if="row.deleted === 1" :icon="DeleteFilled" @click="handleDrop(row)">
+                    清理
+                  </el-dropdown-item>
+                </div>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+      </vxe-column>
+    </ProVxeTable>
     <el-dialog
       v-model="dialogVisible"
       :title="title"
@@ -84,7 +103,7 @@
 <script setup lang="tsx">
 defineOptions({ name: 'SysLoggerLogin' })
 import { ResSysLoggerLogin } from '@/api/interface/sysLoggerLogin'
-import { ProTableInstance, ColumnProps, SearchProps } from '@/components/ProTable/interface'
+import { ProVxeTableInstance, ProVxeColumnProps } from '@/components/ProVxeTable/interface'
 import { Delete, Refresh, DeleteFilled, View, DArrowRight } from '@element-plus/icons-vue'
 import {
   getSysLoggerLoginListApi,
@@ -93,18 +112,21 @@ import {
   recoverSysLoggerLoginApi,
   getSysLoggerLoginApi,
 } from '@/api/modules/sysLoggerLogin'
-import { getIntDictOptions } from '@/utils/dict'
+// import { getIntDictOptions } from '@/utils/dict'
 import { DictTag } from '@/components/DictTag'
 import { useHandleData } from '@/hooks/useHandleData'
-import { HasAuth } from '@/utils/auth'
+// import { useLoadingStore } from '@/stores/modules/loading'
+// import { storeToRefs } from 'pinia'
 import { ProTablePaginationEnum } from '@/enums'
+import { HasAuth } from '@/utils/auth'
 // 获取loading状态
+// const { loading } = storeToRefs(useLoadingStore())
 //禁用
 const disabled = ref(true)
 //弹出层标题
 const title = ref('')
 //列表数据
-const proTable = ref<ProTableInstance>()
+const proTable = ref<ProVxeTableInstance>()
 //显示弹出层
 const dialogVisible = ref(false)
 //数据接口
@@ -117,13 +139,14 @@ const sysLoggerLoginForm = ref<ResSysLoggerLogin>({
   loginTime: '', // 登录时间
   channel: undefined, // 渠道
   ip: undefined, // IP
-  deleted: 0, // 删除:0否/1是
+  deleted: 0, // 删除
   tenantId: 0, // 租户
   creator: undefined, // 创建人
   createTime: undefined, // 创建时间
   updater: undefined, // 更新人
   updateTime: undefined, // 更新时间
 })
+
 /**
  * 获取表格数据列表
  * @param params 查询参数对象
@@ -154,7 +177,7 @@ const resetSysLoggerLogin = () => {
     loginTime: '', // 登录时间
     channel: undefined, // 渠道
     ip: undefined, // IP
-    deleted: 0, // 删除:0否/1是
+    deleted: 0, // 删除
     tenantId: 0, // 租户
     creator: undefined, // 创建人
     createTime: undefined, // 创建时间
@@ -208,51 +231,29 @@ const handleRecover = async (row: ResSysLoggerLogin) => {
   await useHandleData(recoverSysLoggerLoginApi, Number(row.id), '恢复登录日志')
   proTable.value?.getTableList()
 }
-
-//删除状态
-const deletedEnum = getIntDictOptions('deleted')
-// 表格配置项
-const deleteSearch = reactive<SearchProps>(
-  HasAuth('logger.SysLoggerLoginDelete')
-    ? {
-        el: 'switch',
-        span: 2,
-        attrs: {
-          activeValue: 1,
-          inactiveValue: 0,
-        },
-      }
-    : {}
-)
-
-const columns: ColumnProps<ResSysLoggerLogin>[] = [
-  { prop: 'id', label: '编号' },
-  { prop: 'name', label: '姓名' },
-  { prop: 'username', label: '用户名', search: { el: 'input', span: 2 } },
-  { prop: 'ua', label: 'UA' },
+const columns: ProVxeColumnProps[] = [
+  { prop: 'username', label: '用户名', valueType: 'input' },
   {
     prop: 'loginTime',
     label: '登录时间',
-    search: {
-      el: 'date-picker',
-      span: 4,
-      attrs: { type: 'datetimerange', valueFormat: 'YYYY-MM-DD HH:mm:ss' },
+    valueType: 'date-picker',
+    fieldProps: {
+      type: 'datetimerange',
+      startPlaceholder: '请选择',
+      endPlaceholder: '请选择',
+      valueFormat: 'YYYY-MM-DD HH:mm:ss',
     },
   },
-  { prop: 'channel', label: '渠道', search: { el: 'input', span: 2 } },
-  { prop: 'ip', label: 'IP' },
-  { prop: 'deleted', label: '删除', tag: true, enum: deletedEnum, search: deleteSearch },
+  { prop: 'channel', label: '渠道', valueType: 'input' },
   {
-    prop: 'operation',
-    label: '操作',
-    width: 150,
-    fixed: 'right',
-    isShow: HasAuth(
-      'logger.SysLoggerLoginDelete',
-      'logger.SysLoggerLoginDrop',
-      'logger.SysLoggerLoginRecover',
-      'logger.SysLoggerLogin'
-    ),
+    prop: 'deleted',
+    label: '删除',
+    valueType: 'switch',
+    fieldProps: {
+      activeValue: 1,
+      inactiveValue: 0,
+    },
+    hideInSearch: !HasAuth('logger.SysLoggerLoginDelete'),
   },
 ]
 </script>

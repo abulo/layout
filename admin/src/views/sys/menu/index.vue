@@ -1,72 +1,89 @@
 <template>
   <div class="table-box">
-    <ProTable
-      v-if="refreshTable"
+    <ProVxeTable
       ref="proTable"
       title="菜单列表"
-      row-key="id"
       :columns="columns"
       :toolbar-right="['search', 'refresh']"
       :request-api="getTableList"
       :data-callback="menuHandleTree"
-      :default-expand-all="isExpandAll"
       :request-auto="true"
+      :show-number="3"
+      :border="true"
+      :column-config="{ resizable: true, isCurrent: true, isHover: true }"
+      :row-config="{ isCurrent: true, isHover: true }"
+      :virtual-y-config="{ enabled: true, gt: 0 }"
+      :tree-config="{}"
       :pagination="ProTablePaginationEnum.NONE"
-      :search-col="12"
-      :indent="20"
     >
       <template #toolbarLeft>
-        <el-button v-auth="'menu.SysMenuCreate'" type="primary" :icon="CirclePlus" @click="handleAdd()">新增</el-button>
-        <el-button type="primary" :icon="Sort" @click="handleExpandAll">展开/折叠</el-button>
-      </template>
-      <template #type="scope">
-        <DictTag type="menu.type" :value="scope.row.type" />
-      </template>
-      <template #hide="scope">
-        <DictTag type="menu.hide" :value="scope.row.hide" />
-      </template>
-      <template #cache="scope">
-        <DictTag type="menu.cache" :value="scope.row.cache" />
-      </template>
-      <template #full="scope">
-        <DictTag type="menu.full" :value="scope.row.full" />
-      </template>
-      <template #status="scope">
-        <DictTag type="status" :value="scope.row.status" />
-      </template>
-      <template #icon="scope">
-        <Icon :icon="scope.row.icon" :custom-key="scope.row.id" :size="18" />
-      </template>
-      <!-- 菜单操作 -->
-      <template #operation="scope">
-        <el-button v-auth="'menu.SysMenu'" type="primary" link :icon="View" @click="handleItem(scope.row)">
-          查看
+        <el-button v-auth="'menu.SysMenuCreate'" type="primary" :icon="CirclePlus" @click="handleAdd()">
+          新增
         </el-button>
-        <el-dropdown trigger="click">
-          <el-button
-            v-auth="['menu.SysMenuUpdate', 'menu.SysMenuDelete', 'menu.SysMenuCreate']"
-            type="primary"
-            link
-            :icon="DArrowRight"
-          >
-            更多
-          </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <div v-auth="'menu.SysMenuCreate'">
-                <el-dropdown-item :icon="CirclePlus" @click="handleAdd(scope.row)"> 新增 </el-dropdown-item>
-              </div>
-              <div v-auth="'menu.SysMenuUpdate'">
-                <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>
-              </div>
-              <div v-auth="'menu.SysMenuDelete'">
-                <el-dropdown-item :icon="Delete" @click="handleDelete(scope.row)"> 删除 </el-dropdown-item>
-              </div>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
+        <el-button type="primary" :icon="Sort" :loading="loadingStore.loading" @click="handleExpandAll">
+          展开/折叠
+        </el-button>
       </template>
-    </ProTable>
+      <vxe-column field="id" title="编号" fixed="left" width="auto"></vxe-column>
+      <vxe-column field="name" title="名称" tree-node width="auto"></vxe-column>
+      <vxe-column field="code" title="编码" width="auto"></vxe-column>
+      <vxe-column field="type" title="类型" align="center">
+        <template #default="{ row }">
+          <DictTag type="menu.type" :value="row.type" />
+        </template>
+      </vxe-column>
+      <vxe-column field="sort" title="排序" align="center"></vxe-column>
+      <vxe-column field="path" title="地址" width="auto"></vxe-column>
+      <vxe-column field="icon" title="图标" align="center">
+        <template #default="{ row }">
+          <Icon :icon="row.icon" :custom-key="row.id" :size="18" class="el-icon" />
+        </template>
+      </vxe-column>
+      <vxe-column field="component" title="组件路径" width="auto"></vxe-column>
+      <vxe-column field="componentName" title="组件名称"></vxe-column>
+      <vxe-column field="status" title="状态" align="center">
+        <template #default="{ row }">
+          <DictTag type="status" :value="row.status" />
+        </template>
+      </vxe-column>
+      <vxe-column
+        v-auth="['menu.SysMenuUpdate', 'menu.SysMenuDelete', 'menu.SysMenuCreate', 'menu.SysMenu']"
+        field="operation"
+        fixed="right"
+        title="操作"
+        align="center"
+        width="auto"
+      >
+        <template #default="{ row }">
+          <el-button v-auth="'menu.SysMenu'" type="primary" link :icon="View" @click="handleItem(row)">
+            查看
+          </el-button>
+          <el-dropdown trigger="click">
+            <el-button
+              v-auth="['menu.SysMenuUpdate', 'menu.SysMenuDelete', 'menu.SysMenuCreate']"
+              type="primary"
+              link
+              :icon="DArrowRight"
+            >
+              更多
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <div v-auth="'menu.SysMenuCreate'">
+                  <el-dropdown-item :icon="CirclePlus" @click="handleAdd(row)"> 新增 </el-dropdown-item>
+                </div>
+                <div v-auth="'menu.SysMenuUpdate'">
+                  <el-dropdown-item :icon="EditPen" @click="handleUpdate(row)"> 编辑 </el-dropdown-item>
+                </div>
+                <div v-auth="'menu.SysMenuDelete'">
+                  <el-dropdown-item :icon="Delete" @click="handleDelete(row)"> 删除 </el-dropdown-item>
+                </div>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+      </vxe-column>
+    </ProVxeTable>
     <el-dialog
       v-model="dialogVisible"
       :title="title"
@@ -240,7 +257,7 @@
 <script setup lang="tsx">
 defineOptions({ name: 'SysMenu' })
 import { ResSysMenu } from '@/api/interface/sysMenu'
-import { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
+import { ProVxeTableInstance, ProVxeColumnProps } from '@/components/ProVxeTable/interface'
 import { EditPen, CirclePlus, Delete, View, DArrowRight, Sort } from '@element-plus/icons-vue'
 import {
   getSysMenuListApi,
@@ -252,26 +269,25 @@ import {
 } from '@/api/modules/sysMenu'
 import { FormInstance, FormRules } from 'element-plus'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
-import { HasAuth } from '@/utils/auth'
 import { handleTree } from '@pureadmin/utils'
 import { getIntDictOptions } from '@/utils/dict'
 import { useLoadingStore } from '@/stores/modules/loading'
 import { storeToRefs } from 'pinia'
 import { ProTablePaginationEnum } from '@/enums'
+import { useTimeoutFn } from '@vueuse/core'
+
+const proTable = ref<ProVxeTableInstance>()
 // 获取loading状态
-const { loading } = storeToRefs(useLoadingStore())
+const loadingStore = useLoadingStore()
+const { loading } = storeToRefs(loadingStore)
 //禁用
 const disabled = ref(true)
 //弹出层标题
 const title = ref('')
 //列表数据
-const proTable = ref<ProTableInstance>()
-//显示弹出层
 const dialogVisible = ref(false)
 //是否展开，默认全部折叠
 const isExpandAll = ref(false)
-//重新渲染表格状态
-const refreshTable = ref(true)
 //菜单类别
 const menuTypeEnum = getIntDictOptions('menu.type')
 //菜单隐藏
@@ -449,17 +465,18 @@ const submitForm = (formEl: FormInstance | undefined) => {
 
 // 设置展开合并
 const handleExpandAll = () => {
-  refreshTable.value = false
+  loadingStore.setLoading(true)
   isExpandAll.value = !isExpandAll.value
-  nextTick(() => {
-    refreshTable.value = true
-    menuOptions.value = []
-  })
+  if (isExpandAll.value) {
+    proTable.value?.setAllTreeExpand(true)
+  } else {
+    proTable.value?.clearTreeExpand()
+  }
+  useTimeoutFn(() => {
+    loadingStore.setLoading(false)
+  }, 500)
 }
 
-const menuHandleTree = (data: ResSysMenu[]) => {
-  return handleTree(data)
-}
 // 获取菜单选项
 const getMenuOptions = async () => {
   const { data } = await getSysMenuListSimpleApi()
@@ -492,25 +509,12 @@ const getMenuOptions = async () => {
   ] as unknown as ResSysMenu[]
 }
 
+const menuHandleTree = (data: ResSysMenu[]) => {
+  return handleTree(data)
+}
+
 // 定义列配置项
-const columns: ColumnProps<ResSysMenu>[] = [
-  { prop: 'name', label: '名称', fixed: 'left', align: 'left' },
-  { prop: 'code', label: '编码' },
-  { prop: 'type', label: '类型' },
-  { prop: 'sort', label: '排序' },
-  { prop: 'path', label: '地址' },
-  { prop: 'icon', label: '图标' },
-  { prop: 'component', label: '组件路径' },
-  { prop: 'componentName', label: '组件名称' },
-  { prop: 'status', label: '状态' },
-  {
-    prop: 'operation',
-    label: '操作',
-    width: 150,
-    fixed: 'right',
-    isShow: HasAuth('menu.SysMenuUpdate', 'menu.SysMenuDelete', 'menu.SysMenu', 'menu.SysMenuCreate'),
-  },
-]
+const columns: ProVxeColumnProps[] = []
 </script>
 <style scoped lang="scss">
 @use '@/styles/custom';

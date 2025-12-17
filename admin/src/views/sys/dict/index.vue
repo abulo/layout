@@ -1,54 +1,73 @@
 <template>
   <div class="table-box">
-    <ProTable
+    <ProVxeTable
       ref="proTable"
       title="字典类型列表"
-      row-key="id"
       :columns="columns"
       :toolbar-right="['search', 'refresh']"
       :request-api="getTableList"
       :request-auto="true"
+      :show-number="3"
+      :border="true"
+      :column-config="{ resizable: true, isCurrent: true, isHover: true }"
+      :row-config="{ isCurrent: true, isHover: true }"
       :pagination="ProTablePaginationEnum.BE"
-      :search-col="12"
     >
       <template #toolbarLeft>
         <el-button v-auth="'dict.SysDictTypeCreate'" type="primary" :icon="CirclePlus" @click="handleAdd">
           新增
         </el-button>
       </template>
-      <template #status="scope">
-        <DictTag type="status" :value="scope.row.status" />
-      </template>
-      <!-- 菜单操作 -->
-      <template #operation="scope">
-        <el-button v-auth="'dict.SysDictType'" type="primary" link :icon="View" @click="handleItem(scope.row)">
-          查看
-        </el-button>
-        <el-dropdown trigger="click">
-          <el-button
-            v-auth="['dict.SysDictTypeUpdate', 'dict.SysDictTypeDelete', 'dict.SysDictList']"
-            type="primary"
-            link
-            :icon="DArrowRight"
-          >
-            更多
+      <vxe-column field="id" title="编号" fixed="left" width="auto"> </vxe-column>
+      <vxe-column field="name" title="字典名称"> </vxe-column>
+      <vxe-column field="type" title="字典类型"> </vxe-column>
+      <vxe-column field="status" title="状态">
+        <template #default="{ row }">
+          <DictTag type="status" :value="row.status" />
+        </template>
+      </vxe-column>
+      <vxe-column field="remark" title="备注"> </vxe-column>
+      <vxe-column field="creator" title="创建人"> </vxe-column>
+      <vxe-column field="createTime" title="创建时间"> </vxe-column>
+      <vxe-column field="updater" title="更新人"> </vxe-column>
+      <vxe-column field="updateTime" title="更新时间"> </vxe-column>
+      <vxe-column
+        v-auth="['dict.SysDictTypeUpdate', 'dict.SysDictTypeDelete', 'dict.SysDictType', 'dict.SysDictList']"
+        field="operation"
+        fixed="right"
+        title="操作"
+        width="auto"
+      >
+        <template #default="{ row }">
+          <el-button v-auth="'dict.SysDictType'" type="primary" link :icon="View" @click="handleItem(row)">
+            查看
           </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <div v-auth="'dict.SysDictList'">
-                <el-dropdown-item :icon="DataBoard" @click="toLinkDict(scope.row)"> 字典列表 </el-dropdown-item>
-              </div>
-              <div v-auth="'dict.SysDictTypeUpdate'">
-                <el-dropdown-item :icon="EditPen" @click="handleUpdate(scope.row)"> 编辑 </el-dropdown-item>
-              </div>
-              <div v-auth="'dict.SysDictTypeDelete'">
-                <el-dropdown-item :icon="Delete" @click="handleDelete(scope.row)"> 删除 </el-dropdown-item>
-              </div>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </template>
-    </ProTable>
+          <el-dropdown trigger="click">
+            <el-button
+              v-auth="['dict.SysDictTypeUpdate', 'dict.SysDictTypeDelete', 'dict.SysDictList']"
+              type="primary"
+              link
+              :icon="DArrowRight"
+            >
+              更多
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <div v-auth="'dict.SysDictList'">
+                  <el-dropdown-item :icon="DataBoard" @click="toLinkDict(row)"> 字典列表 </el-dropdown-item>
+                </div>
+                <div v-auth="'dict.SysDictTypeUpdate'">
+                  <el-dropdown-item :icon="EditPen" @click="handleUpdate(row)"> 编辑 </el-dropdown-item>
+                </div>
+                <div v-auth="'dict.SysDictTypeDelete'">
+                  <el-dropdown-item :icon="Delete" @click="handleDelete(row)"> 删除 </el-dropdown-item>
+                </div>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+      </vxe-column>
+    </ProVxeTable>
     <el-dialog
       v-model="dialogVisible"
       :title="title"
@@ -96,7 +115,7 @@
 <script setup lang="tsx">
 defineOptions({ name: 'SysDictType' })
 import { ResSysDictType } from '@/api/interface/sysDictType'
-import { ProTableInstance, ColumnProps } from '@/components/ProTable/interface'
+import { ProVxeTableInstance, ProVxeColumnProps } from '@/components/ProVxeTable/interface'
 import { EditPen, CirclePlus, Delete, View, DArrowRight, DataBoard } from '@element-plus/icons-vue'
 import {
   getSysDictTypeListApi,
@@ -107,7 +126,6 @@ import {
 } from '@/api/modules/sysDictType'
 import { FormInstance, FormRules } from 'element-plus'
 import { useHandleData, useHandleSet } from '@/hooks/useHandleData'
-import { HasAuth } from '@/utils/auth'
 import { useRouter } from 'vue-router'
 import { getIntDictOptions } from '@/utils/dict'
 import { useLoadingStore } from '@/stores/modules/loading'
@@ -122,7 +140,7 @@ const disabled = ref(true)
 //弹出层标题
 const title = ref('')
 //列表数据
-const proTable = ref<ProTableInstance>()
+const proTable = ref<ProVxeTableInstance>()
 //显示弹出层
 const dialogVisible = ref(false)
 // 状态枚举
@@ -266,23 +284,10 @@ const toLinkDict = (row: ResSysDictType) => {
   })
 }
 
-const columns: ColumnProps<ResSysDictType>[] = [
-  { prop: 'id', label: '编号', fixed: 'left' },
-  { prop: 'name', label: '字典名称', search: { el: 'input', span: 2 } },
-  { prop: 'type', label: '字典类型', search: { el: 'input', span: 2 } },
-  { prop: 'status', label: '状态', tag: true, enum: statusEnum, search: { el: 'select', span: 2 } },
-  { prop: 'remark', label: '备注' },
-  { prop: 'creator', label: '创建人' },
-  { prop: 'createTime', label: '创建时间' },
-  { prop: 'updater', label: '更新人' },
-  { prop: 'updateTime', label: '更新时间' },
-  {
-    prop: 'operation',
-    label: '操作',
-    width: 150,
-    fixed: 'right',
-    isShow: HasAuth('dict.SysDictTypeUpdate', 'dict.SysDictTypeDelete', 'dict.SysDictType', 'dict.SysDictList'),
-  },
+const columns: ProVxeColumnProps[] = [
+  { prop: 'name', label: '字典名称', valueType: 'input' },
+  { prop: 'type', label: '字典类型', valueType: 'input' },
+  { prop: 'status', label: '状态', valueType: 'select', options: statusEnum },
 ]
 </script>
 <style scoped lang="scss">
