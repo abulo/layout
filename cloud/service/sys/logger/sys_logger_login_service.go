@@ -9,6 +9,7 @@ import (
 	globalLogger "github.com/abulo/ratel/v3/core/logger"
 	"github.com/abulo/ratel/v3/server/xgrpc"
 	"github.com/abulo/ratel/v3/stores/sql"
+	"github.com/abulo/ratel/v3/util"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc/status"
 )
@@ -156,10 +157,10 @@ func (srv SrvSysLoggerLoginServiceServer) SysLoggerLoginList(ctx context.Context
 		condition["channel"] = request.GetChannel()
 	}
 	if request.BeginLoginTime != nil {
-		condition["beginLoginTime"] = request.GetBeginLoginTime()
+		condition["beginLoginTime"] = util.Date("Y-m-d H:i:s", util.GrpcTime(request.GetBeginLoginTime()))
 	}
 	if request.FinishLoginTime != nil {
-		condition["finishLoginTime"] = request.GetFinishLoginTime()
+		condition["finishLoginTime"] = util.Date("Y-m-d H:i:s", util.GrpcTime(request.GetFinishLoginTime()))
 	}
 	if request.UserId != nil {
 		condition["userId"] = request.GetUserId()
@@ -233,10 +234,10 @@ func (srv SrvSysLoggerLoginServiceServer) SysLoggerLoginListTotal(ctx context.Co
 		condition["channel"] = request.GetChannel()
 	}
 	if request.BeginLoginTime != nil {
-		condition["beginLoginTime"] = request.GetBeginLoginTime()
+		condition["beginLoginTime"] = util.Date("Y-m-d H:i:s", util.GrpcTime(request.GetBeginLoginTime()))
 	}
 	if request.FinishLoginTime != nil {
-		condition["finishLoginTime"] = request.GetFinishLoginTime()
+		condition["finishLoginTime"] = util.Date("Y-m-d H:i:s", util.GrpcTime(request.GetFinishLoginTime()))
 	}
 	if request.UserId != nil {
 		condition["userId"] = request.GetUserId()

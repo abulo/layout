@@ -9,6 +9,7 @@ import (
 	globalLogger "github.com/abulo/ratel/v3/core/logger"
 	"github.com/abulo/ratel/v3/server/xgrpc"
 	"github.com/abulo/ratel/v3/stores/sql"
+	"github.com/abulo/ratel/v3/util"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc/status"
 )
@@ -162,10 +163,10 @@ func (srv SrvSysLoggerOperateServiceServer) SysLoggerOperateList(ctx context.Con
 		condition["method"] = request.GetMethod()
 	}
 	if request.BeginStartTime != nil {
-		condition["beginStartTime"] = request.GetBeginStartTime()
+		condition["beginStartTime"] = util.Date("Y-m-d H:i:s", util.GrpcTime(request.GetBeginStartTime()))
 	}
 	if request.FinishStartTime != nil {
-		condition["finishStartTime"] = request.GetFinishStartTime()
+		condition["finishStartTime"] = util.Date("Y-m-d H:i:s", util.GrpcTime(request.GetFinishStartTime()))
 	}
 	if request.UserId != nil {
 		condition["userId"] = request.GetUserId()
@@ -246,10 +247,10 @@ func (srv SrvSysLoggerOperateServiceServer) SysLoggerOperateListTotal(ctx contex
 		condition["method"] = request.GetMethod()
 	}
 	if request.BeginStartTime != nil {
-		condition["beginStartTime"] = request.GetBeginStartTime()
+		condition["beginStartTime"] = util.Date("Y-m-d H:i:s", util.GrpcTime(request.GetBeginStartTime()))
 	}
 	if request.FinishStartTime != nil {
-		condition["finishStartTime"] = request.GetFinishStartTime()
+		condition["finishStartTime"] = util.Date("Y-m-d H:i:s", util.GrpcTime(request.GetFinishStartTime()))
 	}
 	if request.UserId != nil {
 		condition["userId"] = request.GetUserId()

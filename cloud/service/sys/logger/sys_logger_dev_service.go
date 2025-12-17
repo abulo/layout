@@ -8,6 +8,7 @@ import (
 	globalLogger "github.com/abulo/ratel/v3/core/logger"
 	"github.com/abulo/ratel/v3/server/xgrpc"
 	"github.com/abulo/ratel/v3/stores/sql"
+	"github.com/abulo/ratel/v3/util"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc/status"
 )
@@ -106,10 +107,10 @@ func (srv SrvSysLoggerDevServiceServer) SysLoggerDevList(ctx context.Context, re
 	condition := make(map[string]any)
 	// 构造查询条件
 	if request.BeginTimestamp != nil {
-		condition["beginTimestamp"] = request.GetBeginTimestamp()
+		condition["beginTimestamp"] = util.Date("Y-m-d H:i:s", util.GrpcTime(request.GetBeginTimestamp()))
 	}
 	if request.FinishTimestamp != nil {
-		condition["finishTimestamp"] = request.GetFinishTimestamp()
+		condition["finishTimestamp"] = util.Date("Y-m-d H:i:s", util.GrpcTime(request.GetFinishTimestamp()))
 	}
 	if request.Host != nil {
 		condition["host"] = request.GetHost()
@@ -165,10 +166,10 @@ func (srv SrvSysLoggerDevServiceServer) SysLoggerDevListTotal(ctx context.Contex
 	// 构造查询条件
 	// 构造查询条件
 	if request.BeginTimestamp != nil {
-		condition["beginTimestamp"] = request.GetBeginTimestamp()
+		condition["beginTimestamp"] = util.Date("Y-m-d H:i:s", util.GrpcTime(request.GetBeginTimestamp()))
 	}
 	if request.FinishTimestamp != nil {
-		condition["finishTimestamp"] = request.GetFinishTimestamp()
+		condition["finishTimestamp"] = util.Date("Y-m-d H:i:s", util.GrpcTime(request.GetFinishTimestamp()))
 	}
 	if request.Host != nil {
 		condition["host"] = request.GetHost()
