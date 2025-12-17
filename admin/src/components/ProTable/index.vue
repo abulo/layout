@@ -15,7 +15,10 @@
   <!-- 表格主体 -->
   <div class="card table-main">
     <!-- 表格头部 操作按钮 -->
-    <div class="table-header mb-2 flex justify-between">
+    <div
+      v-if="toolbarLeftArr.length > 0 || toolbarMiddle || toolbarRightArr.length > 0"
+      class="table-header mb-2 flex justify-between"
+    >
       <div class="header-button-left">
         <template v-for="item in toolbarLeftArr" :key="item.auth">
           <el-button
@@ -52,11 +55,6 @@
             @click="handleToolbarClick(item.name)"
           />
         </template>
-        <!-- <template v-if="toolbarRightArr.length === 0">
-          <slot name="toolbarRight">
-            <el-button v-if="columns.length" :icon="Operation" circle @click="openColSetting" />
-          </slot>
-        </template> -->
       </div>
     </div>
     <!-- 表格主体 -->

@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-defineOptions({ name: 'Pagination' })
+defineOptions({ name: 'ProVxePagination' })
 import { useGlobalStore } from '@/stores/modules/global'
 const globalStore = useGlobalStore()
 
