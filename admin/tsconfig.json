@@ -4,7 +4,7 @@
     "useDefineForClassFields": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "types": ["vite/client", "element-plus/global", "unplugin-icons/types/vue"],
+    "types": ["vite/client", "element-plus/global", "unplugin-icons/types/vue","plus-pro-components/global"],
     "jsxImportSource": "vue",
     "allowJs": true,
     "jsxFactory": "h",

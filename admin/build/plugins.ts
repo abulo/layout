@@ -12,6 +12,7 @@ import devtoolsJson from 'vite-plugin-devtools-json'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { PlusProComponentsResolver } from '@plus-pro-components/resolver'
 import { FileSystemIconLoader } from 'unplugin-icons/loaders'
 import Icons from 'unplugin-icons/vite'
 import { cdn } from './cdn'
@@ -72,6 +73,7 @@ export const createVitePlugins = (viteEnv: ViteEnv): (PluginOption | PluginOptio
         // IconsResolver({
         //   enabledCollections: ['localSvgIcon'],
         // }),
+        PlusProComponentsResolver(),
       ],
       dts: 'src/types/components.d.ts',
       dtsTsx: false,
