@@ -206,13 +206,13 @@ const rulesSysDictForm = reactive<FormRules>({
 const getTableList = (params: any) => {
   // 深拷贝参数对象，避免修改原始参数
   let newParams = JSON.parse(JSON.stringify(params))
-  // if (newParams.dictTypeId) {
-  //   dictTypeId.value = Number(newParams.dictTypeId)
-  //   sysDictForm.value.dictTypeId = dictTypeId.value
-  // } else {
-  newParams.dictTypeId = dictTypeId.value
-  sysDictForm.value.dictTypeId = dictTypeId.value
-  // }
+  if (newParams.dictTypeId) {
+    dictTypeId.value = Number(newParams.dictTypeId)
+    sysDictForm.value.dictTypeId = dictTypeId.value
+  } else {
+    newParams.dictTypeId = dictTypeId.value
+    sysDictForm.value.dictTypeId = dictTypeId.value
+  }
   return getSysDictListApi(newParams)
 }
 
@@ -361,6 +361,17 @@ onMounted(async () => {
   tabStore.setTabsTitle(dict.name)
 })
 
+const setTableTitle = async () => {
+  const { data: dict } = await getSysDictTypeApi(sysDictForm.value.dictTypeId)
+  tabStore.setTabsTitle(dict.name)
+}
+
+watch(
+  () => sysDictForm.value.dictTypeId,
+  () => setTableTitle(),
+  { deep: true }
+)
+
 // 套餐列表
 const sysDictTypeListEnum = computed(() => {
   if (Array.isArray(sysDictTypeList.value)) {
@@ -373,12 +384,13 @@ const sysDictTypeListEnum = computed(() => {
 })
 
 const columns: ProVxeColumnProps[] = [
-  // {
-  //   prop: 'dictTypeId',
-  //   label: '字典类型',
-  //   valueType: 'select',
-  //   options: sysDictTypeListEnum,
-  // },
+  {
+    prop: 'dictTypeId',
+    label: '字典类型',
+    valueType: 'select',
+    options: sysDictTypeListEnum,
+    defaultValue: Number(route.params.dictTypeId),
+  },
   { prop: 'status', label: '状态', valueType: 'select', options: statusEnum },
 ]
 </script>

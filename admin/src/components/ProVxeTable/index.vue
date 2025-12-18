@@ -6,8 +6,8 @@
     :reset="_reset"
     :columns="searchColumns"
     :show-number="showNumber"
-    :search-param="searchParam"
     :default-values="defaultValues"
+    :search-param="searchParam"
   />
   <!-- 表格主体 -->
   <div class="card table-main">
@@ -82,14 +82,17 @@ import { VxeTableInstance } from 'vxe-table'
 import { toolbarButtonsConfig } from '@/utils/proTable'
 import { ProTablePaginationEnum } from '@/enums'
 import { useLoadingStore } from '@/stores/modules/loading'
-import { ProVxeTableProps } from './interface'
-import { PlusColumn } from 'plus-pro-components'
+import { ProVxeTableProps, ProVxeColumnProps } from './interface'
+// import { ProVxeTableProps, FieldValues, ProVxeColumnProps } from './interface'
+// import { PlusColumn } from 'plus-pro-components'
 import { useGlobalStore } from '@/stores/modules/global'
 import ProVxeSearchForm from './components/ProVxeSearchForm.vue'
 import ProVxePagination from './components/ProVxePagination.vue'
 import { ElMessage } from 'element-plus'
 import { useTable } from '@/hooks/useTable'
 import { useI18n } from 'vue-i18n'
+// import { cloneDeep } from 'lodash-es'
+
 // 接受父组件参数，配置默认值
 const props = withDefaults(defineProps<ProVxeTableProps>(), {
   columns: () => [],
@@ -114,7 +117,29 @@ const _search = () => {
   emit('search')
 }
 
+const defaultValues = computed(() => {
+  const res = {}
+  searchColumns.value.map(column => {
+    if (column?.defaultValue !== undefined && column?.defaultValue !== null) {
+      // 添加到对象中
+      res[column.prop] = column.defaultValue
+    }
+  })
+  return res
+})
+
 const _reset = () => {
+  for (const key in defaultValues.value) {
+    if (Object.prototype.hasOwnProperty.call(defaultValues.value, key)) {
+      const defaultValue = defaultValues.value[key]
+      // 判断是否为 Promise 或返回 Promise 的函数
+      if (defaultValue !== undefined && defaultValue !== null) {
+        // 直接赋值非空的普通值
+        searchParam.value[key] = defaultValue
+        searchInitParam.value[key] = defaultValue
+      }
+    }
+  }
   reset()
   emit('reset')
 }
@@ -137,7 +162,7 @@ const searchParamDefaultValuePromises: { key: string; promise: Promise<any> }[] 
 
 // 过滤需要搜索的配置项 && 排序
 const searchColumns = computed(() => {
-  return props.columns as PlusColumn[]
+  return props.columns as ProVxeColumnProps[]
 })
 
 // 如果是前端分页，且有筛选参数，但是没有 fePaginationFilterMethod，则抛出错误
@@ -194,7 +219,6 @@ const {
   handleSizeChange,
   handleCurrentChange,
 } = useTable(props.requestApi, props.initParam, props.pagination, props.fePaginationFilterMethod, props.dataCallback)
-const defaultValues = props.defaultValues
 
 // 处理 toolbar 点击事件
 const handleToolbarClick = (name: string) => {
@@ -231,6 +255,19 @@ for (const key in props.initParam) {
   }
 }
 
+// 遍历一下 initParam 的值 并且设置到 searchParam 中
+for (const key in defaultValues.value) {
+  if (Object.prototype.hasOwnProperty.call(defaultValues.value, key)) {
+    const defaultValue = defaultValues.value[key]
+    // 判断是否为 Promise 或返回 Promise 的函数
+    if (defaultValue !== undefined && defaultValue !== null) {
+      // 直接赋值非空的普通值
+      searchParam.value[key] = defaultValue
+      // searchDefaultParamDefaultValuePromises.push({ key, promise: defaultValue })
+    }
+  }
+}
+
 const setSearchParamForm = (key: string, value: any) => {
   searchParam.value[key] = value
 }
@@ -263,6 +300,7 @@ const clearSelection = () => tableRef.value!.clearCheckboxRow()
 const clearTreeExpand = () => tableRef.value!.clearTreeExpand()
 // 清空树形结构选中
 const setAllTreeExpand = (bool: boolean) => tableRef.value!.setAllTreeExpand(bool)
+const getFullColumns = () => tableRef.value!.getFullColumns()
 // 暴露给父组件的参数和方法
 defineExpose({
   element: tableRef,
@@ -279,5 +317,6 @@ defineExpose({
   clearSelection,
   clearTreeExpand,
   setAllTreeExpand,
+  getFullColumns,
 })
 </script>

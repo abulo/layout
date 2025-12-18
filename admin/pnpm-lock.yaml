@@ -87,8 +87,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0(vue@3.5.25(typescript@5.9.3))
       vxe-pc-ui:
-        specifier: 4.11.8
-        version: 4.11.8(vue@3.5.25(typescript@5.9.3))
+        specifier: 4.11.10
+        version: 4.11.10(vue@3.5.25(typescript@5.9.3))
       vxe-table:
         specifier: 4.17.31
         version: 4.17.31(vue@3.5.25(typescript@5.9.3))
@@ -5474,8 +5474,8 @@ packages:
     peerDependencies:
       vue: ^3.0.1
 
-  vxe-pc-ui@4.11.8:
-    resolution: {integrity: sha512-zHgjpQNLCb4SYZPKIAXr/EjROr/D5Hvdz7jF+Eu3+0ZvNrMral0K90ZnsiMNRNY3LnBv0Vrv61gyhODm1jOicw==}
+  vxe-pc-ui@4.11.10:
+    resolution: {integrity: sha512-RE+O0hZTrQlBcFPCAZuY1qXTP5bO0R/vWAzPiCkwkRuNj+ybpxMHUax99SquOs2Z0PchcLSuXSS0ivlP46CVoQ==}
 
   vxe-table@4.17.31:
     resolution: {integrity: sha512-wypRp0RvfuNXaJvMESbEbiRNrTYUc05XWzv7OpspvOP+F41kPs6LLGhC4fS8kCOQRlX2lFGyPigIwTzluhwhMw==}
@@ -8188,7 +8188,7 @@ snapshots:
 
   core-js-compat@3.44.0:
     dependencies:
-      browserslist: 4.27.0
+      browserslist: 4.28.1
 
   core-util-is@1.0.3: {}
 
@@ -11272,7 +11272,7 @@ snapshots:
       sortablejs: 1.14.0
       vue: 3.5.25(typescript@5.9.3)
 
-  vxe-pc-ui@4.11.8(vue@3.5.25(typescript@5.9.3)):
+  vxe-pc-ui@4.11.10(vue@3.5.25(typescript@5.9.3)):
     dependencies:
       '@vxe-ui/core': 4.2.16(vue@3.5.25(typescript@5.9.3))
     transitivePeerDependencies:
@@ -11280,7 +11280,7 @@ snapshots:
 
   vxe-table@4.17.31(vue@3.5.25(typescript@5.9.3)):
     dependencies:
-      vxe-pc-ui: 4.11.8(vue@3.5.25(typescript@5.9.3))
+      vxe-pc-ui: 4.11.10(vue@3.5.25(typescript@5.9.3))
     transitivePeerDependencies:
       - vue
 

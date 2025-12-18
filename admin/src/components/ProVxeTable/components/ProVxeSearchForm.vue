@@ -1,10 +1,9 @@
 <template>
   <div v-if="columns.length" class="card table-search pb-4!">
     <PlusSearch
-      ref="formRef"
       :model-value="searchParam"
       :columns="columns"
-      :default-values="defaultValues"
+      :default-values="searchDefaultValues"
       :show-number="showNumber"
       @update:model-value="handleUpdateModelValue"
       @search="search"
@@ -14,7 +13,7 @@
 </template>
 <script setup lang="ts">
 defineOptions({ name: 'ProVxeSearchForm' })
-import { ProSearchProps } from '../interface'
+import { ProSearchProps, FieldValues } from '../interface'
 
 // 定义事件发射器
 const emit = defineEmits<{
@@ -22,11 +21,16 @@ const emit = defineEmits<{
 }>()
 
 // 默认值
-withDefaults(defineProps<ProSearchProps>(), {
+const props = withDefaults(defineProps<ProSearchProps>(), {
   columns: () => [],
   searchParam: () => ({}),
   showNumber: 3,
   defaultValues: () => ({}),
+})
+
+// 过滤需要搜索的配置项 && 排序
+const searchDefaultValues = computed(() => {
+  return props.defaultValues as FieldValues
 })
 
 // 处理 model 值更新

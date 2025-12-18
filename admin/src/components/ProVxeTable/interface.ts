@@ -8,18 +8,55 @@ import ProVxeTable from './index.vue'
 type PropertyKey = string | number | symbol
 type DefaultRow = Record<PropertyKey, any>
 
-export type ProVxeColumnProps = PlusColumn
+export type RecordType = {
+  [index: keyof any]: any
+}
+/**
+ * 通用的单个表单值的类型，适用于大多数通用场景
+ */
+export type FieldValueType =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | Date
+  | string[]
+  | number[]
+  | boolean[]
+  | Date[]
+  | [Date, Date]
+  | [number, number]
+  | [string, string]
+  | string[][]
+  | number[][]
+  // v0.1.7 新增
+  | RecordType
+
+/**
+ * 通用的整体表单值的类型
+ */
+export type FieldValues = Record<keyof any, FieldValueType>
+
+export interface ProVxeColumnProps extends PlusColumn {
+  /**
+   * 搜索字段的默认值
+   */
+  defaultValue?: FieldValueType
+}
 
 export interface ProSearchProps {
   columns?: PlusColumn[] // 搜索配置列
   searchParam?: IObject // 搜索参数
-  defaultValues?: IObject // 搜索项默认值
   showNumber?: number // 搜索项每列占比配置 ==> 非必传
+  defaultValues?: FieldValues
   search: (_params: IObject) => void // 搜索方法
   reset: (_params: IObject) => void // 重置方法
 }
 
-// export interface ProVxeColumnProps<T extends DefaultRow = any> extends PlusColumn {}
+// export interface ProVxeColumnProps extends PlusColumn {
+
+// }
 
 export type ProVxeTableInstance = Omit<
   InstanceType<typeof ProVxeTable>,
@@ -67,5 +104,4 @@ export interface ProVxeTableProps<Query = any, Item extends DefaultRow = any, Ex
   layout?: string
   showNumber?: number // 搜索项每列占比配置 ==> 非必传
   border?: boolean
-  defaultValues?: IObject // 搜索项初始化参数 ==> 非必传（默认为{}）
 }
