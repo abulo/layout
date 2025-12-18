@@ -263,7 +263,6 @@ for (const key in defaultValues.value) {
     if (defaultValue !== undefined && defaultValue !== null) {
       // 直接赋值非空的普通值
       searchParam.value[key] = defaultValue
-      // searchDefaultParamDefaultValuePromises.push({ key, promise: defaultValue })
     }
   }
 }
@@ -294,13 +293,6 @@ watch(
   { deep: true }
 )
 
-// 清空选中数据列表
-const clearSelection = () => tableRef.value!.clearCheckboxRow()
-// 清空树形结构展开
-const clearTreeExpand = () => tableRef.value!.clearTreeExpand()
-// 清空树形结构选中
-const setAllTreeExpand = (bool: boolean) => tableRef.value!.setAllTreeExpand(bool)
-const getFullColumns = () => tableRef.value!.getFullColumns()
 // 暴露给父组件的参数和方法
 defineExpose({
   element: tableRef,
@@ -314,9 +306,5 @@ defineExpose({
   reset,
   handleSizeChange,
   handleCurrentChange,
-  clearSelection,
-  clearTreeExpand,
-  setAllTreeExpand,
-  getFullColumns,
 })
 </script>

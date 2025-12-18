@@ -468,9 +468,9 @@ const handleExpandAll = () => {
   loadingStore.setLoading(true)
   isExpandAll.value = !isExpandAll.value
   if (isExpandAll.value) {
-    proTable.value?.setAllTreeExpand(true)
+    proTable.value?.element?.setAllTreeExpand(true)
   } else {
-    proTable.value?.clearTreeExpand()
+    proTable.value?.element?.clearTreeExpand()
   }
   useTimeoutFn(() => {
     loadingStore.setLoading(false)
