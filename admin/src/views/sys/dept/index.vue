@@ -15,6 +15,7 @@
       :virtual-y-config="{ enabled: true, gt: 0 }"
       :tree-config="{}"
       :pagination="ProTablePaginationEnum.NONE"
+      @data-rendered="dataRenderedEvent"
     >
       <template #toolbarLeft>
         <el-button v-auth="'dept.SysDeptCreate'" type="primary" :icon="CirclePlus" @click="handleAdd()">新增</el-button>
@@ -117,8 +118,7 @@
         <el-form-item label="上级" prop="parentId">
           <el-tree-select
             v-model="sysDeptForm.parentId"
-            :data="deptOptions"
-            :props="{ value: 'id', label: 'name' }"
+            :data="deptEnum"
             value-key="id"
             node-key="id"
             placeholder="请选择"
@@ -214,6 +214,8 @@ import { ResSysUser } from '@/api/interface/sysUser'
 import { getSysUserApi, getSysUserListSimpleApi } from '@/api/modules/sysUser'
 import { ProTablePaginationEnum } from '@/enums'
 import { useTimeoutFn } from '@vueuse/core'
+import { HandleEnumList } from '@/utils'
+import { VxeTableEvents } from 'vxe-table'
 // 获取loading状态
 const loadingStore = useLoadingStore()
 const { loading } = storeToRefs(loadingStore)
@@ -426,6 +428,14 @@ const handleExpandAll = () => {
   }, 500)
 }
 
+const dataRenderedEvent: VxeTableEvents.DataRendered<any> = () => {
+  if (isExpandAll.value) {
+    proTable.value?.element?.setAllTreeExpand(true)
+  } else {
+    proTable.value?.element?.clearTreeExpand()
+  }
+}
+
 // 获取部门列表
 const getDeptOptions = async () => {
   const { data } = await getSysDeptListSimpleApi()
@@ -445,10 +455,22 @@ const getDeptOptions = async () => {
       createTime: undefined, // 创建时间
       updater: undefined, // 更新人
       updateTime: undefined, // 更新时间
-      children: handleTree(data),
+      // children: handleTree(data),
     },
+    ...data,
   ] as unknown as ResSysDept[]
 }
+
+const deptEnum = computed(() => {
+  if (Array.isArray(deptOptions.value)) {
+    return HandleEnumList(handleTree(deptOptions.value), {
+      label: 'name',
+      value: 'id',
+      children: 'children',
+    })
+  }
+  return []
+})
 
 // 在 el-dialog 上添加点击事件监听器
 const handleDialogClick = () => {

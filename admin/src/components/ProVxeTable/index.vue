@@ -128,7 +128,7 @@ const defaultValues = computed(() => {
   return res
 })
 
-const _reset = () => {
+const resetDefaultValues = () => {
   for (const key in defaultValues.value) {
     if (Object.prototype.hasOwnProperty.call(defaultValues.value, key)) {
       const defaultValue = defaultValues.value[key]
@@ -140,6 +140,10 @@ const _reset = () => {
       }
     }
   }
+}
+
+const _reset = () => {
+  resetDefaultValues()
   reset()
   emit('reset')
 }

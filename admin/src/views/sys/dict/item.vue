@@ -32,10 +32,6 @@
       <vxe-column field="cssClass" title="CSS样式"> </vxe-column>
       <vxe-column field="status" title="状态"> </vxe-column>
       <vxe-column field="remark" title="备注"> </vxe-column>
-      <vxe-column field="creator" title="创建人"> </vxe-column>
-      <vxe-column field="createTime" title="创建时间"> </vxe-column>
-      <vxe-column field="updater" title="更新人"> </vxe-column>
-      <vxe-column field="updateTime" title="更新时间"> </vxe-column>
       <vxe-column
         v-auth="['dict.SysDictUpdate', 'dict.SysDictDelete', 'dict.SysDict']"
         field="operation"

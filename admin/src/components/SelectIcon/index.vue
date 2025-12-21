@@ -166,7 +166,7 @@ const state: {
   // fontIconNames: [],
   inputValue: '',
   prependIcon: props.modelValue,
-  defaultModelValue: props.modelValue || '',
+  defaultModelValue: props.modelValue || 'ep:search',
   iconKey: 0, // 给icon标签准备个key，以随时使用 h 函数重新生成元素
 })
 

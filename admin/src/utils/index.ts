@@ -403,6 +403,106 @@ export function filterEnum(callValue: any, enumData?: any, fieldNames?: FieldNam
     return filterData ? filterData[label] : '--'
   }
 }
+export function filterEnumText(callValue: any, enumData?: any, fieldNames?: FieldNamesProps) {
+  const value = fieldNames?.value ?? 'value'
+  const label = fieldNames?.label ?? 'label'
+  const children = fieldNames?.children ?? 'children'
+  let filterData: { [key: string]: any } = {}
+  // 判断 enumData 是否为数组
+  if (Array.isArray(enumData)) {
+    filterData = findItemNested(enumData, callValue, value, children)
+  }
+  return filterData ? filterData[label] : ''
+}
+
+/**
+ * 将浮点数转换为带单位字符串
+ * @param f 要转换的浮点数
+ * @returns 带单位字符串
+ */
+export function floatUnitString(f: number): string {
+  if (f === undefined || f === null || isNaN(f)) {
+    return '--'
+  }
+  const m: string[] = ['万', '亿', '万亿', '亿亿', '万亿亿', '亿亿亿']
+  let unit: string = ''
+
+  for (let i = 0; f > 1e4 && i < m.length; i++) {
+    unit = m[i]
+    f /= 1e4
+  }
+
+  if (unit === '') {
+    return f.toString()
+  }
+
+  return `${f.toFixed(2)}${unit}`
+}
+
+/**
+ * 根据节点值查找路径
+ * @param tree 树形结构数据（可以是数组，也可以是单个对象）
+ * @param value 要查找的节点值
+ * @returns 包含路径字符串和标签数组的对象，如果未找到返回null
+ */
+export function findPathByIdWithSeparator(value: string, tree: any): { path: string; labels: string[] } | null {
+  // 处理 null 或 undefined
+  if (!tree) {
+    return null
+  }
+
+  // 深度优先搜索函数
+  function dfs(node: any, path: string[]): string[] | null {
+    // 检查节点是否有必要的属性
+    if (!node || typeof node !== 'object') {
+      return null
+    }
+
+    const currentPath = [...path, node.label]
+
+    // 如果找到目标节点，返回当前路径
+    if (node.value === value) {
+      return currentPath
+    }
+
+    // 如果有子节点，继续递归搜索
+    if (node?.children && node?.children.length > 0) {
+      for (const child of node.children) {
+        const result = dfs(child, currentPath)
+        if (result) {
+          return result
+        }
+      }
+    }
+
+    return null
+  }
+
+  // 如果 tree 是数组，遍历数组
+  if (Array.isArray(tree)) {
+    for (const node of tree) {
+      const result = dfs(node, [])
+      if (result) {
+        return {
+          path: result.join(' / '),
+          labels: result,
+        }
+      }
+    }
+  }
+  // 如果 tree 是单个对象
+  else if (typeof tree === 'object') {
+    const result = dfs(tree, [])
+    if (result) {
+      return {
+        path: result.join(' / '),
+        labels: result,
+      }
+    }
+  }
+
+  return null
+}
 
 /**
  * @description 递归查找 callValue 对应的 enum 值

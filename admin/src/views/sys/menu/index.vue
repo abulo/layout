@@ -15,6 +15,7 @@
       :virtual-y-config="{ enabled: true, gt: 0 }"
       :tree-config="{}"
       :pagination="ProTablePaginationEnum.NONE"
+      @data-rendered="dataRenderedEvent"
     >
       <template #toolbarLeft>
         <el-button v-auth="'menu.SysMenuCreate'" type="primary" :icon="CirclePlus" @click="handleAdd()">
@@ -108,8 +109,7 @@
             <el-form-item label="上级菜单" prop="parentId">
               <el-tree-select
                 v-model="sysMenuForm.parentId"
-                :data="menuOptions"
-                :props="{ value: 'id', label: 'name' }"
+                :data="menuEnum"
                 value-key="id"
                 node-key="id"
                 placeholder="请选择"
@@ -275,6 +275,8 @@ import { useLoadingStore } from '@/stores/modules/loading'
 import { storeToRefs } from 'pinia'
 import { ProTablePaginationEnum } from '@/enums'
 import { useTimeoutFn } from '@vueuse/core'
+import { HandleEnumList } from '@/utils'
+import { VxeTableEvents } from 'vxe-table'
 
 const proTable = ref<ProVxeTableInstance>()
 // 获取loading状态
@@ -477,6 +479,14 @@ const handleExpandAll = () => {
   }, 500)
 }
 
+const dataRenderedEvent: VxeTableEvents.DataRendered<any> = () => {
+  if (isExpandAll.value) {
+    proTable.value?.element?.setAllTreeExpand(true)
+  } else {
+    proTable.value?.element?.clearTreeExpand()
+  }
+}
+
 // 获取菜单选项
 const getMenuOptions = async () => {
   const { data } = await getSysMenuListSimpleApi()
@@ -504,10 +514,22 @@ const getMenuOptions = async () => {
       createTime: undefined,
       updater: undefined,
       updateTime: undefined,
-      children: handleTree(data),
+      // children: handleTree(data),
     },
+    ...data,
   ] as unknown as ResSysMenu[]
 }
+
+const menuEnum = computed(() => {
+  if (Array.isArray(menuOptions.value)) {
+    return HandleEnumList(handleTree(menuOptions.value), {
+      label: 'name',
+      value: 'id',
+      children: 'children',
+    })
+  }
+  return []
+})
 
 const menuHandleTree = (data: ResSysMenu[]) => {
   return handleTree(data)

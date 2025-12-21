@@ -46,8 +46,9 @@ const breadcrumbList = computed(() => {
 })
 
 // Click Breadcrumb
-const onBreadcrumbClick = (item: MenuOptions, index: number) => {
-  if (index !== breadcrumbList.value.length - 1) {
+const onBreadcrumbClick = (item: MenuOptions, index: string | number) => {
+  const numericIndex = typeof index === 'string' ? parseInt(index, 10) : index
+  if (numericIndex !== breadcrumbList.value.length - 1) {
     router.push(item.path)
   }
 }
