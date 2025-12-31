@@ -6,7 +6,7 @@ import "github.com/abulo/ratel/v3/stores/null"
 type SysLoggerDev struct {
 	Id        *int64        `gorm:"primaryKey;autoIncrement;column:id" json:"id"` //bigint 编号,PRI
 	Host      null.String   `gorm:"column:host" json:"host"`                      //varchar 服务名
-	Timestamp null.DateTime `gorm:"column:timestamp" json:"timestamp"`            //datetime 时间
+	Timestamp null.TimeStamp `gorm:"column:timestamp" json:"timestamp"`            //datetime 时间
 	File      null.String   `gorm:"column:file" json:"file"`                      //varchar
 	Func      null.String   `gorm:"column:func" json:"func"`                      //varchar 方法名
 	Message   null.String   `gorm:"column:message" json:"message"`                //varchar 消息

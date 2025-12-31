@@ -59,8 +59,8 @@ func SysMenuDao(item *SysMenuObject) *dao.SysMenu {
 	if item != nil && item.Active != nil {
 		daoItem.Active = null.StringFrom(item.GetActive()) // 激活地址
 	}
-	if item != nil && item.Full != nil {
-		daoItem.Full = item.Full // 全屏:1 开/0 关
+	if item != nil && item.FullScreen != nil {
+		daoItem.FullScreen = item.FullScreen // 全屏:1 开/0 关
 	}
 	if item != nil && item.Redirect != nil {
 		daoItem.Redirect = null.StringFrom(item.GetRedirect()) // 重定向
@@ -72,13 +72,13 @@ func SysMenuDao(item *SysMenuObject) *dao.SysMenu {
 		daoItem.Creator = null.StringFrom(item.GetCreator()) // 创建人
 	}
 	if item != nil && item.CreateTime != nil {
-		daoItem.CreateTime = null.DateTimeFrom(util.GrpcTime(item.CreateTime)) // 创建时间
+		daoItem.CreateTime = null.TimeStampFrom(util.GrpcTime(item.CreateTime)) // 创建时间
 	}
 	if item != nil && item.Updater != nil {
 		daoItem.Updater = null.StringFrom(item.GetUpdater()) // 更新人
 	}
 	if item != nil && item.UpdateTime != nil {
-		daoItem.UpdateTime = null.DateTimeFrom(util.GrpcTime(item.UpdateTime)) // 更新时间
+		daoItem.UpdateTime = null.TimeStampFrom(util.GrpcTime(item.UpdateTime)) // 更新时间
 	}
 
 	return daoItem
@@ -132,8 +132,8 @@ func SysMenuProto(item dao.SysMenu) *SysMenuObject {
 	if item.Active.IsValid() {
 		res.Active = item.Active.Ptr()
 	}
-	if item.Full != nil {
-		res.Full = item.Full
+	if item.FullScreen != nil {
+		res.FullScreen = item.FullScreen
 	}
 	if item.Redirect.IsValid() {
 		res.Redirect = item.Redirect.Ptr()

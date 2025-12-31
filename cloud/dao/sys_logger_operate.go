@@ -15,7 +15,7 @@ type SysLoggerOperate struct {
 	Ua           null.String   `gorm:"column:ua" json:"ua"`                          //varchar UA
 	GoMethod     null.String   `gorm:"column:go_method" json:"goMethod"`             //varchar 方法名
 	GoMethodArgs null.JSON     `gorm:"column:go_method_args" json:"goMethodArgs"`    //json 方法参数
-	StartTime    null.DateTime `gorm:"column:start_time" json:"startTime"`           //datetime 开始时间
+	StartTime    null.TimeStamp `gorm:"column:start_time" json:"startTime"`           //datetime 开始时间
 	Duration     null.Int32    `gorm:"column:duration" json:"duration"`              //int 执行时长
 	Channel      null.String   `gorm:"column:channel" json:"channel"`                //varchar 渠道
 	Result       null.Int32    `gorm:"column:result" json:"result"`                  //tinyint 结果:0 成功/1 失败
@@ -23,9 +23,9 @@ type SysLoggerOperate struct {
 	Deleted      *int32        `gorm:"column:deleted" json:"deleted"`                //tinyint 删除:0否/1是
 	TenantId     *int64        `gorm:"column:tenant_id" json:"tenantId"`             //bigint 租户
 	Creator      null.String   `gorm:"column:creator" json:"creator"`                //varchar 创建人
-	CreateTime   null.DateTime `gorm:"column:create_time" json:"createTime"`         //datetime 创建时间
+	CreateTime   null.TimeStamp `gorm:"column:create_time" json:"createTime"`         //datetime 创建时间
 	Updater      null.String   `gorm:"column:updater" json:"updater"`                //varchar 更新人
-	UpdateTime   null.DateTime `gorm:"column:update_time" json:"updateTime"`         //datetime 更新时间
+	UpdateTime   null.TimeStamp `gorm:"column:update_time" json:"updateTime"`         //datetime 更新时间
 }
 
 func (SysLoggerOperate) TableName() string {

@@ -118,7 +118,12 @@
         <el-form-item label="上级" prop="parentId">
           <el-tree-select
             v-model="sysDeptForm.parentId"
-            :data="deptEnum"
+            :data="deptOptions"
+            :props="{
+              value: 'id',
+              label: 'name',
+              children: 'children',
+            }"
             value-key="id"
             node-key="id"
             placeholder="请选择"
@@ -214,7 +219,7 @@ import { ResSysUser } from '@/api/interface/sysUser'
 import { getSysUserApi, getSysUserListSimpleApi } from '@/api/modules/sysUser'
 import { ProTablePaginationEnum } from '@/enums'
 import { useTimeoutFn } from '@vueuse/core'
-import { HandleEnumList } from '@/utils'
+// import { HandleEnumList } from '@/utils'
 import { VxeTableEvents } from 'vxe-table'
 // 获取loading状态
 const loadingStore = useLoadingStore()
@@ -455,22 +460,22 @@ const getDeptOptions = async () => {
       createTime: undefined, // 创建时间
       updater: undefined, // 更新人
       updateTime: undefined, // 更新时间
-      // children: handleTree(data),
+      children: handleTree(data),
     },
     ...data,
   ] as unknown as ResSysDept[]
 }
 
-const deptEnum = computed(() => {
-  if (Array.isArray(deptOptions.value)) {
-    return HandleEnumList(handleTree(deptOptions.value), {
-      label: 'name',
-      value: 'id',
-      children: 'children',
-    })
-  }
-  return []
-})
+// const deptEnum = computed(() => {
+//   if (Array.isArray(deptOptions.value)) {
+//     return HandleEnumList(handleTree(deptOptions.value), {
+//       label: 'name',
+//       value: 'id',
+//       children: 'children',
+//     })
+//   }
+//   return []
+// })
 
 // 在 el-dialog 上添加点击事件监听器
 const handleDialogClick = () => {

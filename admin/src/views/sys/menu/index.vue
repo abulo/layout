@@ -109,7 +109,12 @@
             <el-form-item label="上级菜单" prop="parentId">
               <el-tree-select
                 v-model="sysMenuForm.parentId"
-                :data="menuEnum"
+                :data="menuOptions"
+                :props="{
+                  value: 'id',
+                  label: 'name',
+                  children: 'children',
+                }"
                 value-key="id"
                 node-key="id"
                 placeholder="请选择"
@@ -514,22 +519,11 @@ const getMenuOptions = async () => {
       createTime: undefined,
       updater: undefined,
       updateTime: undefined,
-      // children: handleTree(data),
+      children: handleTree(data),
     },
-    ...data,
+    // ...data,
   ] as unknown as ResSysMenu[]
 }
-
-const menuEnum = computed(() => {
-  if (Array.isArray(menuOptions.value)) {
-    return HandleEnumList(handleTree(menuOptions.value), {
-      label: 'name',
-      value: 'id',
-      children: 'children',
-    })
-  }
-  return []
-})
 
 const menuHandleTree = (data: ResSysMenu[]) => {
   return handleTree(data)

@@ -14,7 +14,7 @@ import (
 // sys_dict 字典
 // SysDictCreate 创建数据
 func SysDictCreate(ctx context.Context, data dao.SysDict) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	err = db.WithContext(ctx).Model(&dao.SysDict{}).Create(&data).Error
 	res = cast.ToInt64(data.Id)
 	return
@@ -22,7 +22,7 @@ func SysDictCreate(ctx context.Context, data dao.SysDict) (res int64, err error)
 
 // SysDictUpdate 更新数据
 func SysDictUpdate(ctx context.Context, id int64, data dao.SysDict) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.SysDict{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
@@ -30,7 +30,7 @@ func SysDictUpdate(ctx context.Context, id int64, data dao.SysDict) (res int64, 
 
 // SysDictDelete 删除数据
 func SysDictDelete(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysDict
 	result := db.WithContext(ctx).Model(&dao.SysDict{}).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
@@ -38,14 +38,14 @@ func SysDictDelete(ctx context.Context, id int64) (res int64, err error) {
 
 // SysDict 查询单条数据
 func SysDict(ctx context.Context, id int64) (res dao.SysDict, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	err = db.WithContext(ctx).Model(&dao.SysDict{}).Where("id = ?", id).Find(&res).Error
 	return
 }
 
 // SysDictList 查询列表数据
 func SysDictList(ctx context.Context, condition map[string]any) (res []dao.SysDict, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysDict{})
 	if val, ok := condition["dictTypeId"]; ok {
 		builder.Where("dict_type_id = ?", val)
@@ -73,7 +73,7 @@ func SysDictList(ctx context.Context, condition map[string]any) (res []dao.SysDi
 
 // SysDictListTotal 查询列表数据总量
 func SysDictListTotal(ctx context.Context, condition map[string]any) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysDict{})
 	if val, ok := condition["dictTypeId"]; ok {
 		builder.Where("dict_type_id = ?", val)

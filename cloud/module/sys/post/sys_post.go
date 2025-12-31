@@ -14,7 +14,7 @@ import (
 // sys_post 职位
 // SysPostCreate 创建数据
 func SysPostCreate(ctx context.Context, data dao.SysPost) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	err = db.WithContext(ctx).Model(&dao.SysPost{}).Create(&data).Error
 	res = cast.ToInt64(data.Id)
 	return
@@ -22,7 +22,7 @@ func SysPostCreate(ctx context.Context, data dao.SysPost) (res int64, err error)
 
 // SysPostUpdate 更新数据
 func SysPostUpdate(ctx context.Context, id int64, data dao.SysPost) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.SysPost{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
@@ -30,7 +30,7 @@ func SysPostUpdate(ctx context.Context, id int64, data dao.SysPost) (res int64, 
 
 // SysPostDelete 删除数据
 func SysPostDelete(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysPost
 	data.Id = proto.Int64(id)
 	data.Deleted = proto.Int32(1)
@@ -40,14 +40,14 @@ func SysPostDelete(ctx context.Context, id int64) (res int64, err error) {
 
 // SysPost 查询单条数据
 func SysPost(ctx context.Context, id int64) (res dao.SysPost, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	err = db.WithContext(ctx).Model(&dao.SysPost{}).Where("id = ?", id).Find(&res).Error
 	return
 }
 
 // SysPostRecover 恢复数据
 func SysPostRecover(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysPost
 	data.Id = proto.Int64(id)
 	data.Deleted = proto.Int32(0)
@@ -57,7 +57,7 @@ func SysPostRecover(ctx context.Context, id int64) (res int64, err error) {
 
 // SysPostDrop 清理数据
 func SysPostDrop(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysPost
 	result := db.WithContext(ctx).Model(&dao.SysPost{}).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
@@ -65,7 +65,7 @@ func SysPostDrop(ctx context.Context, id int64) (res int64, err error) {
 
 // SysPostList 查询列表数据
 func SysPostList(ctx context.Context, condition map[string]any) (res []dao.SysPost, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysPost{})
 	if val, ok := condition["tenantId"]; ok {
 		builder.Where("tenant_id = ?", val)
@@ -99,7 +99,7 @@ func SysPostList(ctx context.Context, condition map[string]any) (res []dao.SysPo
 
 // SysPostListTotal 查询列表数据总量
 func SysPostListTotal(ctx context.Context, condition map[string]any) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysPost{})
 	if val, ok := condition["tenantId"]; ok {
 		builder.Where("tenant_id = ?", val)

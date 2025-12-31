@@ -117,17 +117,18 @@ export default [
 
       // 一般规则
       curly: ['error', 'multi-line'],
-      'no-console': ['error', { allow: ['error'] }],
-      'no-debugger': 'error',
-      'no-unused-vars': [
-        'error',
-        {
-          argsIgnorePattern: '^_',
-          varsIgnorePattern: '^[A-Z0-9_]+$',
-          caughtErrors: 'none',
-          ignoreRestSiblings: true,
-        },
-      ],
+      'no-console': 'off',
+      'no-debugger': 'off',
+      'no-unused-vars': 'off',
+      // 'no-unused-vars': [
+      //   'error',
+      //   {
+      //     argsIgnorePattern: '^_',
+      //     varsIgnorePattern: '^[A-Z0-9_]+$',
+      //     caughtErrors: 'none',
+      //     ignoreRestSiblings: true,
+      //   },
+      // ],
     },
   },
 

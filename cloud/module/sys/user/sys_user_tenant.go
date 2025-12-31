@@ -15,7 +15,7 @@ import (
 // sys_user_tenant 租户用户
 // SysUserTenantCreate 创建数据
 func SysUserTenantCreate(ctx context.Context, data dao.SysUserTenant) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	err = db.WithContext(ctx).Model(&dao.SysUserTenant{}).Create(&data).Error
 	res = cast.ToInt64(data.Id)
 	return
@@ -23,7 +23,7 @@ func SysUserTenantCreate(ctx context.Context, data dao.SysUserTenant) (res int64
 
 // SysUserTenantUpdate 更新数据
 func SysUserTenantUpdate(ctx context.Context, id int64, data dao.SysUserTenant) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.SysUserTenant{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
@@ -31,7 +31,7 @@ func SysUserTenantUpdate(ctx context.Context, id int64, data dao.SysUserTenant) 
 
 // SysUserTenantDelete 删除数据
 func SysUserTenantDelete(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysUserTenant
 	result := db.WithContext(ctx).Model(&dao.SysUserTenant{}).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
@@ -39,7 +39,7 @@ func SysUserTenantDelete(ctx context.Context, id int64) (res int64, err error) {
 
 // SysUserTenant 查询单条数据
 func SysUserTenant(ctx context.Context, id int64) (res dao.SysUserTenant, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	err = db.WithContext(ctx).Model(&dao.SysUserTenant{}).Where("id = ?", id).Find(&res).Error
 	return
 }
@@ -50,7 +50,7 @@ func SysUserTenantBind(ctx context.Context, condition map[string]any) (res dao.S
 		err = errors.New("condition is empty")
 		return
 	}
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysUserTenant{})
 	if val, ok := condition["userId"]; ok {
 		builder.Where("user_id = ?", val)
@@ -65,7 +65,7 @@ func SysUserTenantBind(ctx context.Context, condition map[string]any) (res dao.S
 
 // SysUserTenantList 查询列表数据
 func SysUserTenantList(ctx context.Context, condition map[string]any) (res []dao.SysUserTenant, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysUserTenant{})
 	if val, ok := condition["userId"]; ok {
 		builder.Where("user_id = ?", val)
@@ -90,7 +90,7 @@ func SysUserTenantList(ctx context.Context, condition map[string]any) (res []dao
 
 // SysUserTenantListTotal 查询列表数据总量
 func SysUserTenantListTotal(ctx context.Context, condition map[string]any) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysUserTenant{})
 	if val, ok := condition["userId"]; ok {
 		builder.Where("user_id = ?", val)

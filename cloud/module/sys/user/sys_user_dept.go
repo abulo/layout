@@ -15,7 +15,7 @@ import (
 // sys_user_dept 用户部门
 // SysUserDeptCreate 创建数据
 func SysUserDeptCreate(ctx context.Context, data dao.SysUserDept) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	err = db.WithContext(ctx).Model(&dao.SysUserDept{}).Create(&data).Error
 	res = cast.ToInt64(data.Id)
 	return
@@ -23,7 +23,7 @@ func SysUserDeptCreate(ctx context.Context, data dao.SysUserDept) (res int64, er
 
 // SysUserDeptUpdate 更新数据
 func SysUserDeptUpdate(ctx context.Context, id int64, data dao.SysUserDept) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.SysUserDept{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
@@ -31,7 +31,7 @@ func SysUserDeptUpdate(ctx context.Context, id int64, data dao.SysUserDept) (res
 
 // SysUserDeptDelete 删除数据
 func SysUserDeptDelete(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysUserDept
 	result := db.WithContext(ctx).Model(&dao.SysUserDept{}).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
@@ -39,7 +39,7 @@ func SysUserDeptDelete(ctx context.Context, id int64) (res int64, err error) {
 
 // SysUserDept 查询单条数据
 func SysUserDept(ctx context.Context, id int64) (res dao.SysUserDept, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	err = db.WithContext(ctx).Model(&dao.SysUserDept{}).Where("id = ?", id).Find(&res).Error
 	return
 }
@@ -50,7 +50,7 @@ func SysUserDeptItem(ctx context.Context, condition map[string]any) (res dao.Sys
 		err = errors.New("condition is empty")
 		return
 	}
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysUserDept{})
 	if val, ok := condition["tenantId"]; ok {
 		builder.Where("tenant_id = ?", val)
@@ -68,7 +68,7 @@ func SysUserDeptItem(ctx context.Context, condition map[string]any) (res dao.Sys
 
 // SysUserDeptList 查询列表数据
 func SysUserDeptList(ctx context.Context, condition map[string]any) (res []dao.SysUserDept, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysUserDept{})
 	if val, ok := condition["tenantId"]; ok {
 		builder.Where("tenant_id = ?", val)
@@ -96,7 +96,7 @@ func SysUserDeptList(ctx context.Context, condition map[string]any) (res []dao.S
 
 // SysUserDeptListTotal 查询列表数据总量
 func SysUserDeptListTotal(ctx context.Context, condition map[string]any) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysUserDept{})
 	if val, ok := condition["tenantId"]; ok {
 		builder.Where("tenant_id = ?", val)

@@ -17,7 +17,7 @@ import (
 // sys_logger_operate 操作日志
 // SysLoggerOperateCreate 创建数据
 func SysLoggerOperateCreate(ctx context.Context, data dao.SysLoggerOperate) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	err = db.WithContext(ctx).Model(&dao.SysLoggerOperate{}).Create(&data).Error
 	res = cast.ToInt64(data.Id)
 	return
@@ -25,7 +25,7 @@ func SysLoggerOperateCreate(ctx context.Context, data dao.SysLoggerOperate) (res
 
 // SysLoggerOperateUpdate 更新数据
 func SysLoggerOperateUpdate(ctx context.Context, id int64, data dao.SysLoggerOperate) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.SysLoggerOperate{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
@@ -33,7 +33,7 @@ func SysLoggerOperateUpdate(ctx context.Context, id int64, data dao.SysLoggerOpe
 
 // SysLoggerOperateDelete 删除数据
 func SysLoggerOperateDelete(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysLoggerOperate
 	data.Id = proto.Int64(id)
 	data.Deleted = proto.Int32(1)
@@ -43,14 +43,14 @@ func SysLoggerOperateDelete(ctx context.Context, id int64) (res int64, err error
 
 // SysLoggerOperate 查询单条数据
 func SysLoggerOperate(ctx context.Context, id int64) (res dao.SysLoggerOperate, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	err = db.WithContext(ctx).Model(&dao.SysLoggerOperate{}).Where("id = ?", id).Find(&res).Error
 	return
 }
 
 // SysLoggerOperateRecover 恢复数据
 func SysLoggerOperateRecover(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysLoggerOperate
 	data.Id = proto.Int64(id)
 	data.Deleted = proto.Int32(0)
@@ -60,7 +60,7 @@ func SysLoggerOperateRecover(ctx context.Context, id int64) (res int64, err erro
 
 // SysLoggerOperateDrop 清理数据
 func SysLoggerOperateDrop(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysLoggerOperate
 	result := db.WithContext(ctx).Model(&dao.SysLoggerOperate{}).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
@@ -74,7 +74,7 @@ func SysLoggerOperateList(ctx context.Context, condition map[string]any) (res []
 	scopeDept := condition["scopeDept"].([]int64)
 	scope := cast.ToInt32(condition["scope"])
 	userId := cast.ToInt64(condition["userId"])
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysLoggerOperate{}).Select("sys_logger_operate.*").Joins("LEFT JOIN sys_user_dept ON sys_user_dept.tenant_id = sys_logger_operate.tenant_id  AND sys_logger_operate.user_id = sys_user_dept.user_id")
 	if val, ok := condition["tenantId"]; ok {
 		builder.Where("sys_logger_operate.tenant_id = ?", val)
@@ -132,7 +132,7 @@ func SysLoggerOperateList(ctx context.Context, condition map[string]any) (res []
 			builder.Limit(cast.ToInt(val))
 		}
 	}
-	builder.Group("`sys_logger_operate`.`id`")
+	builder.Group("sys_logger_operate.id")
 	builder.Order(clause.OrderBy{Columns: []clause.OrderByColumn{
 		{Column: clause.Column{Name: "sys_logger_operate.id"}, Desc: true},
 	}})
@@ -148,7 +148,7 @@ func SysLoggerOperateListTotal(ctx context.Context, condition map[string]any) (r
 	scopeDept := condition["scopeDept"].([]int64)
 	scope := cast.ToInt32(condition["scope"])
 	userId := cast.ToInt64(condition["userId"])
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysLoggerOperate{}).Joins("LEFT JOIN sys_user_dept ON sys_user_dept.tenant_id = sys_logger_operate.tenant_id  AND sys_logger_operate.user_id = sys_user_dept.user_id")
 	if val, ok := condition["tenantId"]; ok {
 		builder.Where("sys_logger_operate.tenant_id = ?", val)
@@ -206,7 +206,7 @@ func SysLoggerOperateListTotal(ctx context.Context, condition map[string]any) (r
 			builder.Limit(cast.ToInt(val))
 		}
 	}
-	builder.Group("`sys_logger_operate`.`id`")
+	builder.Group("sys_logger_operate.id")
 
 	err = db.Table("(?) as sys_logger_operate_table", builder).Count(&res).Error
 	return

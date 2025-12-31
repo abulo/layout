@@ -14,7 +14,7 @@ import (
 // sys_tenant_package 租户套餐
 // SysTenantPackageCreate 创建数据
 func SysTenantPackageCreate(ctx context.Context, data dao.SysTenantPackage) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	err = db.WithContext(ctx).Model(&dao.SysTenantPackage{}).Create(&data).Error
 	res = cast.ToInt64(data.Id)
 	return
@@ -22,7 +22,7 @@ func SysTenantPackageCreate(ctx context.Context, data dao.SysTenantPackage) (res
 
 // SysTenantPackageUpdate 更新数据
 func SysTenantPackageUpdate(ctx context.Context, id int64, data dao.SysTenantPackage) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.SysTenantPackage{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
@@ -30,7 +30,7 @@ func SysTenantPackageUpdate(ctx context.Context, id int64, data dao.SysTenantPac
 
 // SysTenantPackageDelete 删除数据
 func SysTenantPackageDelete(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysTenantPackage
 	result := db.WithContext(ctx).Model(&dao.SysTenantPackage{}).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
@@ -38,14 +38,14 @@ func SysTenantPackageDelete(ctx context.Context, id int64) (res int64, err error
 
 // SysTenantPackage 查询单条数据
 func SysTenantPackage(ctx context.Context, id int64) (res dao.SysTenantPackage, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	err = db.WithContext(ctx).Model(&dao.SysTenantPackage{}).Where("id = ?", id).Find(&res).Error
 	return
 }
 
 // SysTenantPackageList 查询列表数据
 func SysTenantPackageList(ctx context.Context, condition map[string]any) (res []dao.SysTenantPackage, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysTenantPackage{})
 	if val, ok := condition["status"]; ok {
 		builder.Where("status = ?", val)
@@ -73,7 +73,7 @@ func SysTenantPackageList(ctx context.Context, condition map[string]any) (res []
 
 // SysTenantPackageListTotal 查询列表数据总量
 func SysTenantPackageListTotal(ctx context.Context, condition map[string]any) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysTenantPackage{})
 	if val, ok := condition["status"]; ok {
 		builder.Where("status = ?", val)

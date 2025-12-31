@@ -14,7 +14,7 @@ import (
 // sys_logger_dev 开发日志
 // SysLoggerDevCreate 创建数据
 func SysLoggerDevCreate(ctx context.Context, data dao.SysLoggerDev) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	err = db.WithContext(ctx).Model(&dao.SysLoggerDev{}).Create(&data).Error
 	res = cast.ToInt64(data.Id)
 	return
@@ -22,7 +22,7 @@ func SysLoggerDevCreate(ctx context.Context, data dao.SysLoggerDev) (res int64, 
 
 // SysLoggerDevUpdate 更新数据
 func SysLoggerDevUpdate(ctx context.Context, id int64, data dao.SysLoggerDev) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.SysLoggerDev{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
@@ -30,7 +30,7 @@ func SysLoggerDevUpdate(ctx context.Context, id int64, data dao.SysLoggerDev) (r
 
 // SysLoggerDevDelete 删除数据
 func SysLoggerDevDelete(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysLoggerDev
 	result := db.WithContext(ctx).Model(&dao.SysLoggerDev{}).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
@@ -38,14 +38,14 @@ func SysLoggerDevDelete(ctx context.Context, id int64) (res int64, err error) {
 
 // SysLoggerDev 查询单条数据
 func SysLoggerDev(ctx context.Context, id int64) (res dao.SysLoggerDev, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	err = db.WithContext(ctx).Model(&dao.SysLoggerDev{}).Where("id = ?", id).Find(&res).Error
 	return
 }
 
 // SysLoggerDevList 查询列表数据
 func SysLoggerDevList(ctx context.Context, condition map[string]any) (res []dao.SysLoggerDev, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysLoggerDev{})
 	if val, ok := condition["beginTimestamp"]; ok {
 		builder.Where("timestamp >= ?", val)
@@ -78,7 +78,7 @@ func SysLoggerDevList(ctx context.Context, condition map[string]any) (res []dao.
 
 // SysLoggerDevListTotal 查询列表数据总量
 func SysLoggerDevListTotal(ctx context.Context, condition map[string]any) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysLoggerDev{})
 	if val, ok := condition["beginTimestamp"]; ok {
 		builder.Where("timestamp >= ?", val)

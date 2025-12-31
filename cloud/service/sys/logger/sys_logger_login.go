@@ -30,7 +30,7 @@ func SysLoggerLoginDao(item *SysLoggerLoginObject) *dao.SysLoggerLogin {
 		daoItem.Ua = null.StringFrom(item.GetUa()) // UA
 	}
 	if item != nil && item.LoginTime != nil {
-		daoItem.LoginTime = null.DateTimeFrom(util.GrpcTime(item.LoginTime)) // 登录时间
+		daoItem.LoginTime = null.TimeStampFrom(util.GrpcTime(item.LoginTime)) // 登录时间
 	}
 	if item != nil && item.Channel != nil {
 		daoItem.Channel = null.StringFrom(item.GetChannel()) // 渠道
@@ -48,13 +48,13 @@ func SysLoggerLoginDao(item *SysLoggerLoginObject) *dao.SysLoggerLogin {
 		daoItem.Creator = null.StringFrom(item.GetCreator()) // 创建人
 	}
 	if item != nil && item.CreateTime != nil {
-		daoItem.CreateTime = null.DateTimeFrom(util.GrpcTime(item.CreateTime)) // 创建时间
+		daoItem.CreateTime = null.TimeStampFrom(util.GrpcTime(item.CreateTime)) // 创建时间
 	}
 	if item != nil && item.Updater != nil {
 		daoItem.Updater = null.StringFrom(item.GetUpdater()) // 更新人
 	}
 	if item != nil && item.UpdateTime != nil {
-		daoItem.UpdateTime = null.DateTimeFrom(util.GrpcTime(item.UpdateTime)) // 更新时间
+		daoItem.UpdateTime = null.TimeStampFrom(util.GrpcTime(item.UpdateTime)) // 更新时间
 	}
 
 	return daoItem

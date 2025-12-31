@@ -48,13 +48,13 @@ func SysDeptDao(item *SysDeptObject) *dao.SysDept {
 		daoItem.Creator = null.StringFrom(item.GetCreator()) // 创建人
 	}
 	if item != nil && item.CreateTime != nil {
-		daoItem.CreateTime = null.DateTimeFrom(util.GrpcTime(item.CreateTime)) // 创建时间
+		daoItem.CreateTime = null.TimeStampFrom(util.GrpcTime(item.CreateTime)) // 创建时间
 	}
 	if item != nil && item.Updater != nil {
 		daoItem.Updater = null.StringFrom(item.GetUpdater()) // 更新人
 	}
 	if item != nil && item.UpdateTime != nil {
-		daoItem.UpdateTime = null.DateTimeFrom(util.GrpcTime(item.UpdateTime)) // 更新时间
+		daoItem.UpdateTime = null.TimeStampFrom(util.GrpcTime(item.UpdateTime)) // 更新时间
 	}
 
 	return daoItem

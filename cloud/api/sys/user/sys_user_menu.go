@@ -69,7 +69,7 @@ func BuildVMenu(homeId int64) *menu.SysMenuObject {
 	item.ComponentName = proto.String("Home")
 	item.Hide = proto.Int32(0)
 	item.Cache = proto.Int32(0)
-	item.Full = proto.Int32(0)
+	item.FullScreen = proto.Int32(0)
 	item.Status = proto.Int32(0)
 	return item
 }

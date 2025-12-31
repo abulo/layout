@@ -1,5 +1,5 @@
 // {{.Table.TableName}} {{.Table.TableComment}}
-import http from '@/utils/request/sys'
+import http from '@/utils/request'
 import { Res{{CamelStr .Table.TableName}}, Req{{CamelStr .Table.TableName}}Params } from '@/api/interface/{{Helper .Table.TableName}}'
 
 {{- range .Method}}
@@ -41,6 +41,17 @@ export const get{{CamelStr .Table.TableName}}ListApi = (params?: Req{{CamelStr .
 {{- else}}
   return http.get<Res{{CamelStr .Table.TableName}}[]>({{ApiList "list"}}, params)
 {{- end}}
-};
+}
+
+
+// {{.Table.TableComment}}列表(精简)数据
+export const get{{CamelStr .Table.TableName}}ListSimpleApi = (params?: Req{{CamelStr .Table.TableName}}Params) => {
+{{- if .Page}}
+  return http.get<ResultPage<Res{{CamelStr .Table.TableName}}>>({{ApiList "list"}}, params)
+{{- else}}
+  return http.get<Res{{CamelStr .Table.TableName}}[]>({{ApiList "list"}}, params)
+{{- end}}
+}
+
 {{- end}}
 {{- end}}

@@ -47,7 +47,7 @@ func main() {
 	env.SetBuildTime(BuildTime)
 	env.SetBuildVersion(BuildVersion)
 	// client := initial.Core.Store.LoadMongoDB("mongodb")
-	client := initial.Core.Store.LoadSQL("mysql").Write()
+	client := initial.Core.Store.LoadSQL("postgres").Write()
 	loggerHook := sql.DefaultWithURL(client, "sys_logger_dev")
 	defer loggerHook.Flush()
 	logger.Logger.AddHook(loggerHook)

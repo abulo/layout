@@ -16,7 +16,7 @@ import (
 // sys_tenant 租户
 // SysTenantCreate 创建数据
 func SysTenantCreate(ctx context.Context, data dao.SysTenant) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	tx := db.Session(&gorm.Session{SkipDefaultTransaction: false}).Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -90,7 +90,7 @@ func SysTenantCreate(ctx context.Context, data dao.SysTenant) (res int64, err er
 
 // SysTenantUpdate 更新数据
 func SysTenantUpdate(ctx context.Context, id int64, data dao.SysTenant) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.SysTenant{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
@@ -98,7 +98,7 @@ func SysTenantUpdate(ctx context.Context, id int64, data dao.SysTenant) (res int
 
 // SysTenantDelete 删除数据
 func SysTenantDelete(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysTenant
 	data.Id = proto.Int64(id)
 	data.Deleted = proto.Int32(1)
@@ -108,14 +108,14 @@ func SysTenantDelete(ctx context.Context, id int64) (res int64, err error) {
 
 // SysTenant 查询单条数据
 func SysTenant(ctx context.Context, id int64) (res dao.SysTenant, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
-	err = db.WithContext(ctx).Model(&dao.SysTenant{}).Select("`sys_tenant`.*", "`sys_user`.username", "`sys_user`.`password`").Joins("LEFT JOIN `sys_user` ON `sys_tenant`.user_id = `sys_user`.id").Where("`sys_tenant`.id = ?", id).Find(&res).Error
+	db := initial.Core.Store.LoadSQL("postgres").Read()
+	err = db.WithContext(ctx).Model(&dao.SysTenant{}).Select("sys_tenant.*", "sys_user.username", "sys_user.password").Joins("LEFT JOIN sys_user ON sys_tenant.user_id = sys_user.id").Where("sys_tenant.id = ?", id).Find(&res).Error
 	return
 }
 
 // SysTenantRecover 恢复数据
 func SysTenantRecover(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysTenant
 	data.Id = proto.Int64(id)
 	data.Deleted = proto.Int32(0)
@@ -125,7 +125,7 @@ func SysTenantRecover(ctx context.Context, id int64) (res int64, err error) {
 
 // SysTenantDrop 清理数据
 func SysTenantDrop(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysTenant
 	result := db.WithContext(ctx).Model(&dao.SysTenant{}).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
@@ -133,26 +133,26 @@ func SysTenantDrop(ctx context.Context, id int64) (res int64, err error) {
 
 // SysTenantList 查询列表数据
 func SysTenantList(ctx context.Context, condition map[string]any) (res []dao.SysTenant, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
-	builder := db.WithContext(ctx).Model(&dao.SysTenant{}).Select("`sys_tenant`.*", "`sys_user`.username", "`sys_user`.password").Joins("LEFT JOIN `sys_user` ON `sys_tenant`.user_id = `sys_user`.id")
+	db := initial.Core.Store.LoadSQL("postgres").Read()
+	builder := db.WithContext(ctx).Model(&dao.SysTenant{}).Select("sys_tenant.*", "sys_user.username", "sys_user.password").Joins("LEFT JOIN sys_user ON sys_tenant.user_id = sys_user.id")
 
 	if val, ok := condition["deleted"]; ok {
-		builder.Where("`sys_tenant`.deleted = ?", val)
+		builder.Where("sys_tenant.deleted = ?", val)
 	}
 	if val, ok := condition["status"]; ok {
-		builder.Where("`sys_tenant`.status = ?", val)
+		builder.Where("sys_tenant.status = ?", val)
 	}
 	if val, ok := condition["name"]; ok {
-		builder.Where("`sys_tenant`.`name` LIKE ?", "%"+cast.ToString(val)+"%")
+		builder.Where("sys_tenant.name LIKE ?", "%"+cast.ToString(val)+"%")
 	}
 	if val, ok := condition["beginExpireDate"]; ok {
-		builder.Where("`sys_tenant`.`expire_date` >= ?", val)
+		builder.Where("sys_tenant.expire_date >= ?", val)
 	}
 	if val, ok := condition["finishExpireDate"]; ok {
-		builder.Where("`sys_tenant`.`expire_date` <= ?", val)
+		builder.Where("sys_tenant.expire_date <= ?", val)
 	}
 	if val, ok := condition["packageId"]; ok {
-		builder.Where("`sys_tenant`.package_id = ?", val)
+		builder.Where("sys_tenant.package_id = ?", val)
 	}
 
 	if val, ok := condition["pagination"]; ok {
@@ -173,7 +173,7 @@ func SysTenantList(ctx context.Context, condition map[string]any) (res []dao.Sys
 
 // SysTenantListTotal 查询列表数据总量
 func SysTenantListTotal(ctx context.Context, condition map[string]any) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysTenant{})
 	if val, ok := condition["deleted"]; ok {
 		builder.Where("deleted = ?", val)
@@ -182,13 +182,13 @@ func SysTenantListTotal(ctx context.Context, condition map[string]any) (res int6
 		builder.Where("status = ?", val)
 	}
 	if val, ok := condition["name"]; ok {
-		builder.Where("`name` LIKE ?", "%"+cast.ToString(val)+"%")
+		builder.Where("name LIKE ?", "%"+cast.ToString(val)+"%")
 	}
 	if val, ok := condition["beginExpireDate"]; ok {
-		builder.Where("`expire_date` >= ?", val)
+		builder.Where("expire_date >= ?", val)
 	}
 	if val, ok := condition["finishExpireDate"]; ok {
-		builder.Where("`expire_date` <= ?", val)
+		builder.Where("expire_date <= ?", val)
 	}
 	if val, ok := condition["packageId"]; ok {
 		builder.Where("package_id = ?", val)

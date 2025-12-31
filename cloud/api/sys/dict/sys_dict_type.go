@@ -77,7 +77,7 @@ func SysDictTypeCreate(ctx context.Context, newCtx *app.RequestContext) {
 	}
 	reqInfo.Id = nil
 	reqInfo.Creator = null.StringFrom(newCtx.GetString("userName"))
-	reqInfo.CreateTime = null.DateTimeFrom(util.Now())
+	reqInfo.CreateTime = null.TimeStampFrom(util.Now())
 	request.Data = dict.SysDictTypeProto(reqInfo)
 	// 执行服务
 	res, err := client.SysDictTypeCreate(ctx, request)
@@ -137,9 +137,9 @@ func SysDictTypeUpdate(ctx context.Context, newCtx *app.RequestContext) {
 	}
 	reqInfo.Id = nil
 	reqInfo.Updater = null.StringFrom(newCtx.GetString("userName"))
-	reqInfo.UpdateTime = null.DateTimeFrom(util.Now())
+	reqInfo.UpdateTime = null.TimeStampFrom(util.Now())
 	reqInfo.Creator = null.StringFromPtr(nil)
-	reqInfo.CreateTime = null.DateTimeFromPtr(nil)
+	reqInfo.CreateTime = null.TimeStampFromPtr(nil)
 	request.Data = dict.SysDictTypeProto(reqInfo)
 	// 执行服务
 	res, err := client.SysDictTypeUpdate(ctx, request)

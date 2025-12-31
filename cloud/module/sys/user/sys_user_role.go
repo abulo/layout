@@ -15,7 +15,7 @@ import (
 // sys_user_role 用户角色
 // SysUserRoleCreate 创建数据
 func SysUserRoleCreate(ctx context.Context, data dao.SysUserRole) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	err = db.WithContext(ctx).Model(&dao.SysUserRole{}).Create(&data).Error
 	res = cast.ToInt64(data.Id)
 	return
@@ -23,7 +23,7 @@ func SysUserRoleCreate(ctx context.Context, data dao.SysUserRole) (res int64, er
 
 // SysUserRoleUpdate 更新数据
 func SysUserRoleUpdate(ctx context.Context, id int64, data dao.SysUserRole) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.SysUserRole{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
@@ -31,7 +31,7 @@ func SysUserRoleUpdate(ctx context.Context, id int64, data dao.SysUserRole) (res
 
 // SysUserRoleDelete 删除数据
 func SysUserRoleDelete(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysUserRole
 	result := db.WithContext(ctx).Model(&dao.SysUserRole{}).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
@@ -39,7 +39,7 @@ func SysUserRoleDelete(ctx context.Context, id int64) (res int64, err error) {
 
 // SysUserRole 查询单条数据
 func SysUserRole(ctx context.Context, id int64) (res dao.SysUserRole, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	err = db.WithContext(ctx).Model(&dao.SysUserRole{}).Where("id = ?", id).Find(&res).Error
 	return
 }
@@ -50,7 +50,7 @@ func SysUserRoleItem(ctx context.Context, condition map[string]any) (res dao.Sys
 		err = errors.New("condition is empty")
 		return
 	}
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysUserRole{})
 	if val, ok := condition["tenantId"]; ok {
 		builder.Where("tenant_id = ?", val)
@@ -68,7 +68,7 @@ func SysUserRoleItem(ctx context.Context, condition map[string]any) (res dao.Sys
 
 // SysUserRoleList 查询列表数据
 func SysUserRoleList(ctx context.Context, condition map[string]any) (res []dao.SysUserRole, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysUserRole{})
 	if val, ok := condition["tenantId"]; ok {
 		builder.Where("tenant_id = ?", val)
@@ -96,7 +96,7 @@ func SysUserRoleList(ctx context.Context, condition map[string]any) (res []dao.S
 
 // SysUserRoleListTotal 查询列表数据总量
 func SysUserRoleListTotal(ctx context.Context, condition map[string]any) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysUserRole{})
 	if val, ok := condition["tenantId"]; ok {
 		builder.Where("tenant_id = ?", val)

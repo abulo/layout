@@ -14,7 +14,7 @@ import (
 // sys_menu 菜单
 // SysMenuCreate 创建数据
 func SysMenuCreate(ctx context.Context, data dao.SysMenu) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	err = db.WithContext(ctx).Model(&dao.SysMenu{}).Create(&data).Error
 	res = cast.ToInt64(data.Id)
 	return
@@ -22,7 +22,7 @@ func SysMenuCreate(ctx context.Context, data dao.SysMenu) (res int64, err error)
 
 // SysMenuUpdate 更新数据
 func SysMenuUpdate(ctx context.Context, id int64, data dao.SysMenu) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.SysMenu{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
@@ -30,7 +30,7 @@ func SysMenuUpdate(ctx context.Context, id int64, data dao.SysMenu) (res int64, 
 
 // SysMenuDelete 删除数据
 func SysMenuDelete(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysMenu
 	result := db.WithContext(ctx).Model(&dao.SysMenu{}).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
@@ -38,14 +38,14 @@ func SysMenuDelete(ctx context.Context, id int64) (res int64, err error) {
 
 // SysMenu 查询单条数据
 func SysMenu(ctx context.Context, id int64) (res dao.SysMenu, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	err = db.WithContext(ctx).Model(&dao.SysMenu{}).Where("id = ?", id).Find(&res).Error
 	return
 }
 
 // SysMenuParent 查询列表数据
 func SysMenuParent(ctx context.Context, condition map[string]any) (res []dao.SysMenu, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysMenu{})
 	if val, ok := condition["status"]; ok {
 		builder.Where("status = ?", val)
@@ -73,7 +73,7 @@ func SysMenuParent(ctx context.Context, condition map[string]any) (res []dao.Sys
 
 // SysMenuParentTotal 查询列表数据总量
 func SysMenuParentTotal(ctx context.Context, condition map[string]any) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysMenu{})
 	if val, ok := condition["status"]; ok {
 		builder.Where("status = ?", val)
@@ -91,7 +91,7 @@ func SysMenuParentTotal(ctx context.Context, condition map[string]any) (res int6
 
 // SysMenuList 查询列表数据
 func SysMenuList(ctx context.Context, condition map[string]any) (res []dao.SysMenu, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysMenu{})
 	if val, ok := condition["status"]; ok {
 		builder.Where("status = ?", val)
@@ -123,7 +123,7 @@ func SysMenuList(ctx context.Context, condition map[string]any) (res []dao.SysMe
 
 // SysMenuListTotal 查询列表数据总量
 func SysMenuListTotal(ctx context.Context, condition map[string]any) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysMenu{})
 	if val, ok := condition["status"]; ok {
 		builder.Where("status = ?", val)
@@ -141,8 +141,8 @@ func SysMenuListTotal(ctx context.Context, condition map[string]any) (res int64,
 
 // SystemMenuListRecursive 递归查询向上查询, 用于在计划任务中使用
 func SysMenuListRecursive(ctx context.Context, id int64) (res []dao.SysMenu, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
-	db.WithContext(ctx).Raw("WITH RECURSIVE menu_path AS ( SELECT id,name,code,type,sort,parent_id,path,icon,component,component_name,hide,link,cache,remark,active,full,redirect,status,creator,create_time,updater,update_time FROM sys_menu WHERE id = ? UNION ALL SELECT m.id,m.name,m.code,m.type,m.sort,m.parent_id,m.path,m.icon,m.component,m.component_name,m.hide,m.link,m.cache,m.remark,m.active,m.full,m.redirect,m.status,m.creator,m.create_time,m.updater,m.update_time FROM sys_menu m INNER JOIN menu_path mp ON m.id = mp.parent_id WHERE m.parent_id != 0 OR m.id = mp.parent_id ) SELECT * FROM menu_path;", id).Scan(&res)
+	db := initial.Core.Store.LoadSQL("postgres").Read()
+	db.WithContext(ctx).Raw("WITH RECURSIVE menu_path AS ( SELECT id,name,code,type,sort,parent_id,path,icon,component,component_name,hide,link,cache,remark,active,full_screen,redirect,status,creator,create_time,updater,update_time FROM sys_menu WHERE id = ? UNION ALL SELECT m.id,m.name,m.code,m.type,m.sort,m.parent_id,m.path,m.icon,m.component,m.component_name,m.hide,m.link,m.cache,m.remark,m.active,m.full_screen,m.redirect,m.status,m.creator,m.create_time,m.updater,m.update_time FROM sys_menu m INNER JOIN menu_path mp ON m.id = mp.parent_id WHERE m.parent_id != 0 OR m.id = mp.parent_id ) SELECT * FROM menu_path;", id).Scan(&res)
 	err = nil
 	// 将 res 倒序
 	if len(res) > 0 {

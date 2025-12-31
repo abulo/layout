@@ -14,7 +14,7 @@ import (
 // sys_dept 部门
 // SysDeptCreate 创建数据
 func SysDeptCreate(ctx context.Context, data dao.SysDept) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	err = db.WithContext(ctx).Model(&dao.SysDept{}).Create(&data).Error
 	res = cast.ToInt64(data.Id)
 	return
@@ -22,7 +22,7 @@ func SysDeptCreate(ctx context.Context, data dao.SysDept) (res int64, err error)
 
 // SysDeptUpdate 更新数据
 func SysDeptUpdate(ctx context.Context, id int64, data dao.SysDept) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.SysDept{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
@@ -30,7 +30,7 @@ func SysDeptUpdate(ctx context.Context, id int64, data dao.SysDept) (res int64, 
 
 // SysDeptDelete 删除数据
 func SysDeptDelete(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysDept
 	data.Id = proto.Int64(id)
 	data.Deleted = proto.Int32(1)
@@ -40,14 +40,14 @@ func SysDeptDelete(ctx context.Context, id int64) (res int64, err error) {
 
 // SysDept 查询单条数据
 func SysDept(ctx context.Context, id int64) (res dao.SysDept, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	err = db.WithContext(ctx).Model(&dao.SysDept{}).Where("id = ?", id).Find(&res).Error
 	return
 }
 
 // SysDeptRecover 恢复数据
 func SysDeptRecover(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysDept
 	data.Id = proto.Int64(id)
 	data.Deleted = proto.Int32(0)
@@ -57,7 +57,7 @@ func SysDeptRecover(ctx context.Context, id int64) (res int64, err error) {
 
 // SysDeptDrop 清理数据
 func SysDeptDrop(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysDept
 	result := db.WithContext(ctx).Model(&dao.SysDept{}).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
@@ -65,7 +65,7 @@ func SysDeptDrop(ctx context.Context, id int64) (res int64, err error) {
 
 // SysDeptList 查询列表数据
 func SysDeptList(ctx context.Context, condition map[string]any) (res []dao.SysDept, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysDept{})
 	if val, ok := condition["tenantId"]; ok {
 		builder.Where("tenant_id = ?", val)
@@ -103,7 +103,7 @@ func SysDeptList(ctx context.Context, condition map[string]any) (res []dao.SysDe
 
 // SysDeptListTotal 查询列表数据总量
 func SysDeptListTotal(ctx context.Context, condition map[string]any) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysDept{})
 	if val, ok := condition["tenantId"]; ok {
 		builder.Where("tenant_id = ?", val)

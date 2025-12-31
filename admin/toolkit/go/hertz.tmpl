@@ -86,8 +86,9 @@ func {{.Name}}(ctx context.Context,newCtx *app.RequestContext) {
 		return
 	}
 	reqInfo.Id = nil
+	reqInfo.TenantId = proto.Int64(newCtx.GetInt64("tenantId"))
 	reqInfo.Creator = null.StringFrom(newCtx.GetString("userName"))
-	reqInfo.CreateTime = null.DateTimeFrom(util.Now())
+	reqInfo.CreateTime = null.TimeStampFrom(util.Now())
 	request.Data = {{.Pkg}}.{{CamelStr .Table.TableName}}Proto(reqInfo)
 	// 执行服务
 	res, err := client.{{.Name}}(ctx, request)
@@ -146,10 +147,11 @@ func {{.Name}}(ctx context.Context,newCtx *app.RequestContext) {
 		return
 	}
 	reqInfo.Id = nil
+	reqInfo.TenantId = proto.Int64(newCtx.GetInt64("tenantId"))
 	reqInfo.Updater = null.StringFrom(newCtx.GetString("userName"))
-	reqInfo.UpdateTime = null.DateTimeFrom(util.Now())
+	reqInfo.UpdateTime = null.TimeStampFrom(util.Now())
 	reqInfo.Creator = null.StringFromPtr(nil)
-	reqInfo.CreateTime = null.DateTimeFromPtr(nil)
+	reqInfo.CreateTime = null.TimeStampFromPtr(nil)
 	request.Data = {{.Pkg}}.{{CamelStr .Table.TableName}}Proto(reqInfo)
 	// 执行服务
 	res, err := client.{{.Name}}(ctx, request)
@@ -393,6 +395,17 @@ func {{.Name}}(ctx context.Context,newCtx *app.RequestContext){
 	{{ApiToProto .Condition "request" "newCtx.GetQuery" false}}
 	{{- end}}
 
+	request.TenantId = proto.Int64(newCtx.GetInt64("tenantId"))      // 租户ID
+	requestTotal.TenantId = proto.Int64(newCtx.GetInt64("tenantId")) // 租户ID
+	request.Deleted = proto.Int32(0)                                 // 删除状态
+	requestTotal.Deleted = proto.Int32(0)                            // 删除状态
+	if val, ok := newCtx.GetQuery("deleted"); ok {
+		if cast.ToBool(val) {
+			request.Deleted = proto.Int32(1)
+			requestTotal.Deleted = proto.Int32(1)
+		}
+	}
+
 	{{- if .Page}}
 	// 执行服务,获取数据量
 	resTotal, err := client.{{.Name}}Total(ctx, requestTotal)
@@ -480,6 +493,17 @@ func {{.Name}}Simple(ctx context.Context,newCtx *app.RequestContext){
 	{{- else}}
 	{{ApiToProto .Condition "request" "newCtx.GetQuery" false}}
 	{{- end}}
+
+	request.TenantId = proto.Int64(newCtx.GetInt64("tenantId"))      // 租户ID
+	requestTotal.TenantId = proto.Int64(newCtx.GetInt64("tenantId")) // 租户ID
+	request.Deleted = proto.Int32(0)                                 // 删除状态
+	requestTotal.Deleted = proto.Int32(0)                            // 删除状态
+	if val, ok := newCtx.GetQuery("deleted"); ok {
+		if cast.ToBool(val) {
+			request.Deleted = proto.Int32(1)
+			requestTotal.Deleted = proto.Int32(1)
+		}
+	}
 
 	{{- if .Page}}
 	// 执行服务,获取数据量

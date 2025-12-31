@@ -21,7 +21,7 @@ func SysLoggerDevDao(item *SysLoggerDevObject) *dao.SysLoggerDev {
 		daoItem.Host = null.StringFrom(item.GetHost()) // 服务名
 	}
 	if item != nil && item.Timestamp != nil {
-		daoItem.Timestamp = null.DateTimeFrom(util.GrpcTime(item.Timestamp)) // 时间
+		daoItem.Timestamp = null.TimeStampFrom(util.GrpcTime(item.Timestamp)) // 时间
 	}
 	if item != nil && item.File != nil {
 		daoItem.File = null.StringFrom(item.GetFile()) //

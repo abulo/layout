@@ -141,7 +141,7 @@ func AuthMiddleware() app.HandlerFunc {
 		sysLoggerOperate.Ua = null.StringFrom(cast.ToString(newCtx.Request.Header.UserAgent()))        // ua
 		sysLoggerOperate.GoMethod = null.StringFrom(newCtx.HandlerName())                              // 方法名
 		sysLoggerOperate.GoMethodArgs = null.JSONFrom(newCtx.Request.Body())                           // 方法参数
-		sysLoggerOperate.StartTime = null.DateTimeFrom(startTime)                                      // 开始时间
+		sysLoggerOperate.StartTime = null.TimeStampFrom(startTime)                                      // 开始时间
 		sysLoggerOperate.Duration = null.Int32From(cast.ToInt32(time.Since(startTime).Milliseconds())) // 执行时长
 		sysLoggerOperate.Channel = null.StringFrom(channel)                                            // 渠道
 		sysLoggerOperate.Result = null.Int32From(0)
@@ -152,9 +152,9 @@ func AuthMiddleware() app.HandlerFunc {
 		sysLoggerOperate.Deleted = proto.Int32(0)
 		sysLoggerOperate.TenantId = proto.Int64(tenantId)
 		sysLoggerOperate.Creator = null.StringFrom(userName)       //创建者
-		sysLoggerOperate.CreateTime = null.DateTimeFrom(startTime) //创建时间
+		sysLoggerOperate.CreateTime = null.TimeStampFrom(startTime) //创建时间
 		sysLoggerOperate.Updater = null.StringFrom(userName)       //更新者
-		sysLoggerOperate.UpdateTime = null.DateTimeFrom(startTime) //更新时间
+		sysLoggerOperate.UpdateTime = null.TimeStampFrom(startTime) //更新时间
 		// 将这些数据需要全部存储在消息列队中,然后后台去执行消息列队
 		key := util.NewReplacer(initial.Core.Config.String("Cache.SysLoggerOperate.Queue"))
 		bytes, _ := json.Marshal(sysLoggerOperate)

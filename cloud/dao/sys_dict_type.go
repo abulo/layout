@@ -10,9 +10,9 @@ type SysDictType struct {
 	Status     *int32        `gorm:"column:status" json:"status"`                  //tinyint 状态:0正常/1停用
 	Remark     null.String   `gorm:"column:remark" json:"remark"`                  //varchar 备注
 	Creator    null.String   `gorm:"column:creator" json:"creator"`                //varchar 创建人
-	CreateTime null.DateTime `gorm:"column:create_time" json:"createTime"`         //datetime 创建时间
+	CreateTime null.TimeStamp `gorm:"column:create_time" json:"createTime"`         //datetime 创建时间
 	Updater    null.String   `gorm:"column:updater" json:"updater"`                //varchar 更新人
-	UpdateTime null.DateTime `gorm:"column:update_time" json:"updateTime"`         //datetime 更新时间
+	UpdateTime null.TimeStamp `gorm:"column:update_time" json:"updateTime"`         //datetime 更新时间
 }
 
 func (SysDictType) TableName() string {

@@ -48,7 +48,7 @@ func SysLoggerOperateDao(item *SysLoggerOperateObject) *dao.SysLoggerOperate {
 		daoItem.GoMethodArgs = null.JSONFrom(item.GetGoMethodArgs()) // 方法参数
 	}
 	if item != nil && item.StartTime != nil {
-		daoItem.StartTime = null.DateTimeFrom(util.GrpcTime(item.StartTime)) // 开始时间
+		daoItem.StartTime = null.TimeStampFrom(util.GrpcTime(item.StartTime)) // 开始时间
 	}
 	if item != nil && item.Duration != nil {
 		daoItem.Duration = null.Int32From(item.GetDuration()) // 执行时长
@@ -72,13 +72,13 @@ func SysLoggerOperateDao(item *SysLoggerOperateObject) *dao.SysLoggerOperate {
 		daoItem.Creator = null.StringFrom(item.GetCreator()) // 创建人
 	}
 	if item != nil && item.CreateTime != nil {
-		daoItem.CreateTime = null.DateTimeFrom(util.GrpcTime(item.CreateTime)) // 创建时间
+		daoItem.CreateTime = null.TimeStampFrom(util.GrpcTime(item.CreateTime)) // 创建时间
 	}
 	if item != nil && item.Updater != nil {
 		daoItem.Updater = null.StringFrom(item.GetUpdater()) // 更新人
 	}
 	if item != nil && item.UpdateTime != nil {
-		daoItem.UpdateTime = null.DateTimeFrom(util.GrpcTime(item.UpdateTime)) // 更新时间
+		daoItem.UpdateTime = null.TimeStampFrom(util.GrpcTime(item.UpdateTime)) // 更新时间
 	}
 
 	return daoItem

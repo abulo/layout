@@ -17,7 +17,7 @@ import (
 // sys_logger_login 登录日志
 // SysLoggerLoginCreate 创建数据
 func SysLoggerLoginCreate(ctx context.Context, data dao.SysLoggerLogin) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	err = db.WithContext(ctx).Model(&dao.SysLoggerLogin{}).Create(&data).Error
 	res = cast.ToInt64(data.Id)
 	return
@@ -25,7 +25,7 @@ func SysLoggerLoginCreate(ctx context.Context, data dao.SysLoggerLogin) (res int
 
 // SysLoggerLoginUpdate 更新数据
 func SysLoggerLoginUpdate(ctx context.Context, id int64, data dao.SysLoggerLogin) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	data.Id = proto.Int64(id)
 	result := db.WithContext(ctx).Model(&dao.SysLoggerLogin{}).Where("id = ?", id).Updates(data)
 	return result.RowsAffected, result.Error
@@ -33,7 +33,7 @@ func SysLoggerLoginUpdate(ctx context.Context, id int64, data dao.SysLoggerLogin
 
 // SysLoggerLoginDelete 删除数据
 func SysLoggerLoginDelete(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysLoggerLogin
 	data.Id = proto.Int64(id)
 	data.Deleted = proto.Int32(1)
@@ -43,14 +43,14 @@ func SysLoggerLoginDelete(ctx context.Context, id int64) (res int64, err error) 
 
 // SysLoggerLogin 查询单条数据
 func SysLoggerLogin(ctx context.Context, id int64) (res dao.SysLoggerLogin, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	err = db.WithContext(ctx).Model(&dao.SysLoggerLogin{}).Where("id = ?", id).Find(&res).Error
 	return
 }
 
 // SysLoggerLoginRecover 恢复数据
 func SysLoggerLoginRecover(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysLoggerLogin
 	data.Id = proto.Int64(id)
 	data.Deleted = proto.Int32(0)
@@ -60,7 +60,7 @@ func SysLoggerLoginRecover(ctx context.Context, id int64) (res int64, err error)
 
 // SysLoggerLoginDrop 清理数据
 func SysLoggerLoginDrop(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysLoggerLogin
 	result := db.WithContext(ctx).Model(&dao.SysLoggerLogin{}).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
@@ -74,7 +74,7 @@ func SysLoggerLoginList(ctx context.Context, condition map[string]any) (res []da
 	scopeDept := condition["scopeDept"].([]int64)
 	scope := cast.ToInt32(condition["scope"])
 	userId := cast.ToInt64(condition["userId"])
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysLoggerLogin{}).Select("sys_logger_login.*").Joins("LEFT JOIN sys_user_dept ON sys_user_dept.tenant_id = sys_logger_login.tenant_id  AND sys_logger_login.user_id = sys_user_dept.user_id")
 	if val, ok := condition["tenantId"]; ok {
 		builder.Where("sys_logger_login.tenant_id = ?", val)
@@ -126,7 +126,7 @@ func SysLoggerLoginList(ctx context.Context, condition map[string]any) (res []da
 			builder.Limit(cast.ToInt(val))
 		}
 	}
-	builder.Group("`sys_logger_login`.`id`")
+	builder.Group("sys_logger_login.id")
 	builder.Order(clause.OrderBy{Columns: []clause.OrderByColumn{
 		{Column: clause.Column{Name: "sys_logger_login.id"}, Desc: true},
 	}})
@@ -142,7 +142,7 @@ func SysLoggerLoginListTotal(ctx context.Context, condition map[string]any) (res
 	scopeDept := condition["scopeDept"].([]int64)
 	scope := cast.ToInt32(condition["scope"])
 	userId := cast.ToInt64(condition["userId"])
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysLoggerLogin{}).Joins("LEFT JOIN sys_user_dept ON sys_user_dept.tenant_id = sys_logger_login.tenant_id  AND sys_logger_login.user_id = sys_user_dept.user_id")
 	if val, ok := condition["tenantId"]; ok {
 		builder.Where("sys_logger_login.tenant_id = ?", val)
@@ -194,7 +194,7 @@ func SysLoggerLoginListTotal(ctx context.Context, condition map[string]any) (res
 			builder.Limit(cast.ToInt(val))
 		}
 	}
-	builder.Group("`sys_logger_login`.`id`")
+	builder.Group("sys_logger_login.id")
 	err = db.Table("(?) as sys_logger_login_table", builder).Count(&res).Error
 	return
 }

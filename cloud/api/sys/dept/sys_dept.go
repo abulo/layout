@@ -78,7 +78,7 @@ func SysDeptCreate(ctx context.Context, newCtx *app.RequestContext) {
 	reqInfo.Id = nil
 	reqInfo.TenantId = proto.Int64(newCtx.GetInt64("tenantId"))
 	reqInfo.Creator = null.StringFrom(newCtx.GetString("userName"))
-	reqInfo.CreateTime = null.DateTimeFrom(util.Now())
+	reqInfo.CreateTime = null.TimeStampFrom(util.Now())
 	request.Data = dept.SysDeptProto(reqInfo)
 	// 执行服务
 	res, err := client.SysDeptCreate(ctx, request)
@@ -139,9 +139,9 @@ func SysDeptUpdate(ctx context.Context, newCtx *app.RequestContext) {
 	reqInfo.Id = nil
 	reqInfo.TenantId = proto.Int64(newCtx.GetInt64("tenantId"))
 	reqInfo.Updater = null.StringFrom(newCtx.GetString("userName"))
-	reqInfo.UpdateTime = null.DateTimeFrom(util.Now())
+	reqInfo.UpdateTime = null.TimeStampFrom(util.Now())
 	reqInfo.Creator = null.StringFromPtr(nil)
-	reqInfo.CreateTime = null.DateTimeFromPtr(nil)
+	reqInfo.CreateTime = null.TimeStampFromPtr(nil)
 	request.Data = dept.SysDeptProto(reqInfo)
 	// 执行服务
 	res, err := client.SysDeptUpdate(ctx, request)

@@ -37,8 +37,8 @@ message SysMenuObject {
 	optional string remark = 14; //备注
 	// @inject_tag: gorm:"column:active" json:"active"
 	optional string active = 15; //激活地址
-	// @inject_tag: gorm:"column:full" json:"full"
-	optional int32 full = 16; //全屏:1 开/0 关
+	// @inject_tag: gorm:"column:full_screen" json:"fullScreen"
+	optional int32 full_screen = 16; //全屏:1 开/0 关
 	// @inject_tag: gorm:"column:redirect" json:"redirect"
 	optional string redirect = 17; //重定向
 	// @inject_tag: gorm:"column:status" json:"status"
@@ -102,7 +102,7 @@ message SysMenuResponse {
 }
 // SysMenuParentRequest 列表数据
 message SysMenuParentRequest {
-	
+
 	// @inject_tag: db:"status" json:"status"
 	optional int32 status = 1; // 状态:0正常/1停用
 	// @inject_tag: db:"type" json:"type"
@@ -122,7 +122,7 @@ message SysMenuParentResponse {
 }
 // SysMenuParentTotalRequest 列表数据
 message SysMenuParentTotalRequest {
-	
+
 	// @inject_tag: db:"status" json:"status"
 	optional int32 status = 1; // 状态:0正常/1停用
 	// @inject_tag: db:"type" json:"type"
@@ -133,7 +133,7 @@ message SysMenuParentTotalRequest {
 }
 // SysMenuListRequest 列表数据
 message SysMenuListRequest {
-	
+
 	// @inject_tag: db:"status" json:"status"
 	optional int32 status = 1; // 状态:0正常/1停用
 	// @inject_tag: db:"type" json:"type"
@@ -153,7 +153,7 @@ message SysMenuListResponse {
 }
 // SysMenuListTotalRequest 列表数据
 message SysMenuListTotalRequest {
-	
+
 	// @inject_tag: db:"status" json:"status"
 	optional int32 status = 1; // 状态:0正常/1停用
 	// @inject_tag: db:"type" json:"type"

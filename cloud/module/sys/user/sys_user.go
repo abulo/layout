@@ -20,7 +20,7 @@ import (
 // sys_user 用户
 // SysUserCreate 创建数据
 func SysUserCreate(ctx context.Context, data dao.SysUser) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	tx := db.Session(&gorm.Session{SkipDefaultTransaction: false}).Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -111,7 +111,7 @@ func SysUserCreate(ctx context.Context, data dao.SysUser) (res int64, err error)
 
 // SysUserUpdate 更新数据
 func SysUserUpdate(ctx context.Context, id int64, data dao.SysUser) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	tx := db.Session(&gorm.Session{SkipDefaultTransaction: false}).Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -222,7 +222,7 @@ func SysUserUpdate(ctx context.Context, id int64, data dao.SysUser) (res int64, 
 
 // SysUserDelete 删除数据
 func SysUserDelete(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysUser
 	data.Id = proto.Int64(id)
 	data.Deleted = proto.Int32(1)
@@ -232,9 +232,9 @@ func SysUserDelete(ctx context.Context, id int64) (res int64, err error) {
 
 // SysUser 查询单条数据
 func SysUser(ctx context.Context, id int64) (res dao.SysUser, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	err = db.WithContext(ctx).Model(&dao.SysUser{}).Select(
-		"`sys_user`.*",
+		"sys_user.*",
 		"COALESCE(( SELECT JSON_ARRAYAGG(sys_user_dept.dept_id)  FROM sys_user_dept WHERE sys_user_dept.tenant_id = sys_user.tenant_id AND sys_user_dept.user_id = sys_user.id ), JSON_ARRAY()) AS dept_ids",
 		"COALESCE(( SELECT JSON_ARRAYAGG(sys_user_post.post_id)  FROM sys_user_post   WHERE sys_user_post.tenant_id = sys_user.tenant_id AND sys_user_post.user_id = sys_user.id ), JSON_ARRAY()) AS post_ids",
 		"COALESCE(( SELECT JSON_ARRAYAGG(sys_user_role.role_id) FROM sys_user_role   WHERE sys_user_role.tenant_id = sys_user.tenant_id AND sys_user_role.user_id = sys_user.id ), JSON_ARRAY()) AS role_ids",
@@ -244,7 +244,7 @@ func SysUser(ctx context.Context, id int64) (res dao.SysUser, err error) {
 
 // SysUserRecover 恢复数据
 func SysUserRecover(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysUser
 	data.Id = proto.Int64(id)
 	data.Deleted = proto.Int32(0)
@@ -254,7 +254,7 @@ func SysUserRecover(ctx context.Context, id int64) (res int64, err error) {
 
 // SysUserDrop 清理数据
 func SysUserDrop(ctx context.Context, id int64) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	var data dao.SysUser
 	result := db.WithContext(ctx).Model(&dao.SysUser{}).Where("id = ?", id).First(&data).Delete(&data)
 	return result.RowsAffected, result.Error
@@ -266,9 +266,9 @@ func SysUserLogin(ctx context.Context, condition map[string]any) (res dao.SysUse
 		err = errors.New("condition is empty")
 		return
 	}
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysUser{}).Select(
-		"`sys_user`.*",
+		"sys_user.*",
 		"COALESCE(( SELECT JSON_ARRAYAGG(sys_user_dept.dept_id)  FROM sys_user_dept WHERE sys_user_dept.tenant_id = sys_user.tenant_id AND sys_user_dept.user_id = sys_user.id ), JSON_ARRAY()) AS dept_ids",
 		"COALESCE(( SELECT JSON_ARRAYAGG(sys_user_post.post_id)  FROM sys_user_post   WHERE sys_user_post.tenant_id = sys_user.tenant_id AND sys_user_post.user_id = sys_user.id ), JSON_ARRAY()) AS post_ids",
 		"COALESCE(( SELECT JSON_ARRAYAGG(sys_user_role.role_id) FROM sys_user_role   WHERE sys_user_role.tenant_id = sys_user.tenant_id AND sys_user_role.user_id = sys_user.id ), JSON_ARRAY()) AS role_ids",
@@ -288,30 +288,30 @@ func SysUserList(ctx context.Context, condition map[string]any) (res []dao.SysUs
 	scopeDept := condition["scopeDept"].([]int64)
 	scope := cast.ToInt32(condition["scope"])
 	userId := cast.ToInt64(condition["userId"])
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysUser{}).Select(
-		"`sys_user`.*",
+		"sys_user.*",
 		"COALESCE(( SELECT JSON_ARRAYAGG(sys_user_dept.dept_id)  FROM sys_user_dept WHERE sys_user_dept.tenant_id = sys_user.tenant_id AND sys_user_dept.user_id = sys_user.id ), JSON_ARRAY()) AS dept_ids",
 		"COALESCE(( SELECT JSON_ARRAYAGG(sys_user_post.post_id)  FROM sys_user_post   WHERE sys_user_post.tenant_id = sys_user.tenant_id AND sys_user_post.user_id = sys_user.id ), JSON_ARRAY()) AS post_ids",
 		"COALESCE(( SELECT JSON_ARRAYAGG(sys_user_role.role_id) FROM sys_user_role   WHERE sys_user_role.tenant_id = sys_user.tenant_id AND sys_user_role.user_id = sys_user.id ), JSON_ARRAY()) AS role_ids",
 	).Joins("LEFT JOIN sys_user_dept ON sys_user_dept.tenant_id = sys_user.tenant_id  AND sys_user.id = sys_user_dept.user_id")
 	if val, ok := condition["tenantId"]; ok {
-		builder.Where("`sys_user`.`tenant_id`", val)
+		builder.Where("sys_user.tenant_id", val)
 	}
 	if val, ok := condition["deleted"]; ok {
-		builder.Where("`sys_user`.`deleted`= ?", val)
+		builder.Where("sys_user.deleted= ?", val)
 	}
 	if val, ok := condition["status"]; ok {
-		builder.Where("`sys_user`.`status`= ?", val)
+		builder.Where("sys_user.status= ?", val)
 	}
 	if val, ok := condition["username"]; ok {
-		builder.Where("`sys_user`.username LIKE ?", "%"+cast.ToString(val)+"%")
+		builder.Where("sys_user.username LIKE ?", "%"+cast.ToString(val)+"%")
 	}
 	if val, ok := condition["mobile"]; ok {
-		builder.Where("`sys_user`.mobile LIKE ?", "%"+cast.ToString(val)+"%")
+		builder.Where("sys_user.mobile LIKE ?", "%"+cast.ToString(val)+"%")
 	}
 	if val, ok := condition["name"]; ok {
-		builder.Where("`sys_user`.name LIKE ?", "%"+cast.ToString(val)+"%")
+		builder.Where("sys_user.name LIKE ?", "%"+cast.ToString(val)+"%")
 	}
 	builder.Where("sys_user_dept.dept_id IN ? ", scopeDept)
 
@@ -346,7 +346,7 @@ func SysUserList(ctx context.Context, condition map[string]any) (res []dao.SysUs
 			builder.Limit(cast.ToInt(val))
 		}
 	}
-	builder.Group("`sys_user`.`id`")
+	builder.Group("sys_user.id")
 	builder.Order(clause.OrderBy{Columns: []clause.OrderByColumn{
 		{Column: clause.Column{Name: "id"}, Desc: true},
 	}})
@@ -362,33 +362,33 @@ func SysUserListTotal(ctx context.Context, condition map[string]any) (res int64,
 	scopeDept := condition["scopeDept"].([]int64)
 	scope := cast.ToInt32(condition["scope"])
 	userId := cast.ToInt64(condition["userId"])
-	db := initial.Core.Store.LoadSQL("mysql").Read()
+	db := initial.Core.Store.LoadSQL("postgres").Read()
 	builder := db.WithContext(ctx).Model(&dao.SysUser{}).Select(
-		"`sys_user`.*",
+		"sys_user.*",
 		"COALESCE(( SELECT JSON_ARRAYAGG(sys_user_dept.dept_id)  FROM sys_user_dept WHERE sys_user_dept.tenant_id = sys_user.tenant_id AND sys_user_dept.user_id = sys_user.id ), JSON_ARRAY()) AS dept_ids",
 		"COALESCE(( SELECT JSON_ARRAYAGG(sys_user_post.post_id)  FROM sys_user_post   WHERE sys_user_post.tenant_id = sys_user.tenant_id AND sys_user_post.user_id = sys_user.id ), JSON_ARRAY()) AS post_ids",
 		"COALESCE(( SELECT JSON_ARRAYAGG(sys_user_role.role_id) FROM sys_user_role   WHERE sys_user_role.tenant_id = sys_user.tenant_id AND sys_user_role.user_id = sys_user.id ), JSON_ARRAY()) AS role_ids",
 	).Joins("LEFT JOIN sys_user_dept ON sys_user_dept.tenant_id = sys_user.tenant_id  AND sys_user.id = sys_user_dept.user_id")
 	if val, ok := condition["tenantId"]; ok {
-		builder.Where("`sys_user`.`tenant_id`= ?", val)
+		builder.Where("sys_user.tenant_id= ?", val)
 	}
 	if val, ok := condition["deleted"]; ok {
-		builder.Where("`sys_user`.`deleted`= ?", val)
+		builder.Where("sys_user.deleted= ?", val)
 	}
 	if val, ok := condition["status"]; ok {
-		builder.Where("`sys_user`.`status`= ?", val)
+		builder.Where("sys_user.status= ?", val)
 	}
 	if val, ok := condition["username"]; ok {
-		builder.Where("`sys_user`.username LIKE ?", "%"+cast.ToString(val)+"%")
+		builder.Where("sys_user.username LIKE ?", "%"+cast.ToString(val)+"%")
 	}
 	if val, ok := condition["mobile"]; ok {
-		builder.Where("`sys_user`.mobile LIKE ?", "%"+cast.ToString(val)+"%")
+		builder.Where("sys_user.mobile LIKE ?", "%"+cast.ToString(val)+"%")
 	}
 	if val, ok := condition["name"]; ok {
-		builder.Where("`sys_user`.name LIKE ?", "%"+cast.ToString(val)+"%")
+		builder.Where("sys_user.name LIKE ?", "%"+cast.ToString(val)+"%")
 	}
 	builder.Where("sys_user_dept.dept_id IN ? ", scopeDept)
-	builder.Group("`sys_user`.`id`")
+	builder.Group("sys_user.id")
 
 	switch scope {
 	case 1: // 全部数据
@@ -419,10 +419,10 @@ func SysUserListTotal(ctx context.Context, condition map[string]any) (res int64,
 
 // SysDeptRecursive 递归查询
 func SysDeptRecursive(ctx context.Context, id int64) (res []int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Read()
-	query := "WITH RECURSIVE filter_sys_dept AS (SELECT id,name,parent_id,sort,user_id,phone,email,status,deleted,tenant_id,creator,create_time,updater,update_time FROM `sys_dept` WHERE `id`=? UNION ALL SELECT d.* FROM sys_dept AS d INNER JOIN filter_sys_dept f ON d.parent_id=f.id) SELECT filter_sys_dept.* FROM filter_sys_dept"
+	db := initial.Core.Store.LoadSQL("postgres").Read()
+	query := "WITH RECURSIVE filter_sys_dept AS (SELECT id,name,parent_id,sort,user_id,phone,email,status,deleted,tenant_id,creator,create_time,updater,update_time FROM sys_dept WHERE id=? UNION ALL SELECT d.* FROM sys_dept AS d INNER JOIN filter_sys_dept f ON d.parent_id=f.id) SELECT filter_sys_dept.* FROM filter_sys_dept"
 	var deptList []dao.SysDept
-	db.WithContext(ctx).Raw(query).Scan(&deptList)
+	db.WithContext(ctx).Raw(query, id).Scan(&deptList)
 	for _, v := range deptList {
 		if cast.ToInt32(v.Deleted) == 0 {
 			res = append(res, cast.ToInt64(v.Id))
@@ -454,15 +454,15 @@ func SysUserScope(ctx context.Context, tenantId, userId int64) (res dao.SysUserS
 		res.ScopeDept = superDept
 		return res, nil
 	}
-	db := initial.Core.Store.LoadSQL("mysql").Read()
-	roleBuilder := db.WithContext(ctx).Model(&dao.SysRole{}).Select("sys_role.*").Joins("LEFT JOIN sys_user_role ON `sys_role`.`id` = `sys_user_role`.`role_id` AND `sys_role`.`tenant_id` = `sys_user_role`.`tenant_id`")
-	roleBuilder.Where("`sys_user_role`.`tenant_id` =? ", tenantId)
-	roleBuilder.Where("`sys_user_role`.`user_id` =? ", userId)
-	roleBuilder.Where("`sys_role`.`tenant_id` =? ", tenantId)
-	roleBuilder.Where("`sys_role`.`deleted` =? ", 0)
-	roleBuilder.Where("`sys_role`.`status` =? ", 0)
-	roleBuilder.Group("`sys_role`.`id`")
-	roleBuilder.Order("`sys_role`.`scope`")
+	db := initial.Core.Store.LoadSQL("postgres").Read()
+	roleBuilder := db.WithContext(ctx).Model(&dao.SysRole{}).Select("sys_role.*").Joins("LEFT JOIN sys_user_role ON sys_role.id = sys_user_role.role_id AND sys_role.tenant_id = sys_user_role.tenant_id")
+	roleBuilder.Where("sys_user_role.tenant_id =? ", tenantId)
+	roleBuilder.Where("sys_user_role.user_id =? ", userId)
+	roleBuilder.Where("sys_role.tenant_id =? ", tenantId)
+	roleBuilder.Where("sys_role.deleted =? ", 0)
+	roleBuilder.Where("sys_role.status =? ", 0)
+	roleBuilder.Group("sys_role.id")
+	roleBuilder.Order("sys_role.scope")
 	var sysRoleList []dao.SysRole
 	err = roleBuilder.Find(&sysRoleList).Error
 	if err != nil {
@@ -484,12 +484,12 @@ func SysUserScope(ctx context.Context, tenantId, userId int64) (res dao.SysUserS
 			}
 		}
 	}
-	deptBuilder := db.WithContext(ctx).Model(&dao.SysDept{}).Select("sys_dept.*").Joins("LEFT JOIN `sys_user_dept` ON `sys_dept`.`id` = `sys_user_dept`.`dept_id` AND `sys_dept`.`tenant_id` = `sys_user_dept`.`tenant_id`")
-	deptBuilder.Where("`sys_user_dept`.`tenant_id` =? ", tenantId)
-	deptBuilder.Where("`sys_user_dept`.`user_id` =? ", userId)
-	deptBuilder.Where("`sys_dept`.`tenant_id` =? ", tenantId)
-	deptBuilder.Where("`sys_dept`.`deleted` =? ", 0)
-	deptBuilder.Where("`sys_dept`.`status` =? ", 0)
+	deptBuilder := db.WithContext(ctx).Model(&dao.SysDept{}).Select("sys_dept.*").Joins("LEFT JOIN sys_user_dept ON sys_dept.id = sys_user_dept.dept_id AND sys_dept.tenant_id = sys_user_dept.tenant_id")
+	deptBuilder.Where("sys_user_dept.tenant_id =? ", tenantId)
+	deptBuilder.Where("sys_user_dept.user_id =? ", userId)
+	deptBuilder.Where("sys_dept.tenant_id =? ", tenantId)
+	deptBuilder.Where("sys_dept.deleted =? ", 0)
+	deptBuilder.Where("sys_dept.status =? ", 0)
 	var sysDeptList []dao.SysDept
 	err = deptBuilder.Find(&sysDeptList).Error
 	if err != nil {
@@ -529,7 +529,7 @@ func SysUserScope(ctx context.Context, tenantId, userId int64) (res dao.SysUserS
 }
 
 func SysUserPassword(ctx context.Context, id int64, password string) (res int64, err error) {
-	db := initial.Core.Store.LoadSQL("mysql").Write()
+	db := initial.Core.Store.LoadSQL("postgres").Write()
 	data, err := SysUser(ctx, id)
 	if err != nil {
 		return 0, err
