@@ -34,9 +34,17 @@
           </template>
         </vxe-column>
         <vxe-column field="creator" title="创建人"> </vxe-column>
-        <vxe-column field="createTime" title="创建时间"></vxe-column>
+        <vxe-column field="createTime" title="创建时间">
+          <template #default="{ row }">
+            {{ XEUtils.toDateString(row.createTime, 'yyyy-MM-dd HH:mm:ss') }}
+          </template>
+        </vxe-column>
         <vxe-column field="updater" title="更新人"> </vxe-column>
-        <vxe-column field="updateTime" title="更新时间"></vxe-column>
+        <vxe-column field="updateTime" title="更新时间">
+          <template #default="{ row }">
+            {{ XEUtils.toDateString(row.updateTime, 'yyyy-MM-dd HH:mm:ss') }}
+          </template>
+        </vxe-column>
         <vxe-column
           v-auth="[
             'user.SysUserUpdate',
@@ -244,6 +252,7 @@ import { useTabsStore } from '@/stores/modules/tabs'
 import { useKeepAliveStore } from '@/stores/modules/keepAlive'
 import { initDynamicRouter } from '@/routers/modules/dynamicRouter'
 import { useRoute, useRouter } from 'vue-router'
+import XEUtils from 'xe-utils'
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()

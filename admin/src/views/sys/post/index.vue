@@ -30,9 +30,17 @@
         </template>
       </vxe-column>
       <vxe-column field="creator" title="创建人"> </vxe-column>
-      <vxe-column field="createTime" title="创建时间"> </vxe-column>
+      <vxe-column field="createTime" title="创建时间">
+        <template #default="{ row }">
+          {{ XEUtils.toDateString(row.createTime, 'yyyy-MM-dd HH:mm:ss') }}
+        </template>
+      </vxe-column>
       <vxe-column field="updater" title="更新人"> </vxe-column>
-      <vxe-column field="updateTime" title="更新时间"> </vxe-column>
+      <vxe-column field="updateTime" title="更新时间">
+        <template #default="{ row }">
+          {{ XEUtils.toDateString(row.updateTime, 'yyyy-MM-dd HH:mm:ss') }}
+        </template>
+      </vxe-column>
       <vxe-column
         v-auth="['post.SysPostUpdate', 'post.SysPostDelete', 'post.SysPostDrop', 'post.SysPostRecover', 'post.SysPost']"
         field="operation"
@@ -141,6 +149,7 @@ import { HasAuth } from '@/utils/auth'
 import { useLoadingStore } from '@/stores/modules/loading'
 import { storeToRefs } from 'pinia'
 import { ProTablePaginationEnum } from '@/enums'
+import XEUtils from 'xe-utils'
 // 获取loading状态
 const loadingStore = useLoadingStore()
 const { loading } = storeToRefs(loadingStore)

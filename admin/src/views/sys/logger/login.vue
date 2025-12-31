@@ -18,7 +18,11 @@
       <vxe-column field="name" title="姓名"> </vxe-column>
       <vxe-column field="username" title="用户名"> </vxe-column>
       <vxe-column field="ua" title="UA" show-overflow> </vxe-column>
-      <vxe-column field="loginTime" title="登录时间"> </vxe-column>
+      <vxe-column field="loginTime" title="登录时间">
+        <template #default="{ row }">
+          {{ XEUtils.toDateString(row.loginTime, 'yyyy-MM-dd HH:mm:ss') }}
+        </template>
+      </vxe-column>
       <vxe-column field="channel" title="渠道"> </vxe-column>
       <vxe-column field="ip" title="IP"> </vxe-column>
       <vxe-column v-auth="'logger.SysLoggerLoginDelete'" field="deleted" title="删除">
@@ -119,6 +123,7 @@ import { useHandleData } from '@/hooks/useHandleData'
 // import { storeToRefs } from 'pinia'
 import { ProTablePaginationEnum } from '@/enums'
 import { HasAuth } from '@/utils/auth'
+import XEUtils from 'xe-utils'
 // 获取loading状态
 // const { loading } = storeToRefs(useLoadingStore())
 //禁用

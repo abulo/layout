@@ -219,8 +219,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item v-if="sysMenuForm.type === 1" label="全屏" prop="full">
-              <el-radio-group v-model="sysMenuForm.full">
+            <el-form-item v-if="sysMenuForm.type === 1" label="全屏" prop="fullScreen">
+              <el-radio-group v-model="sysMenuForm.fullScreen">
                 <el-radio-button
                   v-for="dict in menuFullEnum"
                   :key="dict.value"
@@ -322,7 +322,7 @@ const sysMenuForm = ref<ResSysMenu>({
   cache: 0, // 缓存:0否/1 是
   remark: undefined, // 备注
   active: undefined, // 激活地址
-  full: 0, // 全屏:1 开/0 关
+  fullScreen: 0, // 全屏:1 开/0 关
   redirect: undefined, // 重定向
   status: 0, // 状态:0正常/1停用
   creator: undefined, // 创建人
@@ -376,7 +376,7 @@ const resetSysMenu = () => {
     cache: 0, // 缓存:0否/1 是
     remark: undefined, // 备注
     active: undefined, // 激活地址
-    full: 0, // 全屏:1 开/0 关
+    fullScreen: 0, // 全屏:1 开/0 关
     redirect: undefined, // 重定向
     status: 0, // 状态:0正常/1停用
     creator: undefined, // 创建人
@@ -512,7 +512,7 @@ const getMenuOptions = async () => {
       cache: 0,
       remark: undefined,
       active: undefined,
-      full: 0,
+      fullScreen: 0,
       redirect: undefined,
       status: 0,
       creator: undefined,

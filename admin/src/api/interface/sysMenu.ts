@@ -20,7 +20,7 @@ export interface ResSysMenu {
   cache: number // 缓存:0否/1 是
   remark: string | undefined // 备注
   active: string | undefined // 激活地址
-  full: number // 全屏:1 开/0 关
+  fullScreen: number // 全屏:1 开/0 关
   redirect: string | undefined // 重定向
   status: number // 状态:0正常/1停用
   creator: string | undefined // 创建人

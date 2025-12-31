@@ -24,7 +24,11 @@
       </vxe-column>
       <vxe-column field="url" title="请求地址" width="auto" show-overflow> </vxe-column>
       <vxe-column field="ip" title="IP"> </vxe-column>
-      <vxe-column field="startTime" title="开始时间"> </vxe-column>
+      <vxe-column field="startTime" title="开始时间">
+        <template #default="{ row }">
+          {{ XEUtils.toDateString(row.startTime, 'yyyy-MM-dd HH:mm:ss') }}
+        </template>
+      </vxe-column>
       <vxe-column field="duration" title="执行时长"> </vxe-column>
       <vxe-column field="channel" title="渠道"> </vxe-column>
       <vxe-column field="result" title="结果">
@@ -140,6 +144,7 @@ import { DictTag } from '@/components/DictTag'
 import { useHandleData } from '@/hooks/useHandleData'
 import { ProTablePaginationEnum } from '@/enums'
 import { HasAuth } from '@/utils/auth'
+import XEUtils from 'xe-utils'
 // 获取loading状态
 //禁用
 const disabled = ref(true)

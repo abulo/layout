@@ -15,7 +15,11 @@
     >
       <vxe-column field="id" title="编号" fixed="left" width="auto"></vxe-column>
       <vxe-column field="host" title="服务名"></vxe-column>
-      <vxe-column field="timestamp" title="时间"></vxe-column>
+      <vxe-column field="timestamp" title="时间">
+        <template #default="{ row }">
+          {{ XEUtils.toDateString(row.timestamp, 'yyyy-MM-dd HH:mm:ss') }}
+        </template>
+      </vxe-column>
       <vxe-column field="file" title="文件" show-overflow></vxe-column>
       <vxe-column field="func" title="方法名" show-overflow></vxe-column>
       <vxe-column field="level" title="等级"></vxe-column>
@@ -69,6 +73,7 @@ import { Delete, View } from '@element-plus/icons-vue'
 import { getSysLoggerDevListApi, deleteSysLoggerDevApi, getSysLoggerDevApi } from '@/api/modules/sysLoggerDev'
 import { useHandleData } from '@/hooks/useHandleData'
 import { ProTablePaginationEnum } from '@/enums'
+import XEUtils from 'xe-utils'
 // import { useLoadingStore } from '@/stores/modules/loading'
 // import { storeToRefs } from 'pinia'
 // 获取loading状态

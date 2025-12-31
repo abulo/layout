@@ -36,9 +36,17 @@
         </template>
       </vxe-column>
       <vxe-column field="creator" title="创建人"> </vxe-column>
-      <vxe-column field="createTime" title="创建时间"></vxe-column>
+      <vxe-column field="createTime" title="创建时间">
+        <template #default="{ row }">
+          {{ XEUtils.toDateString(row.createTime, 'yyyy-MM-dd HH:mm:ss') }}
+        </template>
+      </vxe-column>
       <vxe-column field="updater" title="更新人"> </vxe-column>
-      <vxe-column field="updateTime" title="更新时间"></vxe-column>
+      <vxe-column field="updateTime" title="更新时间">
+        <template #default="{ row }">
+          {{ XEUtils.toDateString(row.updateTime, 'yyyy-MM-dd HH:mm:ss') }}
+        </template>
+      </vxe-column>
       <vxe-column
         v-auth="['role.SysRoleUpdate', 'role.SysRoleDelete', 'role.SysRoleDrop', 'role.SysRoleRecover', 'role.SysRole']"
         field="operation"
@@ -237,6 +245,7 @@ import { getSysDeptListSimpleApi } from '@/api/modules/sysDept'
 import { handleTree } from '@pureadmin/utils'
 import { useTimeoutFn } from '@vueuse/core'
 import Node from 'element-plus/es/components/tree/src/model/node'
+import XEUtils from 'xe-utils'
 // 获取loading状态
 const { loading } = storeToRefs(useLoadingStore())
 //禁用

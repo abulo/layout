@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 defineOptions({ name: 'Home' })
 </script>
 
