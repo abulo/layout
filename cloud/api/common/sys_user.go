@@ -89,7 +89,7 @@ func SysUserMenuDao(item *menu.SysMenuObject) *dao.SysMenuTree {
 		daoMetaItem.IsLink = item.GetLink() // 是否外链
 	}
 	daoMetaItem.IsHide = cast.ToBool(cast.ToInt(item.GetHide()))       // 是否隐藏(0:否/1是)
-	daoMetaItem.IsFull = cast.ToBool(cast.ToInt(item.GetFull()))       // 是否全屏
+	daoMetaItem.IsFull = cast.ToBool(cast.ToInt(item.GetFullScreen())) // 是否全屏
 	daoMetaItem.IsAffix = false                                        // 是否固定
 	daoMetaItem.IsKeepAlive = cast.ToBool(cast.ToInt(item.GetCache())) // 是否缓存
 	if !util.Empty(item.Active) {
@@ -314,15 +314,15 @@ func SysUserLogin(ctx context.Context, newCtx *app.RequestContext, req dao.SysUs
 	sysLoggerLogin.Username = proto.String(userInfo.GetUsername())
 	sysLoggerLogin.UserId = proto.Int64(userInfo.GetId())
 	sysLoggerLogin.Ua = null.StringFrom(cast.ToString(newCtx.Request.Header.UserAgent()))
-	sysLoggerLogin.LoginTime = null.DateTimeFrom(nowTime)
+	sysLoggerLogin.LoginTime = null.TimeStampFrom(nowTime)
 	sysLoggerLogin.Channel = null.StringFrom(newCtx.GetString("channel"))
 	sysLoggerLogin.Ip = null.StringFrom(newCtx.ClientIP())
 	sysLoggerLogin.Deleted = proto.Int32(0)
 	sysLoggerLogin.TenantId = proto.Int64(userInfo.GetTenantId())
 	sysLoggerLogin.Creator = null.StringFrom(userInfo.GetName()) //创建者
-	sysLoggerLogin.CreateTime = null.DateTimeFrom(nowTime)       //创建时间
+	sysLoggerLogin.CreateTime = null.TimeStampFrom(nowTime)      //创建时间
 	sysLoggerLogin.Updater = null.StringFrom(userInfo.GetName()) //更新者
-	sysLoggerLogin.UpdateTime = null.DateTimeFrom(nowTime)       //更新时间
+	sysLoggerLogin.UpdateTime = null.TimeStampFrom(nowTime)      //更新时间
 
 	// 将这些数据需要全部存储在消息列队中,然后后台去执行消息列队
 	key := util.NewReplacer(initial.Core.Config.String("Cache.SysLoggerLogin.Queue"))
