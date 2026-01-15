@@ -20,7 +20,6 @@ export const localeMapping = {
 
 for (const locale of availableLocales) {
   if (!localeMapping[locale as keyof typeof localeMapping]) {
-    // eslint-disable-next-line no-console
     console.warn(t(`error.localeNotSupported`, { locale }))
   }
 }

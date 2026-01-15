@@ -104,4 +104,6 @@ export interface ProVxeTableProps<Query = any, Item extends DefaultRow = any, Ex
   layout?: string
   showNumber?: number // 搜索项每列占比配置 ==> 非必传
   border?: boolean
+  layoutPageSizes?: number[] // 表格分页页数选择器
+  tableColSet?: boolean // 表列设置
 }

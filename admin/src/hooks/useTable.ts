@@ -56,6 +56,79 @@ export function useTable<TableItem>(
    * @description 获取表格数据
    * @return void
    * */
+  // const getTableList = async () => {
+  //   try {
+  //     // 先把初始化参数和分页参数放到总参数里面
+  //     Object.assign(
+  //       state.totalParam,
+  //       initParam,
+  //       pagination !== ProTablePaginationEnum.BE
+  //         ? { pageNum: state.pageable.pageNum, pageSize: state.pageable.pageSize }
+  //         : {}
+  //     )
+
+  //     const response = await api({ ...state.searchInitParam, ...state.totalParam })
+
+  //     // 添加数据验证
+  //     if (!response) {
+  //       console.error('API返回数据为空:', response)
+  //       state.tableData = []
+  //       state.pageable.total = 0
+  //       return
+  //     }
+
+  //     const data = Array.isArray(response) ? response : response.data
+
+  //     // 验证数据结构
+  //     if (!data) {
+  //       console.error('响应数据为空:', data)
+  //       state.tableData = []
+  //       state.pageable.total = 0
+  //       return
+  //     }
+
+  //     let listData: TableItem[] | IObject[] = []
+  //     if (pagination === ProTablePaginationEnum.BE) {
+  //       if (Array.isArray((data as ResultPage<TableItem>).list)) {
+  //         listData = (data as ResultPage<TableItem>).list
+  //       } else {
+  //         // 安全处理：当list不存在时，使用空数组
+  //         listData = []
+  //         console.warn('分页数据结构不正确，使用空数组')
+  //       }
+  //       state.pageable.total = (data as ResultPage<TableItem>).total || 0
+  //     } else {
+  //       if (Array.isArray(data)) {
+  //         listData = data
+  //       } else {
+  //         // 如果不是数组且没有list属性，使用空数组
+  //         listData = []
+  //         console.warn('数据不是数组格式，使用空数组')
+  //       }
+  //     }
+
+  //     if (pagination === ProTablePaginationEnum.FE) {
+  //       const { pageNum, pageSize, ...rest } = state.totalParam
+  //       const queryKeys = Object.keys(rest)
+  //       const filterData = queryKeys.length
+  //         ? (fePaginationFilterMethod && fePaginationFilterMethod(rest)) || []
+  //         : (data as TableItem[]) || []
+  //       listData = filterData.slice((pageNum - 1) * pageSize, pageNum * pageSize)
+  //       state.pageable.total = queryKeys.length ? filterData.length : (data as TableItem[]).length || 0
+  //     }
+
+  //     // @ts-expect-error 类型不兼容
+  //     const currentData = dataCallBack ? dataCallBack(listData) : listData
+  //     updateTableData(currentData)
+  //   } catch (error) {
+  //     console.error('获取表格数据失败:', error)
+  //     // 不抛出错误，而是设置空数据，让界面能正常显示
+  //     state.tableData = []
+  //     state.pageable.total = 0
+  //     // 如果确实需要错误提示，可以使用其他方式而不是抛出异常
+  //     // ElMessage.error('获取数据失败: ' + (error as Error).message)
+  //   }
+  // }
   const getTableList = async () => {
     try {
       // 先把初始化参数和分页参数放到总参数里面
@@ -93,8 +166,24 @@ export function useTable<TableItem>(
       // @ts-expect-error 类型不兼容
       state.tableData = dataCallBack ? dataCallBack(listData) : listData
     } catch (error) {
-      throw new Error(error as any)
+      // throw new Error(error as any)
+      console.error('获取表格数据失败:', error)
+      state.tableData = []
+      state.pageable.total = 0
     }
+  }
+
+  /**
+   * @description 更新表格数据
+   * @param data
+   */
+  const updateTableData = (data: any) => {
+    // 删除 state.tableData 的数据
+    state.tableData.splice(0, state.tableData.length)
+    // 判断一下, 如果 data 为 null 或者 undefined, 又或者是空对象, 都直接赋值为 []
+    const currentData = data === null || data === undefined || Object.keys(data).length === 0 ? [] : data
+    // 为了解决表格数据不刷新的问题，这里使用 Object.assign
+    Object.assign(state.tableData, currentData)
   }
 
   /**

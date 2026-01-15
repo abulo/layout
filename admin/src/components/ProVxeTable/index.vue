@@ -47,6 +47,7 @@
             @click="handleToolbarClick(item.name)"
           />
         </template>
+        <el-button v-if="tableColSet" :icon="Menu" circle @click="openCustomEvent" />
       </div>
     </div>
     <!-- 表格主体 -->
@@ -70,6 +71,7 @@
         v-if="pagination !== ProTablePaginationEnum.NONE"
         :pageable="pageable"
         :layout="layout"
+        :page-sizes="layoutPageSizes"
         :handle-size-change="handleSizeChange"
         :handle-current-change="handleCurrentChange"
       />
@@ -79,6 +81,7 @@
 <script setup lang="ts">
 defineOptions({ name: 'ProVxeTable' })
 import { VxeTableInstance } from 'vxe-table'
+import { Menu } from '@element-plus/icons-vue'
 import { toolbarButtonsConfig } from '@/utils/proTable'
 import { ProTablePaginationEnum } from '@/enums'
 import { useLoadingStore } from '@/stores/modules/loading'
@@ -102,6 +105,8 @@ const props = withDefaults(defineProps<ProVxeTableProps>(), {
   border: true,
   layout: 'total, sizes, prev, pager, next, jumper',
   showNumber: 3,
+  layoutPageSizes: () => [10, 20, 30, 40, 50],
+  tableColSet: true,
 })
 
 const { t } = useI18n()
@@ -296,6 +301,13 @@ watch(
   () => getTableList(false),
   { deep: true }
 )
+
+const openCustomEvent = () => {
+  const $table = tableRef.value
+  if ($table) {
+    $table.openCustom()
+  }
+}
 
 // 暴露给父组件的参数和方法
 defineExpose({
